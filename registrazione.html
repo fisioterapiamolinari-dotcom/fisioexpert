@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrati | Fisio Expert Roma</title>
+<meta name="description" content="Registrati come paziente di Fisio Expert Roma. Inserisci i tuoi dati per essere contattato dal nostro team.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a1a; --ink-soft: #4a4a4a; --ink-muted: #8a8a8a;
+    --accent: #f47920; --accent-light: rgba(244,121,32,0.1); --accent-dark: #d4660f;
+    --warm: #f8f4ef; --warm-dark: #ede8e0; --white: #ffffff;
+    --border: rgba(26,26,26,0.1);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --success: #2d7a4f; --success-bg: #eaf5ee;
+    --error: #c0392b; --error-bg: #fdf0ee;
+  }
+  body { font-family: var(--sans); background: var(--warm); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,244,239,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 4rem; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); text-decoration: none; }
+  .nav-back { font-size: 0.875rem; color: var(--accent); text-decoration: none; font-weight: 500; }
+  .nav-back:hover { text-decoration: underline; }
+
+  .page-hero {
+    background: var(--white);
+    padding: 4rem 4rem 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .tag { font-size:0.72rem;font-weight:500;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem; }
+  .page-hero h1 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); color: var(--ink); margin-bottom: 0.75rem; }
+  .page-hero p { font-size: 1rem; color: var(--ink-muted); max-width: 480px; line-height: 1.7; }
+
+  .form-section {
+    padding: 3rem 4rem 5rem;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 3rem;
+    align-items: start;
+    max-width: 1100px;
+  }
+
+  .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 2.25rem;
+  }
+
+  .field-group { margin-bottom: 1.25rem; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus { border-color: var(--accent); background: var(--white); }
+  input::placeholder { color: var(--ink-muted); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background: var(--accent);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { background: var(--accent-dark); }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: var(--warm-dark); color: var(--ink-muted); cursor: not-allowed; transform: none; }
+
+  .status {
+    display: none; margin-top: 1rem;
+    padding: 0.85rem 1rem; border-radius: 8px;
+    font-size: 0.9rem; line-height: 1.5;
+  }
+  .status.success { display: block; background: var(--success-bg); color: var(--success); }
+  .status.error { display: block; background: var(--error-bg); color: var(--error); }
+
+  .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+  .script-field label { color: var(--ink-muted); font-size: 0.78rem; }
+  .script-field input { font-size: 0.8rem; font-family: monospace; background: var(--warm-dark); }
+
+  /* Info sidebar */
+  .info-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+  .info-card-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+  .info-card h3 { font-family: var(--serif); font-size: 1rem; color: var(--ink); margin-bottom: 0.4rem; }
+  .info-card p { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.6; }
+
+  .privacy-note {
+    font-size: 0.78rem; color: var(--ink-muted); margin-top: 1rem; line-height: 1.6;
+  }
+  .privacy-note a { color: var(--accent); text-decoration: none; }
+  .privacy-note a:hover { text-decoration: underline; }
+
+  footer {
+    background: var(--ink); color: rgba(255,255,255,0.5);
+    padding: 2rem 4rem; font-size: 0.82rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .page-hero { padding: 3rem 1.5rem 2rem; }
+    .form-section { grid-template-columns: 1fr; padding: 2rem 1.5rem; gap: 2rem; }
+    .field-row { grid-template-columns: 1fr; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">fisio·expert</a>
+  <a class="nav-back" href="/">← Torna alla home</a>
+</nav>
+
+<div class="page-hero">
+  <div class="tag">Registrazione</div>
+  <h1>Diventa nostro paziente</h1>
+  <p>Inserisci i tuoi dati per essere aggiunto al nostro sistema. Ti contatteremo al più presto per fissare il primo appuntamento.</p>
+</div>
+
+<div class="form-section">
+
+  <div>
+    <div class="form-card">
+      <div class="field-row">
+        <div class="field-group">
+          <label for="nome">Nome *</label>
+          <input type="text" id="nome" placeholder="es. Alessandro" autocomplete="given-name" />
+        </div>
+        <div class="field-group">
+          <label for="cognome">Cognome *</label>
+          <input type="text" id="cognome" placeholder="es. Rossi" autocomplete="family-name" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="telefono">Telefono</label>
+        <input type="tel" id="telefono" placeholder="+39 333 000 0000" autocomplete="tel" />
+      </div>
+
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="esempio@email.com" autocomplete="email" />
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="inviaForm()">
+        <span id="btn-text">Invia la registrazione</span>
+      </button>
+
+      <div class="status" id="status-msg"></div>
+
+      <p class="privacy-note">
+        Inviando il modulo accetti il trattamento dei tuoi dati personali secondo la nostra <a href="#">Privacy Policy</a>, in conformità al GDPR.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="script-field">
+        <label for="script-url">URL Google Apps Script</label>
+        <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/.../exec" />
+      </div>
+    </div>
+  </div>
+
+  <div class="info-sidebar">
+    <div class="info-card">
+      <div class="info-card-icon">📋</div>
+      <h3>I tuoi dati sono al sicuro</h3>
+      <p>Le informazioni che inserisci vengono utilizzate esclusivamente per contattarti e gestire il tuo percorso riabilitativo.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">📞</div>
+      <h3>Ti richiamiamo noi</h3>
+      <p>Dopo la registrazione il nostro staff ti contatterà entro 24 ore per fissare il primo appuntamento.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">📍</div>
+      <h3>Dove siamo</h3>
+      <p>Fisio Expert Roma<br>Via Roma, 1 — 00100 Roma<br>Lun–Ven: 8:00–20:00</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span style="font-family:'DM Serif Display',serif;font-size:1rem;color:rgba(255,255,255,0.7);">fisio·expert</span>
+  <span>P.IVA XXXXXXXXXXX &nbsp;·&nbsp; <a href="#">Privacy policy</a> &nbsp;·&nbsp; Roma</span>
+</footer>
+
+<script>
+  const SCRIPT_URL_KEY = 'fisioexpert_script_url';
+  const saved = localStorage.getItem(SCRIPT_URL_KEY);
+  if (saved) document.getElementById('script-url').value = saved;
+
+  document.getElementById('script-url').addEventListener('change', function() {
+    localStorage.setItem(SCRIPT_URL_KEY, this.value.trim());
+  });
+
+  function inviaForm() {
+    const nome = document.getElementById('nome').value.trim();
+    const cognome = document.getElementById('cognome').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const url = document.getElementById('script-url').value.trim();
+    const status = document.getElementById('status-msg');
+    const btn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+
+    status.className = 'status';
+
+    if (!nome || !cognome) {
+      status.className = 'status error';
+      status.textContent = 'Per favore inserisci nome e cognome.';
+      return;
+    }
+    if (!url) {
+      status.className = 'status error';
+      status.textContent = 'URL dello script non configurato. Contatta l\'amministratore del sito.';
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.textContent = 'Invio in corso…';
+
+    const params = new URLSearchParams({ nome, cognome, telefono, email });
+
+    fetch(url + '?' + params.toString(), { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        status.className = 'status success';
+        status.textContent = 'Registrazione completata! Ti contatteremo entro 24 ore.';
+        document.getElementById('nome').value = '';
+        document.getElementById('cognome').value = '';
+        document.getElementById('telefono').value = '';
+        document.getElementById('email').value = '';
+      })
+      .catch(() => {
+        status.className = 'status error';
+        status.textContent = 'Errore di connessione. Riprova o contattaci direttamente.';
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btnText.textContent = 'Invia la registrazione';
+      });
+  }
+</script>
+
+</body>
+</html>

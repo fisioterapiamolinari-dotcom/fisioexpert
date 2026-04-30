@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prenota — Fisio Expert Roma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #f47920;
+    --bg: #f8f4ef;
+    --ink: #1a1a1a;
+    --white: #ffffff;
+    --border: rgba(26,26,26,0.1);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .header {
+    padding: 28px 32px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.16em;
+  }
+  .brand-dot {
+    width: 0.4em;
+    height: 0.4em;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .tagline {
+    font-size: 14px;
+    color: var(--ink);
+    opacity: 0.6;
+    font-weight: 300;
+  }
+  /* Progress */
+  .progress {
+    display: flex;
+    padding: 18px 32px;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background .3s;
+  }
+  .progress-step.active { background: var(--accent); }
+  /* Step content */
+  .step {
+    padding: 32px;
+    display: none;
+    animation: fadeIn .25s ease;
+  }
+  .step.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .step-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    margin-bottom: 6px;
+    line-height: 1.1;
+  }
+  .step-subtitle {
+    font-size: 15px;
+    color: var(--ink);
+    opacity: 0.7;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+  /* Forms */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 15px;
+    background: var(--white);
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(244,121,32,0.12);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 110px;
+    font-weight: 300;
+  }
+  .field-error {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 6px;
+    display: none;
+  }
+  .field.error input, .field.error textarea { border-color: #c0392b; }
+  .field.error .field-error { display: block; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; gap: 0; } }
+  /* Buttons */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 14px 26px;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity .2s, background .2s, border-color .2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .btn-primary:hover:not(:disabled) { opacity: 0.92; }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg); border-color: var(--ink); }
+  /* Studio cards */
+  .studios { display: grid; gap: 12px; }
+  .studio-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    background: var(--white);
+  }
+  .studio-card:hover { border-color: var(--accent); }
+  .studio-card.selected {
+    border-color: var(--accent);
+    background: rgba(244,121,32,0.06);
+  }
+  .studio-name {
+    font-family: var(--serif);
+    font-size: 21px;
+    margin-bottom: 4px;
+  }
+  .studio-meta {
+    font-size: 14px;
+    color: var(--ink);
+    opacity: 0.7;
+    font-weight: 300;
+  }
+  /* Calendar */
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .cal-month {
+    font-family: var(--serif);
+    font-size: 20px;
+    text-transform: capitalize;
+  }
+  .cal-nav { display: flex; gap: 6px; }
+  .cal-nav button {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--ink);
+    font-family: var(--sans);
+    transition: border-color .2s;
+  }
+  .cal-nav button:hover:not(:disabled) { border-color: var(--accent); }
+  .cal-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 0;
+    color: var(--ink);
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: default;
+    transition: border-color .2s, background .2s, color .2s;
+    border: 1px solid transparent;
+    color: var(--ink);
+  }
+  .cal-day.disabled {
+    color: var(--ink);
+    opacity: 0.2;
+  }
+  .cal-day.available {
+    background: var(--bg);
+    color: var(--ink);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .cal-day.available:hover { border-color: var(--accent); }
+  .cal-day.selected {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+  /* Slots */
+  .slots-wrap { margin-top: 24px; }
+  .slots-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+  }
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+    gap: 8px;
+  }
+  .slot {
+    padding: 11px 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: var(--sans);
+    color: var(--ink);
+    transition: border-color .2s, background .2s, color .2s;
+  }
+  .slot:hover { border-color: var(--accent); }
+  .slot.selected {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+  .loading, .empty, .notice {
+    text-align: center;
+    padding: 18px;
+    color: var(--ink);
+    opacity: 0.7;
+    font-size: 14px;
+    background: var(--bg);
+    border-radius: 8px;
+  }
+  .notice { text-align: left; margin-bottom: 12px; }
+  /* Summary */
+  .summary {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 8px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label {
+    color: var(--ink);
+    opacity: 0.6;
+    font-weight: 300;
+    flex-shrink: 0;
+  }
+  .summary-value { font-weight: 500; text-align: right; word-break: break-word; }
+  /* Success */
+  .success { text-align: center; padding: 16px 0 8px; }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 22px;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  .success-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+  .success-text {
+    color: var(--ink);
+    opacity: 0.75;
+    margin-bottom: 22px;
+    font-weight: 300;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .wa-btn {
+    display: inline-block;
+    background: #25d366;
+    color: var(--white);
+    padding: 13px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    font-family: var(--sans);
+  }
+  .wa-btn:hover { opacity: 0.92; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">fisio<span class="brand-dot" aria-hidden="true"></span>expert</div>
+      <div class="tagline">Prenota la tua visita in pochi passaggi</div>
+    </div>
+    <div class="progress">
+      <div class="progress-step active" data-progress="1"></div>
+      <div class="progress-step" data-progress="2"></div>
+      <div class="progress-step" data-progress="3"></div>
+      <div class="progress-step" data-progress="4"></div>
+    </div>
+
+    <!-- Step 1: Qualifica -->
+    <div class="step active" data-step="1">
+      <h1 class="step-title">Iniziamo a conoscerci</h1>
+      <p class="step-subtitle">I tuoi dati per la prenotazione</p>
+      <form id="qualify-form" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" autocomplete="given-name" required>
+            <div class="field-error">Inserisci il tuo nome</div>
+          </div>
+          <div class="field">
+            <label for="cognome">Cognome</label>
+            <input type="text" id="cognome" name="cognome" autocomplete="family-name" required>
+            <div class="field-error">Inserisci il tuo cognome</div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="telefono">Telefono</label>
+          <input type="tel" id="telefono" name="telefono" autocomplete="tel" placeholder="+39 333 1234567" required>
+          <div class="field-error">Inserisci un numero di telefono valido</div>
+        </div>
+        <div class="field">
+          <label for="problema">Qual è il tuo problema principale?</label>
+          <textarea id="problema" name="problema" placeholder="Descrivi brevemente il dolore, la zona interessata, da quanto tempo..." required></textarea>
+          <div class="field-error">Descrivi brevemente il problema</div>
+        </div>
+        <div class="actions">
+          <span></span>
+          <button type="submit" class="btn btn-primary">Continua →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step 2: Studio -->
+    <div class="step" data-step="2">
+      <h1 class="step-title">Dove preferisci venire?</h1>
+      <p class="step-subtitle">Scegli lo studio più comodo per te</p>
+      <div class="studios" id="studios"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+        <button type="button" class="btn btn-primary" id="step2-next" disabled>Continua →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Calendario + slot -->
+    <div class="step" data-step="3">
+      <h1 class="step-title">Quando vuoi venire?</h1>
+      <p class="step-subtitle" id="step3-sub">Scegli un giorno e un orario disponibile</p>
+      <div class="cal-header">
+        <div class="cal-month" id="cal-month"></div>
+        <div class="cal-nav">
+          <button type="button" id="cal-prev" aria-label="Mese precedente">←</button>
+          <button type="button" id="cal-next" aria-label="Mese successivo">→</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="slots-wrap" id="slots-wrap" style="display:none">
+        <div class="slots-title" id="slots-title"></div>
+        <div id="slots-content"></div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+        <button type="button" class="btn btn-primary" id="step3-next" disabled>Continua →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Conferma -->
+    <div class="step" data-step="4">
+      <div id="confirm-pre">
+        <h1 class="step-title">Conferma la prenotazione</h1>
+        <p class="step-subtitle">Controlla che sia tutto giusto</p>
+        <div class="summary" id="summary"></div>
+        <div id="confirm-error" class="notice" style="display:none;background:#fdecea;color:#a02020;border:1px solid #f5b7b1;margin-bottom:12px"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+          <button type="button" class="btn btn-primary" id="confirm-btn">Conferma prenotazione</button>
+        </div>
+      </div>
+      <div id="confirm-success" style="display:none">
+        <div class="success">
+          <div class="success-icon">✓</div>
+          <h1 class="success-title">Prenotazione ricevuta!</h1>
+          <p class="success-text">Ti ricontatteremo a breve via WhatsApp per confermare l'appuntamento. Per qualsiasi modifica scrivici direttamente.</p>
+          <a href="https://wa.me/393282738164" class="wa-btn" target="_blank" rel="noopener">Scrivici su WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   FISIO EXPERT ROMA — Booking widget
+   Singolo file HTML, vanilla JS. Drop-in su Netlify.
+   ------------------------------------------------------------
+   API ATTESA dall'Apps Script (URL sotto).
+   1) GET  ?action=getSlots&studio=<id>&date=YYYY-MM-DD
+      Risposta: { "slots": ["10:00","10:45","11:30", ...] }
+      (oppure direttamente l'array ["10:00",...])
+      Se la chiamata fallisce o restituisce vuoto, il widget
+      mostra gli slot teorici basati sulle regole dello studio.
+
+   2) POST <APPS_SCRIPT_URL>
+      Body (JSON, content-type text/plain per evitare preflight CORS):
+      {
+        "action": "book",
+        "studio": "<id>", "studioName": "<nome>",
+        "date": "YYYY-MM-DD", "time": "HH:MM",
+        "duration": <minuti>,
+        "nome": "...", "cognome": "...",
+        "telefono": "...", "problema": "..."
+      }
+   ============================================================ */
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznW1gbJU6L24Qt4XvAPYAViaEwISJvOXkgcNoNBTmkHeFvPdB46NGsmnqrVw2LFzgq/exec";
+
+/* Studi: getDay() => 0=Dom, 1=Lun, 2=Mar, 3=Mer, 4=Gio, 5=Ven, 6=Sab */
+const STUDIOS = [
+  { id: 'parioli', name: 'Studio Parioli', durationMin: 45,
+    days: { 1: { start: '10:00', end: '20:00' } },
+    meta: 'Lunedì 10:00–20:00 · 45 min' },
+  { id: 'eur', name: 'Studio EUR', durationMin: 45,
+    days: { 2: { start: '13:00', end: '20:00' }, 4: { start: '13:00', end: '20:00' }, 6: { start: '08:00', end: '14:00' } },
+    meta: 'Mar/Gio 13:00–20:00 · Sab 08:00–14:00 · 45 min' },
+  { id: 'fleming', name: 'Fleming Fitness Academy', durationMin: 60,
+    days: { 3: { start: '09:00', end: '20:00' }, 5: { start: '09:00', end: '20:00' } },
+    meta: 'Mer/Ven 09:00–20:00 · 60 min' },
+];
+
+/* === STATE === */
+const state = {
+  step: 1,
+  patient: { nome: '', cognome: '', telefono: '', problema: '' },
+  studio: null,
+  date: null,
+  time: null,
+  calMonth: null,
+};
+
+/* === UTILS === */
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const pad = (n) => String(n).padStart(2, '0');
+const fmtDate = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fmtDayLong = (d) => d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const fmtMonth = (d) => d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+
+function goToStep(n) {
+  state.step = n;
+  $$('.step').forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+  $$('.progress-step').forEach(p => p.classList.toggle('active', +p.dataset.progress <= n));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* === STEP 1: qualifica === */
+$('#qualify-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fields = ['nome', 'cognome', 'telefono', 'problema'];
+  let valid = true;
+  fields.forEach(f => {
+    const input = $(`#${f}`);
+    const fieldEl = input.closest('.field');
+    const val = input.value.trim();
+    let ok;
+    if (f === 'telefono') ok = /^[+0-9 ()\-]{6,}$/.test(val);
+    else if (f === 'problema') ok = val.length >= 5;
+    else ok = val.length >= 2;
+    fieldEl.classList.toggle('error', !ok);
+    if (!ok) valid = false;
+    else state.patient[f] = val;
+  });
+  if (valid) goToStep(2);
+});
+
+/* === STEP 2: studio === */
+function renderStudios() {
+  const wrap = $('#studios');
+  wrap.innerHTML = STUDIOS.map(s => `
+    <div class="studio-card" data-id="${s.id}" tabindex="0" role="button">
+      <div class="studio-name">${s.name}</div>
+      <div class="studio-meta">${s.meta}</div>
+    </div>
+  `).join('');
+  $$('.studio-card', wrap).forEach(card => {
+    const select = () => {
+      $$('.studio-card', wrap).forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.studio = STUDIOS.find(s => s.id === card.dataset.id);
+      $('#step2-next').disabled = false;
+    };
+    card.addEventListener('click', select);
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
+  });
+}
+renderStudios();
+
+$('#step2-next').addEventListener('click', () => {
+  state.date = null;
+  state.time = null;
+  state.calMonth = startOfMonth(new Date());
+  $('#step3-sub').textContent = `Studio: ${state.studio.name} · ${state.studio.durationMin} min`;
+  $('#slots-wrap').style.display = 'none';
+  $('#step3-next').disabled = true;
+  renderCalendar();
+  goToStep(3);
+});
+
+/* === STEP 3: calendario === */
+function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function isStudioDay(date) {
+  const dow = date.getDay();
+  return state.studio && state.studio.days[dow];
+}
+function isPast(date) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return date < today;
+}
+
+function renderCalendar() {
+  const month = state.calMonth;
+  $('#cal-month').textContent = fmtMonth(month);
+  // Disable prev if at current month
+  const today = new Date(); today.setDate(1); today.setHours(0,0,0,0);
+  $('#cal-prev').disabled = month <= today;
+  const limit = new Date(); limit.setMonth(limit.getMonth()+3, 1); limit.setHours(0,0,0,0);
+  $('#cal-next').disabled = month >= limit;
+
+  const grid = $('#cal-grid');
+  const dows = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const last  = new Date(month.getFullYear(), month.getMonth()+1, 0);
+  const firstWd = (first.getDay() + 6) % 7;
+
+  let html = dows.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i = 0; i < firstWd; i++) html += `<div></div>`;
+  for (let day = 1; day <= last.getDate(); day++) {
+    const d = new Date(month.getFullYear(), month.getMonth(), day);
+    const ymd = fmtDate(d);
+    const past = isPast(d);
+    const ok = !past && !!isStudioDay(d);
+    const cls = ok ? 'available' : 'disabled';
+    const sel = state.date === ymd ? ' selected' : '';
+    html += `<div class="cal-day ${cls}${sel}" data-date="${ymd}">${day}</div>`;
+  }
+  grid.innerHTML = html;
+  $$('.cal-day.available', grid).forEach(el => {
+    el.addEventListener('click', () => selectDate(el.dataset.date));
+  });
+}
+
+$('#cal-prev').addEventListener('click', () => {
+  if ($('#cal-prev').disabled) return;
+  state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth()-1, 1);
+  renderCalendar();
+});
+$('#cal-next').addEventListener('click', () => {
+  if ($('#cal-next').disabled) return;
+  state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth()+1, 1);
+  renderCalendar();
+});
+
+async function selectDate(ymd) {
+  state.date = ymd;
+  state.time = null;
+  $('#step3-next').disabled = true;
+  renderCalendar();
+  const wrap = $('#slots-wrap');
+  wrap.style.display = 'block';
+  const d = new Date(ymd + 'T00:00:00');
+  $('#slots-title').textContent = fmtDayLong(d);
+  const content = $('#slots-content');
+  content.innerHTML = `<div class="loading">Caricamento orari disponibili…</div>`;
+
+  try {
+    const slots = await fetchSlots(state.studio.id, ymd);
+    if (!slots || slots.length === 0) {
+      content.innerHTML = `<div class="empty">Nessuno slot disponibile in questo giorno.</div>`;
+      return;
+    }
+    renderSlots(content, slots, false);
+  } catch (err) {
+    console.error('[Fisio Expert] fetchSlots ERROR:', err);
+    const slots = generateTheoreticalSlots(state.studio, d);
+    if (!slots.length) {
+      content.innerHTML = `<div class="empty">Nessuno slot disponibile.</div>`;
+      return;
+    }
+    renderSlots(content, slots, true, err && err.message ? err.message : String(err));
+  }
+}
+
+function renderSlots(container, slots, fallback, errMsg) {
+  const notice = fallback
+    ? `<div class="notice">⚠️ Impossibile leggere il calendario in tempo reale (${errMsg || 'errore sconosciuto'}). Mostro gli orari teorici; la disponibilità reale verrà confermata via WhatsApp.</div>`
+    : '';
+  container.innerHTML = notice + `<div class="slots">${slots.map(t => `<div class="slot" data-time="${t}">${t}</div>`).join('')}</div>`;
+  $$('.slot', container).forEach(el => {
+    el.addEventListener('click', () => {
+      $$('.slot', container).forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      state.time = el.dataset.time;
+      $('#step3-next').disabled = false;
+    });
+  });
+}
+
+function generateTheoreticalSlots(studio, date) {
+  const dow = date.getDay();
+  const cfg = studio.days[dow];
+  if (!cfg) return [];
+  const out = [];
+  const [sh, sm] = cfg.start.split(':').map(Number);
+  const [eh, em] = cfg.end.split(':').map(Number);
+  let mins = sh * 60 + sm;
+  const endMins = eh * 60 + em;
+  while (mins + studio.durationMin <= endMins) {
+    out.push(`${pad(Math.floor(mins/60))}:${pad(mins%60)}`);
+    mins += studio.durationMin;
+  }
+  return out;
+}
+
+async function fetchSlots(studioId, date) {
+  const url = `${APPS_SCRIPT_URL}?action=getSlots&studio=${encodeURIComponent(studioId)}&date=${encodeURIComponent(date)}`;
+  let res;
+  try {
+    res = await fetch(url, { method: 'GET', redirect: 'follow' });
+  } catch (e) {
+    throw new Error('rete/CORS — controlla deploy "Anyone"');
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); }
+  catch (_) {
+    console.warn('[Fisio Expert] risposta non-JSON:', text.slice(0, 200));
+    throw new Error('lo script non ha restituito JSON');
+  }
+  if (data && data.error) throw new Error('script: ' + data.error);
+  return Array.isArray(data) ? data : (data.slots || []);
+}
+
+$('#step3-next').addEventListener('click', () => {
+  renderSummary();
+  goToStep(4);
+});
+
+/* === STEP 4: conferma === */
+function renderSummary() {
+  const d = new Date(state.date + 'T00:00:00');
+  $('#summary').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Paziente</span><span class="summary-value">${escapeHtml(state.patient.nome)} ${escapeHtml(state.patient.cognome)}</span></div>
+    <div class="summary-row"><span class="summary-label">Telefono</span><span class="summary-value">${escapeHtml(state.patient.telefono)}</span></div>
+    <div class="summary-row"><span class="summary-label">Studio</span><span class="summary-value">${escapeHtml(state.studio.name)}</span></div>
+    <div class="summary-row"><span class="summary-label">Data</span><span class="summary-value">${fmtDayLong(d)}</span></div>
+    <div class="summary-row"><span class="summary-label">Orario</span><span class="summary-value">${state.time} (${state.studio.durationMin} min)</span></div>
+    <div class="summary-row"><span class="summary-label">Problema</span><span class="summary-value" style="max-width:60%">${escapeHtml(state.patient.problema)}</span></div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function showConfirmError(msg) {
+  const box = $('#confirm-error');
+  box.textContent = msg;
+  box.style.display = 'block';
+  const btn = $('#confirm-btn');
+  btn.disabled = false;
+  btn.textContent = 'Riprova';
+}
+
+$('#confirm-btn').addEventListener('click', async () => {
+  const btn = $('#confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso…';
+  $('#confirm-error').style.display = 'none';
+
+  const payload = {
+    action: 'book',
+    studio: state.studio.id,
+    studioName: state.studio.name,
+    date: state.date,
+    time: state.time,
+    duration: state.studio.durationMin,
+    nome: state.patient.nome,
+    cognome: state.patient.cognome,
+    telefono: state.patient.telefono,
+    problema: state.patient.problema,
+  };
+
+  let res, raw, data;
+  try {
+    // text/plain evita il preflight CORS verso Apps Script.
+    res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+    raw = await res.text();
+  } catch (err) {
+    console.error('Errore di rete verso Apps Script:', err);
+    showConfirmError('Errore di rete. Controlla la connessione e riprova.');
+    return;
+  }
+
+  try {
+    data = JSON.parse(raw);
+  } catch (_) {
+    console.error('Risposta non-JSON dallo script:', raw);
+    showConfirmError('Errore del server di prenotazione. Riprova oppure scrivici su WhatsApp.');
+    return;
+  }
+
+  // Lo script può rispondere con { ok:true } o { success:true }
+  const okFlag = data && (data.ok === true || data.success === true);
+  if (!okFlag) {
+    const errMsg = (data && data.error) ? data.error : 'Prenotazione non confermata. Riprova.';
+    console.error('Booking error:', data);
+    showConfirmError(errMsg);
+    return;
+  }
+
+  // SUCCESSO
+  $('#confirm-pre').style.display = 'none';
+  $('#confirm-success').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* === Back buttons === */
+$$('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(state.step - 1)));
+</script>
+</body>
+</html>

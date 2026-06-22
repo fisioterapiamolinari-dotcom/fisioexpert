@@ -749,7 +749,10 @@ function goToStep(n) {
 $$('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(state.step - 1)));
 
 /* ── STEP 1: FORM ── */
-document.addEventListener('DOMContentLoaded', () => initBiometricUI());
+document.addEventListener('DOMContentLoaded', () => {
+  initBiometricUI();
+  prefetchAll(); // avvia subito il caricamento delle disponibilità in background
+});
 
 $('#qualify-form').addEventListener('submit', e => {
   e.preventDefault();
@@ -771,7 +774,7 @@ function initCalendar() {
   state.date = null; state.time = null;
   $('#step2-next').disabled = true;
   $('#slots-wrap').style.display = 'none';
-  prefetchAll();
+  if (!Object.keys(state.cache).length) prefetchAll(); // già avviato al load; rilancia solo se serve
   renderCal();
 }
 

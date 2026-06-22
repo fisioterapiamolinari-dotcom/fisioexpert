@@ -30,7 +30,8 @@
     position: sticky; top: 0; z-index: 10;
   }
   header .wrap { display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-family: var(--mono); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--ink); text-decoration: none; }
+  .logo { font-family: var(--mono); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; }
+  .header-logo { height: 36px; width: auto; display: block; }
   .logo span { color: var(--accent); }
   .back { font-family: var(--sans); font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; }
   .back:hover { color: var(--accent); }
@@ -116,7 +117,15 @@
 
 <header>
   <div class="wrap">
-    <a href="https://fisioexpert.it" class="logo">Fisio<span>Expert</span></a>
+    <a href="https://fisioexpert.it" class="logo">
+      <img
+        src="logo-fisioexpert-header.png"
+        alt="fisio·expert"
+        class="header-logo"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+      >
+      <span style="display:none; font-family:'DM Serif Display',Georgia,serif; font-size:20px;">fisio<span style="color:#f47920;">·</span>expert</span>
+    </a>
     <a href="https://fisioexpert.it" class="back">← Torna al sito</a>
   </div>
 </header>
@@ -141,31 +150,29 @@
 
     <div class="card">
       <h2><span class="num">2</span> Come disdire o spostare</h2>
-      <p>Puoi comunicarci la modifica nel modo che preferisci:</p>
+      <p>Per spostare o annullare un appuntamento puoi:</p>
       <ul class="clean">
-        <li>Tramite <strong>WhatsApp</strong> al numero +39 351 395 7722</li>
-        <li>Rispondendo direttamente <strong>all'email di conferma</strong> che hai ricevuto</li>
-        <li>Scrivendo a <strong>info@fisioexpert.it</strong></li>
+        <li>Scrivermi su <strong>WhatsApp</strong> al numero +39 328 273 8164</li>
+        <li>Oppure <strong>chiamarmi</strong> allo stesso numero</li>
       </ul>
       <p>Riceverai sempre un messaggio WhatsApp di promemoria il giorno prima dell'appuntamento.</p>
     </div>
 
     <div class="card">
       <h2><span class="num">3</span> Mancato preavviso</h2>
-      <p>Una disdetta comunicata <strong>oltre il termine delle 24 ore</strong>, oppure la mancata presentazione all'appuntamento senza alcun avviso, comporta l'impossibilità di liberare lo slot per altri pazienti.</p>
-      <p>In questi casi lo studio si riserva la facoltà di applicare le condizioni concordate al momento della prenotazione. Il rispetto reciproco degli orari è ciò che ci permette di seguire ogni paziente con la giusta attenzione.</p>
+      <p>Una disdetta comunicata <strong>oltre il termine delle 24 ore</strong>, oppure la mancata presentazione all'appuntamento senza alcun avviso, non ci permette di liberare lo slot in tempo per offrirlo a un altro paziente.</p>
+      <p>Per questo motivo, in questi casi, lo studio tratterrà il <strong>50% del costo della seduta</strong>. È una piccola misura che ci aiuta a tutelare il tempo riservato a te e quello degli altri pazienti in attesa: il rispetto reciproco degli orari è ciò che ci permette di seguire ognuno con la giusta attenzione.</p>
     </div>
 
     <div class="card">
       <h2><span class="num">4</span> Ritardi</h2>
-      <p>In caso di ritardo, la seduta si svolgerà comunque entro l'orario originariamente previsto, per non penalizzare i pazienti successivi. Se prevedi di arrivare in ritardo, avvisaci appena possibile: faremo il possibile per riorganizzarci.</p>
+      <p>In caso di ritardo, la seduta si svolgerà comunque entro l'orario originariamente previsto, per non penalizzare i pazienti successivi.</p>
     </div>
 
     <div class="contact-box">
       <h2>Hai bisogno di spostare un appuntamento?</h2>
       <p>Siamo qui per aiutarti. Scrivici su WhatsApp, è il modo più veloce.</p>
-      <a href="https://wa.me/393513957722" class="btn">Scrivici su WhatsApp</a>
-      <p style="margin-top:20px; margin-bottom:0;">oppure <a href="tel:+393513957722" class="wa">+39 351 395 7722</a></p>
+      <a href="https://wa.me/393282738164" class="btn">Scrivici su WhatsApp</a>
     </div>
 
   </div>

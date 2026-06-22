@@ -48,32 +48,32 @@
 
   /* ── HEADER ── */
   .header {
-    padding: 24px 32px 20px;
+    padding: 20px 32px 18px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
-  .logo {
-    font-family: var(--serif);
-    font-size: 20px;
-    letter-spacing: -0.01em;
+  .header-logo {
+    height: 36px;
+    width: auto;
+    display: block;
   }
-  .logo span { color: var(--accent); }
   .header-meta {
     font-size: 13px;
     color: var(--ink);
     opacity: 0.5;
     font-weight: 300;
     text-align: right;
+    white-space: nowrap;
   }
 
   /* ── PROGRESS BAR ── */
   .progress {
     display: flex;
     gap: 6px;
-    padding: 16px 32px;
+    padding: 14px 32px;
     border-bottom: 1px solid var(--border);
     background: var(--bg);
   }
@@ -83,7 +83,6 @@
     background: var(--border-strong);
     border-radius: 2px;
     transition: background 0.35s ease;
-    position: relative;
   }
   .progress-step.active { background: var(--accent); }
   .progress-step.done { background: var(--accent); opacity: 0.4; }
@@ -92,17 +91,17 @@
   .step-label {
     display: flex;
     gap: 6px;
-    padding: 12px 32px 0;
+    padding: 10px 32px 0;
   }
   .step-label span {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--ink);
-    opacity: 0.38;
+    opacity: 0.35;
     flex: 1;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
   }
   .step-label span.active { color: var(--accent); opacity: 1; }
 
@@ -141,49 +140,6 @@
     margin-bottom: 28px;
   }
 
-  /* ── STUDIO SELECTOR ── */
-  .studio-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 28px;
-  }
-  @media (max-width: 520px) { .studio-grid { grid-template-columns: 1fr; } }
-  .studio-card {
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    background: var(--white);
-    position: relative;
-  }
-  .studio-card:hover { border-color: var(--accent); }
-  .studio-card.selected {
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }
-  .studio-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    width: 20px;
-    height: 20px;
-    background: var(--accent);
-    color: #fff;
-    border-radius: 50%;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 20px;
-    text-align: center;
-  }
-  .studio-name { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
-  .studio-days { font-size: 12px; opacity: 0.6; font-weight: 300; line-height: 1.5; }
-
   /* ── FORM FIELDS ── */
   .field { margin-bottom: 16px; }
   .field label {
@@ -193,7 +149,7 @@
     margin-bottom: 7px;
     letter-spacing: 0.01em;
   }
-  .field input, .field select {
+  .field input, .field textarea {
     width: 100%;
     padding: 13px 15px;
     border: 1.5px solid var(--border);
@@ -206,7 +162,8 @@
     appearance: none;
     -webkit-appearance: none;
   }
-  .field input:focus, .field select:focus {
+  .field textarea { resize: vertical; min-height: 100px; font-weight: 300; line-height: 1.5; }
+  .field input:focus, .field textarea:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(244,121,32,0.10);
@@ -219,7 +176,7 @@
     font-weight: 400;
   }
   .field.error input,
-  .field.error select { border-color: #c0392b; }
+  .field.error textarea { border-color: #c0392b; }
   .field.error .field-error { display: block; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 480px) { .row { grid-template-columns: 1fr; gap: 0; } }
@@ -253,6 +210,27 @@
     border: 1.5px solid var(--border);
   }
   .btn-ghost:hover { border-color: var(--border-strong); background: var(--bg); }
+
+  /* ── STUDIO INFO BOX ── */
+  .studio-info {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .studio-info-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .studio-info-name { font-weight: 500; font-size: 15px; margin-bottom: 3px; }
+  .studio-info-detail { font-size: 13px; opacity: 0.6; font-weight: 300; line-height: 1.6; }
 
   /* ── CALENDAR ── */
   .cal-header {
@@ -303,10 +281,8 @@
     transition: border-color 0.15s, background 0.15s, color 0.15s;
     border: 1.5px solid transparent;
     color: var(--ink);
-    font-weight: 400;
   }
   .cal-day.disabled { opacity: 0.18; }
-  .cal-day.today { border-color: var(--accent); opacity: 0.5; }
   .cal-day.available { background: var(--bg); font-weight: 500; cursor: pointer; }
   .cal-day.available:hover { border-color: var(--accent); }
   .cal-day.selected { background: var(--accent); color: var(--white); border-color: var(--accent); }
@@ -318,7 +294,7 @@
     font-weight: 500;
     margin-bottom: 10px;
     text-transform: capitalize;
-    opacity: 0.7;
+    opacity: 0.65;
   }
   .slots {
     display: grid;
@@ -335,7 +311,6 @@
     font-size: 14px;
     font-family: var(--sans);
     color: var(--ink);
-    font-weight: 400;
     transition: border-color 0.15s, background 0.15s, color 0.15s;
   }
   .slot:hover { border-color: var(--accent); }
@@ -355,7 +330,7 @@
     background: var(--bg);
     border-radius: var(--radius);
     padding: 20px 22px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
   .summary-row {
     display: flex;
@@ -369,6 +344,18 @@
   .summary-label { color: var(--ink); opacity: 0.55; font-weight: 300; flex-shrink: 0; }
   .summary-value { font-weight: 500; text-align: right; word-break: break-word; }
   .summary-value small { display: block; font-weight: 300; font-size: 12px; opacity: 0.65; }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
 
   /* ── SUCCESS ── */
   .success { text-align: center; padding: 8px 0 16px; }
@@ -393,7 +380,7 @@
     max-width: 420px;
     margin-left: auto;
     margin-right: auto;
-    line-height: 1.6;
+    line-height: 1.65;
   }
   .wa-btn {
     display: inline-flex;
@@ -411,20 +398,20 @@
   }
   .wa-btn:hover { opacity: 0.88; }
 
-  /* ── BIOMETRIC BANNER ── */
+  /* ── BIOMETRIC ── */
   .bio-banner {
     background: var(--bg);
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
-    padding: 15px 18px;
+    padding: 14px 18px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
-  .bio-banner-text .bio-title { font-weight: 500; font-size: 14px; }
-  .bio-banner-text .bio-sub { font-size: 12px; opacity: 0.55; font-weight: 300; margin-top: 2px; }
+  .bio-title { font-weight: 500; font-size: 14px; }
+  .bio-sub { font-size: 12px; opacity: 0.55; font-weight: 300; margin-top: 2px; }
   .bio-btn {
     background: var(--accent);
     color: #fff;
@@ -440,24 +427,12 @@
   }
   .bio-btn:hover { opacity: 0.88; }
 
-  /* ── NOTICE ── */
-  .notice {
-    background: var(--accent-light);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 12px 16px;
-    font-size: 13px;
-    font-weight: 400;
-    margin-bottom: 20px;
-    color: var(--ink);
-    opacity: 0.85;
-  }
-
   @media (max-width: 600px) {
     body { padding: 12px 8px 40px; }
-    .header { padding: 18px 20px 16px; }
-    .progress { padding: 14px 20px; }
-    .step-label { padding: 10px 20px 0; }
+    .header { padding: 16px 20px 14px; }
+    .header-logo { height: 30px; }
+    .progress { padding: 12px 20px; }
+    .step-label { padding: 8px 20px 0; }
     .step { padding: 24px 20px; }
     .step-title { font-size: 24px; }
     .summary { padding: 16px; }
@@ -467,69 +442,52 @@
 <body>
 <div class="container">
 
-  <!-- HEADER -->
-  <div class="header" id="site-header">
-    <script>
-      fetch('/header.html')
-        .then(r => r.text())
-        .then(html => { document.getElementById('site-header').innerHTML = html; })
-        .catch(() => {
-          document.getElementById('site-header').innerHTML =
-            '<div class="logo">fisio<span>·</span>expert</div><div class="header-meta">fisioexpert.it</div>';
-        });
-    </script>
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <a href="https://fisioexpert.it">
+      <img
+        src="logo-fisioexpert-header.png"
+        alt="fisio·expert"
+        class="header-logo"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+      >
+      <span style="display:none; font-family:'DM Serif Display',Georgia,serif; font-size:20px;">fisio<span style="color:#f47920;">·</span>expert</span>
+    </a>
+    <div class="header-meta">Studio EUR · Viale Pasteur 56</div>
   </div>
 
-  <!-- PROGRESS -->
+  <!-- ── PROGRESS ── -->
   <div class="progress">
     <div class="progress-step active" data-p="1"></div>
     <div class="progress-step" data-p="2"></div>
     <div class="progress-step" data-p="3"></div>
-    <div class="progress-step" data-p="4"></div>
   </div>
   <div class="step-label">
-    <span data-label="1" class="active">Studio</span>
-    <span data-label="2">Dati</span>
-    <span data-label="3">Data e ora</span>
-    <span data-label="4">Conferma</span>
+    <span data-label="1" class="active">Dati</span>
+    <span data-label="2">Data e ora</span>
+    <span data-label="3">Conferma</span>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 1 — SCELTA STUDIO
-  ═══════════════════════════════════ -->
+  <!-- ════════════════════════════════
+       STEP 1 — DATI PAZIENTE
+  ════════════════════════════════ -->
   <div class="step active" data-step="1">
     <p class="step-eyebrow">Prima visita</p>
-    <h1 class="step-title">Scegli lo studio</h1>
-    <p class="step-subtitle">3 location a Roma — scegli quella più comoda per te</p>
-
-    <div class="studio-grid" id="studio-grid">
-      <div class="studio-card" data-studio="parioli">
-        <div class="studio-name">Parioli</div>
-        <div class="studio-days">Lunedì<br>10:00 – 20:00<br>45 min/seduta</div>
-      </div>
-      <div class="studio-card" data-studio="eur">
-        <div class="studio-name">Studio EUR</div>
-        <div class="studio-days">Mar / Gio: 13:00 – 20:00<br>Sab: 08:00 – 14:00<br>45 min/seduta</div>
-      </div>
-      <div class="studio-card" data-studio="fleming">
-        <div class="studio-name">Fleming Fitness Academy</div>
-        <div class="studio-days">Mer / Ven<br>09:00 – 20:00<br>60 min/seduta</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <span></span>
-      <button class="btn btn-primary" id="step1-next" disabled>Continua →</button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════
-       STEP 2 — DATI PAZIENTE
-  ═══════════════════════════════════ -->
-  <div class="step" data-step="2">
-    <p class="step-eyebrow">I tuoi dati</p>
     <h1 class="step-title">Iniziamo a conoscerci</h1>
-    <p class="step-subtitle">Servono per confermare la prenotazione e inviarti un promemoria</p>
+    <p class="step-subtitle">I tuoi dati per la prenotazione</p>
+
+    <!-- Info studio fissa -->
+    <div class="studio-info">
+      <div class="studio-info-dot"></div>
+      <div>
+        <div class="studio-info-name">Studio EUR — Viale Pasteur 56</div>
+        <div class="studio-info-detail">
+          Mar / Gio: 13:00 – 20:00<br>
+          Sab: 08:00 – 14:00<br>
+          Durata seduta: 45 minuti
+        </div>
+      </div>
+    </div>
 
     <form id="qualify-form" novalidate>
       <div class="row">
@@ -555,19 +513,19 @@
         <div class="field-error">Inserisci un indirizzo email valido</div>
       </div>
       <div class="actions">
-        <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+        <span></span>
         <button type="submit" class="btn btn-primary">Continua →</button>
       </div>
     </form>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 3 — CALENDARIO E ORARIO
-  ═══════════════════════════════════ -->
-  <div class="step" data-step="3">
-    <p class="step-eyebrow" id="cal-studio-label">Studio</p>
+  <!-- ════════════════════════════════
+       STEP 2 — CALENDARIO
+  ════════════════════════════════ -->
+  <div class="step" data-step="2">
+    <p class="step-eyebrow">Studio EUR</p>
     <h1 class="step-title">Quando vuoi venire?</h1>
-    <p class="step-subtitle" id="cal-studio-hours"></p>
+    <p class="step-subtitle">Mar / Gio 13:00–20:00 · Sab 08:00–14:00</p>
 
     <div class="cal-header">
       <div class="cal-month" id="cal-month"></div>
@@ -585,21 +543,21 @@
 
     <div class="actions" style="margin-top:28px;">
       <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
-      <button type="button" class="btn btn-primary" id="step3-next" disabled>Continua →</button>
+      <button type="button" class="btn btn-primary" id="step2-next" disabled>Continua →</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════
-       STEP 4 — CONFERMA
-  ═══════════════════════════════════ -->
-  <div class="step" data-step="4">
+  <!-- ════════════════════════════════
+       STEP 3 — CONFERMA
+  ════════════════════════════════ -->
+  <div class="step" data-step="3">
     <div id="confirm-pre">
       <p class="step-eyebrow">Quasi fatto</p>
       <h1 class="step-title">Conferma la prenotazione</h1>
       <p class="step-subtitle">Controlla che sia tutto corretto</p>
       <div class="summary" id="summary"></div>
       <div class="notice">
-        Riceverai una <strong>email di conferma</strong> e un <strong>messaggio WhatsApp</strong> il giorno prima dell'appuntamento.
+        Riceverai una <strong>email di conferma</strong> e un <strong>messaggio WhatsApp</strong> il giorno prima dell'appuntamento dal numero +39 351 395 7722.
       </div>
       <div class="actions">
         <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
@@ -612,7 +570,7 @@
         <div class="success-icon">✓</div>
         <h1 class="success-title">Prenotazione ricevuta!</h1>
         <p class="success-text">
-          Ti mando una email di conferma a breve. Per spostare o annullare l'appuntamento scrivimi direttamente — entro 24 ore prima.
+          Ti mando una email di conferma a breve. Per modificare o annullare scrivi entro 24 ore dall'appuntamento.
         </p>
         <a href="https://wa.me/393282738164" class="wa-btn" target="_blank" rel="noopener">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -624,9 +582,9 @@
 
 </div><!-- /container -->
 
-<!-- ══════════════════════════════════════════════════════
-     WEBAUTHN — salvataggio dati con Face ID / Touch ID
-══════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════
+     WEBAUTHN — Face ID / Touch ID
+══════════════════════════════ -->
 <script>
 const STORAGE_KEY = 'fisioexpert_patient';
 
@@ -671,6 +629,8 @@ async function authenticateBiometric() {
   } catch(e) { console.warn('WebAuthn auth:', e.message); return null; }
 }
 
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 async function initBiometricUI() {
   const saved = loadPatientLocally();
   if (!saved) return;
@@ -682,7 +642,7 @@ async function initBiometricUI() {
   const banner = document.createElement('div');
   banner.className = 'bio-banner';
   banner.innerHTML = `
-    <div class="bio-banner-text">
+    <div>
       <div class="bio-title">Bentornato, ${esc(saved.nome)}!</div>
       <div class="bio-sub">Usa Face ID per compilare automaticamente</div>
     </div>
@@ -735,64 +695,42 @@ async function offerBiometricSave(patient) {
 }
 </script>
 
-<!-- ══════════════════════════════════════════════════════
+<!-- ══════════════════════════════
      LOGICA PRINCIPALE
-══════════════════════════════════════════════════════ -->
+══════════════════════════════ -->
 <script>
-/* ── COSTANTI ── */
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznW1gbJU6L24Qt4XvAPYAViaEwISJvOXkgcNoNBTmkHeFvPdB46NGsmnqrVw2LFzgq/exec";
 const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook-test/fisioexpert-booking";
 
-const STUDI = {
-  parioli: {
-    id: 'parioli',
-    name: 'Studio Parioli',
-    address: 'Roma — Zona Parioli',
-    durationMin: 45,
-    slotStepMin: 45,
-    days: { 1: { start: '10:00', end: '20:00' } },
-    label: 'Parioli · Lunedì 10:00–20:00 · 45 min'
-  },
-  eur: {
-    id: 'eur',
-    name: 'Studio EUR',
-    address: 'Viale Pasteur 56, zona EUR',
-    durationMin: 45,
-    slotStepMin: 45,
-    days: { 2: { start: '13:00', end: '20:00' }, 4: { start: '13:00', end: '20:00' }, 6: { start: '08:00', end: '14:00' } },
-    label: 'EUR · Mar/Gio 13:00–20:00 · Sab 08:00–14:00 · 45 min'
-  },
-  fleming: {
-    id: 'fleming',
-    name: 'Fleming Fitness Academy',
-    address: 'Roma — Zona Fleming',
-    durationMin: 60,
-    slotStepMin: 60,
-    days: { 3: { start: '09:00', end: '20:00' }, 5: { start: '09:00', end: '20:00' } },
-    label: 'Fleming · Mer/Ven 09:00–20:00 · 60 min'
+const STUDIO = {
+  id: 'eur',
+  name: 'Studio EUR',
+  address: 'Viale Pasteur 56, zona EUR',
+  durationMin: 45,
+  slotStepMin: 45,
+  days: {
+    2: { start: '13:00', end: '20:00' },
+    4: { start: '13:00', end: '20:00' },
+    6: { start: '08:00', end: '14:00' }
   }
 };
 
-/* ── STATE ── */
 const state = {
   step: 1,
-  studio: null,
   patient: { nome: '', cognome: '', telefono: '', email: '' },
   date: null, time: null,
   calMonth: null,
   cache: {}
 };
 
-/* ── UTILS ── */
 const $  = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const pad = n => String(n).padStart(2, '0');
 const fmtDate = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
 const fmtLong = d => d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 const fmtMonth = d => d.toLocaleDateString('it-IT', { month:'long', year:'numeric' });
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const isPast = d => { const t=new Date(); t.setHours(0,0,0,0); return d < t; };
-const isWorkDay = d => !!(state.studio && state.studio.days[d.getDay()]);
+const isWorkDay = d => !!STUDIO.days[d.getDay()];
 
 /* ── NAVIGAZIONE ── */
 function goToStep(n) {
@@ -803,30 +741,16 @@ function goToStep(n) {
     el.classList.toggle('active', p === n);
     el.classList.toggle('done', p < n);
   });
-  $$('[data-label]').forEach(el => {
-    el.classList.toggle('active', +el.dataset.label === n);
-  });
+  $$('[data-label]').forEach(el => el.classList.toggle('active', +el.dataset.label === n));
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (n === 3) initCalendar();
-  if (n === 2) initBiometricUI();
+  if (n === 2) initCalendar();
 }
 
 $$('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(state.step - 1)));
 
-/* ── STEP 1: STUDIO ── */
-$$('.studio-card').forEach(card => {
-  card.addEventListener('click', () => {
-    $$('.studio-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    state.studio = STUDI[card.dataset.studio];
-    state.cache = {};
-    state.date = null; state.time = null;
-    $('#step1-next').disabled = false;
-  });
-});
-$('#step1-next').addEventListener('click', () => goToStep(2));
+/* ── STEP 1: FORM ── */
+document.addEventListener('DOMContentLoaded', () => initBiometricUI());
 
-/* ── STEP 2: FORM PAZIENTE ── */
 $('#qualify-form').addEventListener('submit', e => {
   e.preventDefault();
   let ok = true;
@@ -838,17 +762,14 @@ $('#qualify-form').addEventListener('submit', e => {
     el.closest('.field').classList.toggle('error', !v);
     if (!v) ok = false; else state.patient[f] = val;
   });
-  if (ok) goToStep(3);
+  if (ok) goToStep(2);
 });
 
-/* ── STEP 3: CALENDARIO ── */
+/* ── STEP 2: CALENDARIO ── */
 function initCalendar() {
-  const s = state.studio;
-  $('#cal-studio-label').textContent = s.name;
-  $('#cal-studio-hours').textContent = s.label;
   state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   state.date = null; state.time = null;
-  $('#step3-next').disabled = true;
+  $('#step2-next').disabled = true;
   $('#slots-wrap').style.display = 'none';
   prefetchAll();
   renderCal();
@@ -865,16 +786,14 @@ function renderCal() {
   const first = new Date(m.getFullYear(), m.getMonth(), 1);
   const last  = new Date(m.getFullYear(), m.getMonth()+1, 0);
   const fw = (first.getDay() + 6) % 7;
-  const todayYmd = fmtDate(new Date());
   let html = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(d => `<div class="cal-dow">${d}</div>`).join('');
   for (let i = 0; i < fw; i++) html += '<div></div>';
   for (let day = 1; day <= last.getDate(); day++) {
     const d = new Date(m.getFullYear(), m.getMonth(), day);
     const ymd = fmtDate(d);
     const ok = !isPast(d) && isWorkDay(d);
-    const isToday = ymd === todayYmd ? ' today' : '';
     const sel = state.date === ymd ? ' selected' : '';
-    html += `<div class="cal-day ${ok ? 'available' : 'disabled'}${isToday}${sel}" data-date="${ymd}">${day}</div>`;
+    html += `<div class="cal-day ${ok ? 'available' : 'disabled'}${sel}" data-date="${ymd}">${day}</div>`;
   }
   $('#cal-grid').innerHTML = html;
   $$('.cal-day.available').forEach(el => el.addEventListener('click', () => selectDate(el.dataset.date)));
@@ -893,43 +812,45 @@ $('#cal-next').addEventListener('click', () => {
 
 async function selectDate(ymd) {
   state.date = ymd; state.time = null;
-  $('#step3-next').disabled = true;
+  $('#step2-next').disabled = true;
   renderCal();
   $('#slots-wrap').style.display = 'block';
   $('#slots-title').textContent = fmtLong(new Date(ymd + 'T00:00:00'));
   const c = $('#slots-content');
   if (state.cache[ymd]) {
-    const sl = await state.cache[ymd];
-    renderSlots(c, sl);
+    renderSlots(c, await state.cache[ymd]);
   } else {
     c.innerHTML = '<div class="loading">Caricamento orari…</div>';
     let sl;
-    try { sl = await fetchSlots(state.studio.id, ymd); if (!sl || !sl.length) sl = theoreticalSlots(new Date(ymd+'T00:00:00')); }
+    try { sl = await fetchSlots(STUDIO.id, ymd); if (!sl || !sl.length) sl = theoreticalSlots(new Date(ymd+'T00:00:00')); }
     catch { sl = theoreticalSlots(new Date(ymd+'T00:00:00')); }
     renderSlots(c, sl);
   }
 }
 
 function renderSlots(c, slots) {
-  if (!slots || !slots.length) { c.innerHTML = '<div class="empty">Nessuno slot disponibile per questo giorno.</div>'; return; }
+  if (!slots || !slots.length) {
+    c.innerHTML = '<div class="empty">Nessuno slot disponibile per questo giorno.</div>';
+    return;
+  }
   c.innerHTML = '<div class="slots">' + slots.map(t => `<div class="slot" data-time="${t}">${t}</div>`).join('') + '</div>';
   $$('.slot', c).forEach(el => el.addEventListener('click', () => {
     $$('.slot', c).forEach(s => s.classList.remove('selected'));
     el.classList.add('selected');
     state.time = el.dataset.time;
-    $('#step3-next').disabled = false;
+    $('#step2-next').disabled = false;
   }));
 }
 
 function theoreticalSlots(date) {
-  const cfg = state.studio.days[date.getDay()]; if (!cfg) return [];
+  const cfg = STUDIO.days[date.getDay()]; if (!cfg) return [];
   const out = [];
   const parts = s => s.split(':').map(Number);
   const [sh, sm] = parts(cfg.start), [eh, em] = parts(cfg.end);
   let mins = sh*60+sm, endMins = eh*60+em;
-  while (mins + state.studio.durationMin <= endMins) {
+  while (mins + STUDIO.durationMin <= endMins) {
     out.push(pad(Math.floor(mins/60)) + ':' + pad(mins%60));
-    mins += state.studio.slotStepMin;
+    mins += STUDIO.slotStepMin;
   }
   return out;
 }
@@ -940,71 +861,63 @@ async function fetchSlots(sid, date) {
   const d = await r.json(); return Array.isArray(d) ? d : (d.slots || []);
 }
 
-function getAllAvailableDays() {
-  const days = [];
+function prefetchAll() {
+  state.cache = {};
   const today = new Date(); today.setHours(0,0,0,0);
   const limit = new Date(); limit.setMonth(limit.getMonth()+3); limit.setHours(0,0,0,0);
   for (let d = new Date(today); d <= limit; d.setDate(d.getDate()+1)) {
-    if (!isPast(d) && isWorkDay(d)) days.push(fmtDate(new Date(d)));
+    if (!isPast(d) && isWorkDay(d)) {
+      const ymd = fmtDate(new Date(d));
+      state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
+        .then(sl => (sl && sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
+        .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
+    }
   }
-  return days;
 }
 
-function prefetchAll() {
-  state.cache = {};
-  getAllAvailableDays().forEach(ymd => {
-    state.cache[ymd] = fetchSlots(state.studio.id, ymd)
-      .then(sl => (sl && sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
-      .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
-  });
-}
+$('#step2-next').addEventListener('click', () => { renderSummary(); goToStep(3); });
 
-$('#step3-next').addEventListener('click', () => { renderSummary(); goToStep(4); });
-
-/* ── STEP 4: RIEPILOGO ── */
+/* ── STEP 3: RIEPILOGO ── */
 function renderSummary() {
   const d = new Date(state.date + 'T00:00:00');
+  const row = (label, value) =>
+    `<div class="summary-row"><span class="summary-label">${label}</span><span class="summary-value">${value}</span></div>`;
   $('#summary').innerHTML =
     row('Paziente', esc(state.patient.nome) + ' ' + esc(state.patient.cognome)) +
     row('Telefono', esc(state.patient.telefono)) +
     row('Email', esc(state.patient.email)) +
-    row('Studio', esc(state.studio.name) + `<small>${esc(state.studio.address)}</small>`) +
+    row('Studio', esc(STUDIO.name) + `<small>${esc(STUDIO.address)}</small>`) +
     row('Data', fmtLong(d)) +
-    row('Orario', state.time + ' (' + state.studio.durationMin + ' min)');
-}
-function row(label, value) {
-  return `<div class="summary-row"><span class="summary-label">${label}</span><span class="summary-value">${value}</span></div>`;
+    row('Orario', state.time + ' (' + STUDIO.durationMin + ' min)');
 }
 
-/* ── CONFERMA + INVIO A N8N ── */
+/* ── CONFERMA + N8N ── */
 $('#confirm-btn').addEventListener('click', async () => {
   const btn = $('#confirm-btn');
   btn.disabled = true;
   btn.textContent = 'Invio in corso…';
 
-  const payload = {
-    action: 'book',
-    studio: state.studio.id,
-    studioName: state.studio.name,
-    date: state.date,
-    time: state.time,
-    duration: state.studio.durationMin,
-    nome: state.patient.nome,
-    cognome: state.patient.cognome,
-    telefono: state.patient.telefono,
-    email: state.patient.email
-  };
-
-  /* 1. Apps Script (Google Calendar) */
+  /* 1 — Apps Script → Google Calendar */
   try {
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        action: 'book',
+        studio: STUDIO.id,
+        studioName: STUDIO.name,
+        date: state.date,
+        time: state.time,
+        duration: STUDIO.durationMin,
+        nome: state.patient.nome,
+        cognome: state.patient.cognome,
+        telefono: state.patient.telefono,
+        email: state.patient.email
+      })
     });
-  } catch (e) { console.warn('Apps Script error:', e); }
+  } catch(e) { console.warn('Apps Script:', e); }
 
-  /* 2. n8n Webhook (CRM + email conferma) */
+  /* 2 — n8n Webhook → CRM + email */
   try {
     await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
@@ -1015,18 +928,18 @@ $('#confirm-btn').addEventListener('click', async () => {
         nomeCompleto: state.patient.nome + ' ' + state.patient.cognome,
         telefono: state.patient.telefono,
         email: state.patient.email,
-        studio: state.studio.name,
-        studioId: state.studio.id,
-        studioIndirizzo: state.studio.address,
+        studio: STUDIO.name,
+        studioId: STUDIO.id,
+        studioIndirizzo: STUDIO.address,
         data: state.date,
         orario: state.time,
-        durata: state.studio.durationMin,
+        durata: STUDIO.durationMin,
         timestamp: new Date().toISOString()
       })
     });
-  } catch (e) { console.warn('n8n webhook error:', e); }
+  } catch(e) { console.warn('n8n webhook:', e); }
 
-  /* 3. Mostra successo */
+  /* 3 — Mostra successo */
   $('#confirm-pre').style.display = 'none';
   $('#confirm-success').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });

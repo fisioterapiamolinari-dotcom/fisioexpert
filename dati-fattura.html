@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dati per la fattura | Fisio Expert Roma</title>
+<meta name="description" content="Inserisci i tuoi dati anagrafici per la fattura dello studio Fisio Expert Roma.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1a1a; --ink-soft: #4a4a4a; --ink-muted: #8a8a8a;
+    --accent: #f47920; --accent-light: rgba(244,121,32,0.12); --accent-dark: #d4660e;
+    --warm: #f8f4ef; --warm-dark: #ede8e0; --white: #ffffff;
+    --border: rgba(26,26,26,0.1);
+    --ok: #19a974; --err: #d64545;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'Montserrat', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--warm); color: var(--ink); line-height: 1.7; font-weight: 400; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 20px 0; position: sticky; top: 0; z-index: 10; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: var(--mono); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; }
+  .header-logo { height: 36px; width: auto; display: block; }
+  .back { font-family: var(--sans); font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+
+  .hero { background: linear-gradient(180deg, var(--warm-dark) 0%, var(--warm) 100%); padding: 56px 0 40px; text-align: center; }
+  .hero .tag { display: inline-block; font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 6px 14px; border-radius: 100px; margin-bottom: 20px; }
+  .hero h1 { font-family: var(--serif); font-size: clamp(30px, 6vw, 44px); line-height: 1.1; font-weight: 400; margin-bottom: 16px; }
+  .hero p { font-size: 17px; color: var(--ink-soft); max-width: 480px; margin: 0 auto; }
+
+  main { padding: 48px 0 80px; }
+
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; }
+
+  .field { margin-bottom: 24px; }
+  .field:last-child { margin-bottom: 0; }
+  label.lbl { display: block; font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+  .req { color: var(--accent); }
+  input[type="text"] {
+    width: 100%; font-family: var(--sans); font-size: 16px; color: var(--ink);
+    background: var(--warm); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; transition: border-color 0.2s, background 0.2s;
+  }
+  input[type="text"]:focus { outline: none; border-color: var(--accent); background: var(--white); }
+  input.invalid { border-color: var(--err); background: #fdf3f3; }
+  input.valid { border-color: var(--ok); }
+  .hint { font-size: 13px; color: var(--ink-muted); margin-top: 6px; }
+  .msg-err { font-size: 13px; color: var(--err); margin-top: 6px; font-weight: 500; display: none; }
+  .msg-err.show { display: block; }
+
+  .sex-group { display: flex; gap: 12px; }
+  .sex-opt { flex: 1; }
+  .sex-opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .sex-opt label {
+    display: block; text-align: center; cursor: pointer;
+    font-family: var(--mono); font-weight: 700; font-size: 14px;
+    background: var(--warm); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 14px; transition: all 0.18s; color: var(--ink-soft);
+  }
+  .sex-opt input:checked + label { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
+  .sex-opt label small { display: block; font-family: var(--sans); font-weight: 400; font-size: 12px; color: var(--ink-muted); margin-top: 2px; text-transform: none; letter-spacing: 0; }
+  .sex-opt input:checked + label small { color: var(--accent-dark); }
+
+  .submit-btn {
+    width: 100%; font-family: var(--mono); font-weight: 700; font-size: 15px; letter-spacing: 0.5px;
+    background: var(--accent); color: var(--white); border: none; border-radius: 100px;
+    padding: 16px; cursor: pointer; transition: background 0.2s; margin-top: 8px;
+  }
+  .submit-btn:hover { background: var(--accent-dark); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .result { display: none; text-align: center; padding: 16px; border-radius: 12px; margin-top: 20px; font-weight: 500; }
+  .result.ok { display: block; background: rgba(25,169,116,0.1); color: var(--ok); }
+  .result.ko { display: block; background: rgba(214,69,69,0.1); color: var(--err); }
+
+  .pay-box { background: var(--ink); color: var(--white); border-radius: 16px; padding: 28px; text-align: center; }
+  .pay-box h2 { font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--white); margin-bottom: 8px; }
+  .pay-box p { color: rgba(255,255,255,0.7); margin-bottom: 18px; font-size: 15px; }
+  .pay-box a.btn { display: inline-block; font-family: var(--mono); font-weight: 700; font-size: 14px; letter-spacing: 0.5px; background: var(--ok); color: var(--white); text-decoration: none; padding: 14px 28px; border-radius: 100px; transition: opacity 0.2s; }
+  .pay-box a.btn:hover { opacity: 0.9; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 13px; color: var(--ink-muted); }
+  footer a { color: var(--ink-soft); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="https://fisioexpert.it" class="logo">
+      <img src="logo-fisioexpert-header.png" alt="fisio·expert" class="header-logo"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+      <span style="display:none; font-family:'DM Serif Display',Georgia,serif; font-size:20px;">fisio<span style="color:#f47920;">·</span>expert</span>
+    </a>
+    <a href="https://fisioexpert.it" class="back">← Torna al sito</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="tag">Dati per la fattura</span>
+    <h1>Inserisci i tuoi dati</h1>
+    <p>Ci servono pochi dati anagrafici per preparare la tua fattura in anticipo. Bastano due minuti.</p>
+  </div>
+</section>
+
+<main>
+  <div class="wrap">
+    <div class="card">
+
+      <div class="field">
+        <label class="lbl" for="nome">Nome e cognome <span class="req">*</span></label>
+        <input type="text" id="nome" placeholder="Es. Marco Rossi" autocomplete="name">
+        <div class="msg-err" id="err-nome">Inserisci nome e cognome.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Intestazione fattura <span class="req">*</span></label>
+        <div class="sex-group">
+          <div class="sex-opt">
+            <input type="radio" name="sesso" id="sex-m" value="M">
+            <label for="sex-m">Egr. Sig.<small>maschile</small></label>
+          </div>
+          <div class="sex-opt">
+            <input type="radio" name="sesso" id="sex-f" value="F">
+            <label for="sex-f">Egr. Sig.ra<small>femminile</small></label>
+          </div>
+        </div>
+        <div class="msg-err" id="err-sesso">Seleziona un'opzione.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="indirizzo">Indirizzo di residenza <span class="req">*</span></label>
+        <input type="text" id="indirizzo" placeholder="Es. Via Ugo Bignami 7" autocomplete="street-address">
+        <div class="msg-err" id="err-indirizzo">Inserisci l'indirizzo.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="cap">CAP, città e provincia <span class="req">*</span></label>
+        <input type="text" id="cap" placeholder="Es. 00136 Roma RM">
+        <div class="hint">Formato richiesto: <strong>00136 Roma RM</strong> (CAP, città, sigla provincia).</div>
+        <div class="msg-err" id="err-cap">Usa il formato: 00136 Roma RM</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="cf">Codice fiscale <span class="req">*</span></label>
+        <input type="text" id="cf" placeholder="Es. RSSMRC80A01H501U" maxlength="16" style="text-transform:uppercase">
+        <div class="hint">16 caratteri (lettere e numeri).</div>
+        <div class="msg-err" id="err-cf">Codice fiscale non valido (servono 16 caratteri nel formato corretto).</div>
+      </div>
+
+      <button class="submit-btn" id="submit">Invia i miei dati</button>
+
+      <div class="result" id="result"></div>
+    </div>
+
+    <div class="pay-box">
+      <h2>Vuoi pagare in anticipo?</h2>
+      <p>Puoi saldare la prima seduta ora, in modo sicuro. È facoltativo: in alternativa potrai pagare in studio.</p>
+      <a href="IL_TUO_LINK_SUMUP" class="btn" target="_blank" rel="noopener">Paga la prima seduta</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Fisio Expert Roma · P.IVA 14315091000 · <a href="https://fisioexpert.it">fisioexpert.it</a></p>
+  </div>
+</footer>
+
+<script>
+  // === CONFIG: incolla qui l'URL della Web App di Apps Script ===
+  var WEBAPP_URL = 'INCOLLA_QUI_URL_WEB_APP';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // regole di validazione
+  var reCap = /^\d{5}\s+.+\s+[A-Za-z]{2}$/;
+  var reCf  = /^[A-Za-z]{6}\d{2}[A-Za-z]\d{2}[A-Za-z]\d{3}[A-Za-z]$/;
+
+  function setErr(inputId, errId, show) {
+    var inp = $(inputId), err = $(errId);
+    if (show) { inp.classList.add('invalid'); inp.classList.remove('valid'); err.classList.add('show'); }
+    else { inp.classList.remove('invalid'); inp.classList.add('valid'); err.classList.remove('show'); }
+  }
+
+  // validazione live al blur
+  $('cap').addEventListener('blur', function () {
+    if (this.value.trim()) setErr('cap', 'err-cap', !reCap.test(this.value.trim()));
+  });
+  $('cf').addEventListener('blur', function () {
+    if (this.value.trim()) setErr('cf', 'err-cf', !reCf.test(this.value.trim()));
+  });
+
+  function validateAll() {
+    var ok = true;
+    var nome = $('nome').value.trim();
+    var sesso = (document.querySelector('input[name="sesso"]:checked') || {}).value;
+    var indirizzo = $('indirizzo').value.trim();
+    var cap = $('cap').value.trim();
+    var cf = $('cf').value.trim();
+
+    if (!nome) { setErr('nome', 'err-nome', true); ok = false; } else setErr('nome', 'err-nome', false);
+    if (!sesso) { $('err-sesso').classList.add('show'); ok = false; } else $('err-sesso').classList.remove('show');
+    if (!indirizzo) { setErr('indirizzo', 'err-indirizzo', true); ok = false; } else setErr('indirizzo', 'err-indirizzo', false);
+    if (!reCap.test(cap)) { setErr('cap', 'err-cap', true); ok = false; } else setErr('cap', 'err-cap', false);
+    if (!reCf.test(cf)) { setErr('cf', 'err-cf', true); ok = false; } else setErr('cf', 'err-cf', false);
+
+    return ok ? { nome: nome, sesso: sesso, indirizzo: indirizzo, cap: cap, cf: cf.toUpperCase() } : null;
+  }
+
+  $('submit').addEventListener('click', function () {
+    var res = $('result');
+    res.className = 'result';
+    var data = validateAll();
+    if (!data) {
+      res.className = 'result ko';
+      res.textContent = 'Controlla i campi evidenziati in rosso.';
+      return;
+    }
+
+    var btn = $('submit');
+    btn.disabled = true;
+    btn.textContent = 'Invio in corso…';
+
+    fetch(WEBAPP_URL, {
+      method: 'POST',
+      // no-cors non serve: Apps Script Web App risponde con CORS ok se pubblicata "Anyone"
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight
+      body: JSON.stringify(data)
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (out) {
+        if (out && out.ok) {
+          res.className = 'result ok';
+          res.textContent = 'Grazie! I tuoi dati sono stati registrati correttamente.';
+          btn.textContent = 'Inviato ✓';
+        } else {
+          res.className = 'result ko';
+          res.textContent = 'Si è verificato un problema: ' + ((out && out.error) || 'riprova') + '.';
+          btn.disabled = false;
+          btn.textContent = 'Invia i miei dati';
+        }
+      })
+      .catch(function () {
+        res.className = 'result ko';
+        res.textContent = 'Errore di connessione. Riprova tra poco.';
+        btn.disabled = false;
+        btn.textContent = 'Invia i miei dati';
+      });
+  });
+</script>
+
+</body>
+</html>

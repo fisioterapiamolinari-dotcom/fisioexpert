@@ -474,15 +474,11 @@
   });
   btnBack.addEventListener('click', ()=>{ if(current>0) goTo(current-1); });
 
-  // consent-row visual toggle
+  // consent-row visual toggle — il <label> gestisce già il toggle della checkbox,
+  // quindi sincronizziamo solo la classe visiva sull'evento change nativo.
   document.querySelectorAll('.consent-row').forEach(row=>{
     const input = row.querySelector('input');
-    const sync = ()=> row.classList.toggle('checked', input.checked);
-    input.addEventListener('change', sync);
-    row.addEventListener('click', (e)=>{
-      if(e.target===input) return;
-      input.checked = !input.checked; sync();
-    });
+    input.addEventListener('change', ()=> row.classList.toggle('checked', input.checked));
   });
 
   // binary choices

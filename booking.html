@@ -700,7 +700,7 @@ async function offerBiometricSave(patient) {
 ══════════════════════════════ -->
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznW1gbJU6L24Qt4XvAPYAViaEwISJvOXkgcNoNBTmkHeFvPdB46NGsmnqrVw2LFzgq/exec";
-const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook-test/fisioexpert-booking";
+const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook/fisioexpert-booking";
 
 const STUDIO = {
   id: 'eur',
@@ -864,18 +864,33 @@ async function fetchSlots(sid, date) {
   const d = await r.json(); return Array.isArray(d) ? d : (d.slots || []);
 }
 
+// Mette in cache gli slot di un singolo giorno (se non già richiesto)
+function prefetchDay(d) {
+  if (isPast(d) || !isWorkDay(d)) return;
+  const ymd = fmtDate(new Date(d));
+  if (state.cache[ymd]) return; // già in cache o in corso
+  state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
+    .then(sl => (sl && sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
+    .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
+}
+
 function prefetchAll() {
   state.cache = {};
   const today = new Date(); today.setHours(0,0,0,0);
-  const limit = new Date(); limit.setMonth(limit.getMonth()+3); limit.setHours(0,0,0,0);
-  for (let d = new Date(today); d <= limit; d.setDate(d.getDate()+1)) {
-    if (!isPast(d) && isWorkDay(d)) {
-      const ymd = fmtDate(new Date(d));
-      state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
-        .then(sl => (sl && sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
-        .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
-    }
+
+  // Fase 1: prima settimana subito → calendario reattivo all'istante
+  const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate()+7);
+  for (let d = new Date(today); d < weekEnd; d.setDate(d.getDate()+1)) {
+    prefetchDay(new Date(d));
   }
+
+  // Fase 2: i restanti 3 mesi in sottofondo, senza bloccare la prima settimana
+  setTimeout(() => {
+    const limit = new Date(); limit.setMonth(limit.getMonth()+3); limit.setHours(0,0,0,0);
+    for (let d = new Date(weekEnd); d <= limit; d.setDate(d.getDate()+1)) {
+      prefetchDay(new Date(d));
+    }
+  }, 0);
 }
 
 $('#step2-next').addEventListener('click', () => { renderSummary(); goToStep(3); });

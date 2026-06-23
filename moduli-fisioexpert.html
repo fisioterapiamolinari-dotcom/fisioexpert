@@ -428,11 +428,12 @@
     btnBack.style.display = (current>0 && current<TOTAL) ? 'inline-flex' : 'none';
     if(current === 5){ btnNext.textContent = 'Firma e genera PDF'; }
     else if(current < 5){ btnNext.textContent = 'Continua'; }
-    document.querySelector('main').scrollIntoView({behavior:'smooth', block:'start'});
-    if(current===5) setTimeout(resizeCanvas, 60);
     maxReached = Math.max(maxReached, current);
     // navbar hidden on done screen
     document.querySelector('.navbar').style.display = current===TOTAL ? 'none' : 'block';
+    // scroll in cima — protetto: in alcuni contesti (iframe) puo' lanciare eccezioni
+    try { window.scrollTo(0, 0); } catch(e){}
+    if(current===5) setTimeout(resizeCanvas, 60);
   }
 
   function goTo(i){ current = i; render(); }
@@ -468,9 +469,15 @@
   function chk(id){ return document.getElementById(id).checked; }
 
   btnNext.addEventListener('click', ()=>{
-    if(!validate(current)) return;
-    if(current===5){ finish(); return; }
-    goTo(current+1);
+    try {
+      if(!validate(current)) return;
+      if(current===5){ finish(); return; }
+      goTo(current+1);
+    } catch(err){
+      console.error('Errore avanzamento step:', err);
+      // in caso di errore imprevisto, prova comunque ad avanzare se non e' l'ultimo step
+      if(current < 5){ try { goTo(current+1); } catch(e){} }
+    }
   });
   btnBack.addEventListener('click', ()=>{ if(current>0) goTo(current-1); });
 

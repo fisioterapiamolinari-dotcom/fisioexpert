@@ -337,6 +337,7 @@ async function offerBiometricSave(patient) {
 
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznW1gbJU6L24Qt4XvAPYAViaEwISJvOXkgcNoNBTmkHeFvPdB46NGsmnqrVw2LFzgq/exec";
+const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook/fisioexpert-booking";
 
 const STUDIO = {
   id: 'fleming',
@@ -371,14 +372,32 @@ function getAllAvailableDays() {
 function isPast(d) { const t=new Date(); t.setHours(0,0,0,0); return d<t; }
 function isDay(d) { return !!STUDIO.days[d.getDay()]; }
 
+// Mette in cache gli slot di un singolo giorno (se non già richiesto)
+function prefetchDay(d) {
+  if(isPast(d) || !isDay(d)) return;
+  const ymd = fmtDate(new Date(d));
+  if(state.cache[ymd]) return; // già in cache o in corso
+  state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
+    .then(sl => (sl&&sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
+    .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
+}
+
 function prefetchAll() {
-  getAllAvailableDays().forEach(ymd => {
-    if(!state.cache[ymd]) {
-      state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
-        .then(sl => (sl&&sl.length) ? sl : theoreticalSlots(new Date(ymd+'T00:00:00')))
-        .catch(() => theoreticalSlots(new Date(ymd+'T00:00:00')));
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Fase 1: prima settimana subito → calendario reattivo all'istante
+  const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate()+7);
+  for(let d=new Date(today); d<weekEnd; d.setDate(d.getDate()+1)) {
+    prefetchDay(new Date(d));
+  }
+
+  // Fase 2: i restanti 3 mesi in sottofondo, senza bloccare la prima settimana
+  setTimeout(() => {
+    const limit = new Date(); limit.setMonth(limit.getMonth()+3); limit.setHours(0,0,0,0);
+    for(let d=new Date(weekEnd); d<=limit; d.setDate(d.getDate()+1)) {
+      prefetchDay(new Date(d));
     }
-  });
+  }, 0);
 }
 
 /* Avvio immediato — non aspetta nessuna azione utente */
@@ -515,7 +534,26 @@ $('#confirm-btn').addEventListener('click', async ()=>{
       body:JSON.stringify({action:'book',studio:STUDIO.id,studioName:STUDIO.name,date:state.date,time:state.time,
         duration:STUDIO.durationMin,nome:state.patient.nome,cognome:state.patient.cognome,
         telefono:state.patient.telefono,problema:state.patient.problema})});
-  }catch{}
+  }catch(e){ console.warn('Apps Script:', e); }
+
+  /* n8n Webhook → CRM + email */
+  try{
+    await fetch(N8N_WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        nome:state.patient.nome,
+        cognome:state.patient.cognome,
+        nomeCompleto:state.patient.nome+' '+state.patient.cognome,
+        telefono:state.patient.telefono,
+        problema:state.patient.problema,
+        studio:STUDIO.name,
+        studioId:STUDIO.id,
+        studioIndirizzo:STUDIO.address,
+        data:state.date,
+        orario:state.time,
+        durata:STUDIO.durationMin,
+        timestamp:new Date().toISOString()
+      })});
+  }catch(e){ console.warn('n8n webhook:', e); }
   $('#confirm-pre').style.display='none'; $('#confirm-success').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
   offerBiometricSave(state.patient);

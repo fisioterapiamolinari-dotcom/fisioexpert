@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Moduli Paziente · Fisio Expert Roma</title>
+<title>Moduli Paziente · Dott. Gianmarco Molinari</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -182,7 +182,7 @@
 <header>
   <div class="wrap">
     <div class="logo">fisio<b>·</b>expert</div>
-    <div class="step-count" id="stepCount">Passo 1 / 6</div>
+    <div class="step-count" id="stepCount">Passo 1 / 5</div>
   </div>
 </header>
 <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -216,9 +216,9 @@
 
     <!-- STEP 1: CONSENSO INFORMATO -->
     <section class="step" data-step="1">
-      <div class="eyebrow">Modulo 1 di 4</div>
+      <div class="eyebrow">Modulo 1 di 3</div>
       <h1 class="title">Consenso informato</h1>
-      <p class="lead">Al trattamento fisioterapico e rieducativo presso Fisio Expert Roma.</p>
+      <p class="lead">Al trattamento fisioterapico e rieducativo presso lo studio del Dott. Gianmarco Molinari.</p>
       <div class="card legal">
         <h2>Informazioni sul trattamento</h2>
         <p>Il fisioterapista mi ha illustrato la valutazione clinica e il programma di trattamento proposto, che può comprendere <strong>terapia manuale, esercizio terapeutico e rieducativo, terapie fisiche strumentali</strong> e indicazioni comportamentali da seguire a domicilio.</p>
@@ -235,7 +235,7 @@
         <label class="consent-row" id="row_ci">
           <input type="checkbox" id="c_informato">
           <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text">Ho letto e compreso le informazioni. <b>Acconsento</b> a sottopormi al trattamento fisioterapico proposto da Fisio Expert Roma.</span>
+          <span class="consent-text">Ho letto e compreso le informazioni. <b>Acconsento</b> a sottopormi al trattamento fisioterapico proposto dal Dott. Gianmarco Molinari.</span>
         </label>
         <div class="err" id="err1">Spunta il consenso per proseguire.</div>
       </div>
@@ -243,12 +243,12 @@
 
     <!-- STEP 2: PRIVACY -->
     <section class="step" data-step="2">
-      <div class="eyebrow">Modulo 2 di 4</div>
+      <div class="eyebrow">Modulo 2 di 3</div>
       <h1 class="title">Informativa privacy</h1>
       <p class="lead">Trattamento dei dati personali ai sensi del Reg. UE 2016/679 (GDPR).</p>
       <div class="card legal">
         <h2>Informativa ex art. 13 GDPR</h2>
-        <p><strong>Titolare del trattamento:</strong> Fisio Expert Roma · P.IVA 14315091000. Contatti: WhatsApp +39 328 273 8164.</p>
+        <p><strong>Titolare del trattamento:</strong> Dott. Gianmarco Molinari · P.IVA 14315091000. Contatti: WhatsApp +39 328 273 8164.</p>
         <h3>Finalità</h3>
         <p>I dati personali e quelli relativi alla salute (categoria particolare, art. 9 GDPR) sono trattati esclusivamente per le attività di valutazione, prevenzione, cura e riabilitazione fisioterapica e per i connessi adempimenti amministrativi e fiscali.</p>
         <h3>Modalità e conservazione</h3>
@@ -275,7 +275,7 @@
 
     <!-- STEP 3: MARKETING / FOTO -->
     <section class="step" data-step="3">
-      <div class="eyebrow">Modulo 3 di 4</div>
+      <div class="eyebrow">Modulo 3 di 3</div>
       <h1 class="title">Marketing e immagini</h1>
       <p class="lead">Consensi facoltativi e indipendenti. Le prestazioni non cambiano in alcun modo se neghi.</p>
 
@@ -305,44 +305,8 @@
       <div class="err" id="err3">Indica una scelta per ciascuna voce (puoi negare tutto).</div>
     </section>
 
-    <!-- STEP 4: ANAMNESI -->
+    <!-- STEP 4: FIRMA -->
     <section class="step" data-step="4">
-      <div class="eyebrow">Modulo 4 di 4</div>
-      <h1 class="title">Anamnesi iniziale</h1>
-      <p class="lead">Le informazioni cliniche che ci aiutano a costruire il tuo percorso in sicurezza.</p>
-      <div class="card">
-        <div class="grid">
-          <div class="field full"><label>Motivo della visita / disturbo principale</label><textarea id="a_motivo" placeholder="Es. dolore lombare da 3 settimane..."></textarea></div>
-          <div class="field full"><label>Da quanto tempo e come è insorto</label><textarea id="a_storia"></textarea></div>
-          <div class="field full"><label>Patologie note / interventi chirurgici</label><textarea id="a_patologie"></textarea></div>
-          <div class="field full"><label>Farmaci assunti abitualmente</label><textarea id="a_farmaci"></textarea></div>
-          <div class="field full"><label>Allergie</label><input type="text" id="a_allergie"></div>
-          <div class="field"><label>Attività fisica / sportiva</label><input type="text" id="a_sport"></div>
-          <div class="field"><label>Professione</label><input type="text" id="a_lavoro"></div>
-        </div>
-        <h3 style="margin-top:8px">Situazioni particolari</h3>
-        <label class="consent-row" id="row_grav" style="margin-top:8px">
-          <input type="checkbox" id="a_gravidanza">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text">Stato di gravidanza in corso</span>
-        </label>
-        <label class="consent-row" id="row_pace">
-          <input type="checkbox" id="a_pacemaker">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text">Portatore di pacemaker o dispositivi impiantati</span>
-        </label>
-        <div class="field full" style="margin-top:6px"><label>Altre note utili al fisioterapista</label><textarea id="a_note"></textarea></div>
-        <label class="consent-row" id="row_veridicita" style="margin-top:16px">
-          <input type="checkbox" id="a_veridicita">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text">Dichiaro che le informazioni fornite sono <b>veritiere e complete</b>.</span>
-        </label>
-        <div class="err" id="err4">Conferma la veridicità dei dati per proseguire.</div>
-      </div>
-    </section>
-
-    <!-- STEP 5: FIRMA -->
-    <section class="step" data-step="5">
       <div class="eyebrow">Ultimo passaggio</div>
       <h1 class="title">La tua firma</h1>
       <p class="lead">Firma una sola volta: verrà applicata a tutti i moduli che hai compilato. Usa il dito o la matita Apple.</p>
@@ -358,13 +322,13 @@
             <button class="btn-clear" id="btnClear">Cancella</button>
           </div>
         </div>
-        <div class="err" id="err5">Aggiungi la tua firma per generare il PDF.</div>
+        <div class="err" id="err4">Aggiungi la tua firma per generare il PDF.</div>
         <p class="hint" style="margin-top:14px">Firmando dichiari di aver letto e compreso i moduli precedenti e di confermare i consensi indicati.</p>
       </div>
     </section>
 
-    <!-- STEP 6: FATTO -->
-    <section class="step" data-step="6">
+    <!-- STEP 5: FATTO -->
+    <section class="step" data-step="5">
       <div class="card center">
         <div class="done-icon"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
         <h1 class="title">Moduli firmati</h1>
@@ -389,13 +353,13 @@
 
 <script>
 (function(){
-  const TOTAL = 6; // step 0..5 are interactive, 6 = done
+  const TOTAL = 5; // step 0..4 are interactive, 5 = done
   let current = 0;
   const state = { consents: { mk:null, foto_clinico:null, foto_social:null } };
 
   const steps = Array.from(document.querySelectorAll('.step'));
   const chipsWrap = document.getElementById('chips');
-  const chipLabels = ['Dati','Consenso','Privacy','Immagini','Anamnesi','Firma'];
+  const chipLabels = ['Dati','Consenso','Privacy','Immagini','Firma'];
   const progressFill = document.getElementById('progressFill');
   const stepCount = document.getElementById('stepCount');
   const btnNext = document.getElementById('btnNext');
@@ -426,14 +390,14 @@
       c.classList.toggle('done', i<current || current===TOTAL);
     });
     btnBack.style.display = (current>0 && current<TOTAL) ? 'inline-flex' : 'none';
-    if(current === 5){ btnNext.textContent = 'Firma e genera PDF'; }
-    else if(current < 5){ btnNext.textContent = 'Continua'; }
+    if(current === 4){ btnNext.textContent = 'Firma e genera PDF'; }
+    else if(current < 4){ btnNext.textContent = 'Continua'; }
     maxReached = Math.max(maxReached, current);
     // navbar hidden on done screen
     document.querySelector('.navbar').style.display = current===TOTAL ? 'none' : 'block';
     // scroll in cima — protetto: in alcuni contesti (iframe) puo' lanciare eccezioni
     try { window.scrollTo(0, 0); } catch(e){}
-    if(current===5) setTimeout(resizeCanvas, 60);
+    if(current===4) setTimeout(resizeCanvas, 60);
   }
 
   function goTo(i){ current = i; render(); }
@@ -457,10 +421,7 @@
       if(!state.consents.mk || !state.consents.foto_clinico || !state.consents.foto_social){ showErr('err3'); return false; }
     }
     if(step===4){
-      if(!chk('a_veridicita')){ showErr('err4'); return false; }
-    }
-    if(step===5){
-      if(!hasSignature()){ showErr('err5'); return false; }
+      if(!hasSignature()){ showErr('err4'); return false; }
     }
     return true;
   }
@@ -471,12 +432,12 @@
   btnNext.addEventListener('click', ()=>{
     try {
       if(!validate(current)) return;
-      if(current===5){ finish(); return; }
+      if(current===4){ finish(); return; }
       goTo(current+1);
     } catch(err){
       console.error('Errore avanzamento step:', err);
       // in caso di errore imprevisto, prova comunque ad avanzare se non e' l'ultimo step
-      if(current < 5){ try { goTo(current+1); } catch(e){} }
+      if(current < 4){ try { goTo(current+1); } catch(e){} }
     }
   });
   btnBack.addEventListener('click', ()=>{ if(current>0) goTo(current-1); });
@@ -565,11 +526,7 @@
       tel: val('f_tel'), email: val('f_email'),
       ci: chk('c_informato'),
       p_cura: chk('c_privacy_cura'), p_email: chk('c_privacy_email'),
-      mk: state.consents.mk, foto_clinico: state.consents.foto_clinico, foto_social: state.consents.foto_social,
-      a_motivo: val('a_motivo'), a_storia: val('a_storia'), a_patologie: val('a_patologie'),
-      a_farmaci: val('a_farmaci'), a_allergie: val('a_allergie'), a_sport: val('a_sport'),
-      a_lavoro: val('a_lavoro'), a_grav: chk('a_gravidanza'), a_pace: chk('a_pacemaker'),
-      a_note: val('a_note'), a_ver: chk('a_veridicita')
+      mk: state.consents.mk, foto_clinico: state.consents.foto_clinico, foto_social: state.consents.foto_social
     };
   }
   function fmtDate(iso){ if(!iso) return ''; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
@@ -593,7 +550,7 @@
       const w2 = doc.getTextWidth('·');
       doc.setTextColor(...INK); doc.text('expert', M+w1+w2+1, 20);
       doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...MUTED);
-      doc.text('FISIO EXPERT ROMA · P.IVA 14315091000', RIGHT, 16, {align:'right'});
+      doc.text('DOTT. GIANMARCO MOLINARI · P.IVA 14315091000', RIGHT, 16, {align:'right'});
       doc.text('WhatsApp +39 328 273 8164', RIGHT, 20, {align:'right'});
       doc.setDrawColor(...ACCENT); doc.setLineWidth(0.8); doc.line(M, 25, RIGHT, 25);
       doc.setFont('times','normal'); doc.setFontSize(18); doc.setTextColor(...INK);
@@ -668,13 +625,13 @@
       doc.text('Firma del paziente', M, y+5);
       doc.text('Roma, '+dateStr, RIGHT, y+5, {align:'right'});
       doc.setFontSize(7); doc.setTextColor(...MUTED);
-      doc.text('Documento sottoscritto digitalmente su dispositivo. Fisio Expert Roma · P.IVA 14315091000', M, 287);
+      doc.text('Documento sottoscritto digitalmente su dispositivo. Dott. Gianmarco Molinari · P.IVA 14315091000', M, 287);
     }
 
     // ---- PAGE 1: CONSENSO INFORMATO ----
     header('Consenso informato al trattamento');
     patientBar();
-    para('Il/La sottoscritto/a dichiara di essere stato/a informato/a in modo chiaro e comprensibile riguardo al trattamento fisioterapico proposto da Fisio Expert Roma.');
+    para('Il/La sottoscritto/a dichiara di essere stato/a informato/a in modo chiaro e comprensibile riguardo al trattamento fisioterapico proposto dal Dott. Gianmarco Molinari.');
     h3('Finalita e benefici');
     para('Il trattamento (terapia manuale, esercizio terapeutico e rieducativo, terapie fisiche strumentali, indicazioni a domicilio) e finalizzato alla riduzione del dolore, al recupero della funzione e del movimento e al miglioramento della qualita di vita.');
     h3('Rischi ed effetti');
@@ -691,7 +648,7 @@
     doc.addPage(); y=0;
     header('Informativa e consenso privacy (GDPR)');
     patientBar();
-    para('Informativa ai sensi dell\'art. 13 del Reg. UE 2016/679. Titolare del trattamento: Fisio Expert Roma, P.IVA 14315091000.');
+    para('Informativa ai sensi dell\'art. 13 del Reg. UE 2016/679. Titolare del trattamento: Dott. Gianmarco Molinari, P.IVA 14315091000.');
     h3('Finalita');
     para('Dati personali e relativi alla salute (art. 9 GDPR) trattati per valutazione, prevenzione, cura e riabilitazione fisioterapica e per i connessi adempimenti amministrativi e fiscali.');
     h3('Modalita e conservazione');
@@ -721,29 +678,6 @@
     consentLine('Eventuale uso di foto/video su sito e canali social dello studio a scopo divulgativo, sempre revocabile.', d.foto_social);
     signatureBlock();
 
-    // ---- PAGE 4: ANAMNESI ----
-    doc.addPage(); y=0;
-    header('Anamnesi iniziale');
-    patientBar();
-    field('Motivo della visita / disturbo principale', d.a_motivo);
-    field('Insorgenza e durata', d.a_storia);
-    field('Patologie note / interventi', d.a_patologie);
-    field('Farmaci abituali', d.a_farmaci);
-    field('Allergie', d.a_allergie);
-    // two cols
-    const colY = y;
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...MUTED);
-    doc.text('ATTIVITA SPORTIVA', M, y); doc.text('PROFESSIONE', M+90, y); y+=4;
-    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...INK);
-    doc.text(d.a_sport||'—', M, y); doc.text(d.a_lavoro||'—', M+90, y); y+=8;
-    h3('Situazioni particolari');
-    checkbox('Gravidanza in corso', d.a_grav);
-    checkbox('Portatore di pacemaker o dispositivi impiantati', d.a_pace);
-    if(d.a_note) field('Note', d.a_note);
-    y+=2;
-    checkbox('Dichiaro che le informazioni fornite sono veritiere e complete.', d.a_ver);
-    signatureBlock();
-
     return doc;
   }
 
@@ -769,7 +703,6 @@
       ['Marketing', yn(d.mk)],
       ['Foto cliniche', yn(d.foto_clinico)],
       ['Foto social', yn(d.foto_social)],
-      ['Anamnesi', d.a_ver ? '✓ Confermata' : '—'],
       ['Data', dateStr]
     ];
     s.innerHTML = rows.map(r=>`<div class="summary-row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
@@ -801,7 +734,7 @@
     const d = gather();
     const yn = v => v==='yes' ? 'SI' : v==='no' ? 'NO' : '—';
     const L = [];
-    L.push('MODULI PAZIENTE · FISIO EXPERT ROMA');
+    L.push('MODULI PAZIENTE · DOTT. GIANMARCO MOLINARI');
     L.push('P.IVA 14315091000');
     L.push('Data sottoscrizione: '+dateStr);
     L.push('='.repeat(48));
@@ -821,19 +754,6 @@
     L.push('  Comunicazioni marketing           : '+yn(d.mk));
     L.push('  Foto/video clinico-documentale    : '+yn(d.foto_clinico));
     L.push('  Foto/video uso divulgativo/social : '+yn(d.foto_social));
-    L.push('');
-    L.push('ANAMNESI');
-    L.push('  Motivo della visita : '+(d.a_motivo||'—'));
-    L.push('  Insorgenza/durata   : '+(d.a_storia||'—'));
-    L.push('  Patologie/interventi: '+(d.a_patologie||'—'));
-    L.push('  Farmaci             : '+(d.a_farmaci||'—'));
-    L.push('  Allergie            : '+(d.a_allergie||'—'));
-    L.push('  Attività sportiva   : '+(d.a_sport||'—'));
-    L.push('  Professione         : '+(d.a_lavoro||'—'));
-    L.push('  Gravidanza          : '+(d.a_grav?'SI':'no'));
-    L.push('  Pacemaker/impianti  : '+(d.a_pace?'SI':'no'));
-    L.push('  Note                : '+(d.a_note||'—'));
-    L.push('  Veridicità dichiarata: '+(d.a_ver?'SI':'—'));
     L.push('');
     L.push('='.repeat(48));
     L.push('Documento generato su dispositivo. Conservare in archivio riservato.');

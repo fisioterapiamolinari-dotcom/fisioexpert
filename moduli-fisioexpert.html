@@ -31,7 +31,7 @@
   header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
   .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.5px; color: var(--ink); display: inline-flex; align-items: center; }
   .logo b { color: var(--accent); font-weight: inherit; }
-  .header-logo { height: 40px; width: auto; display: block; }
+  .header-logo { height: 56px; width: auto; display: block; }
   .logo-fallback { display: none; font-family: var(--serif); font-size: 22px; }
   .logo-fallback b { color: var(--accent); }
   .step-count { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1px; color: var(--ink-muted); text-transform: uppercase; }
@@ -716,13 +716,11 @@
     const hint = document.getElementById('saveHint');
     const btn = document.getElementById('btnDownload');
     if(supportsFS){
-      btn.textContent = dirHandle ? 'Salva in Moduli Pazienti/'+YEAR_FOLDER : 'Scegli cartella e salva';
-      hint.innerHTML = dirHandle
-        ? 'La cartella è già memorizzata: il salvataggio è diretto. Al massimo il browser chiederà un clic di conferma.'
-        : 'Solo la prima volta scegli la cartella <b>Moduli Pazienti</b> sul desktop: viene memorizzata, e la sottocartella <b>'+YEAR_FOLDER+'</b> è creata in automatico. Dalle volte successive il salvataggio è diretto.';
+      btn.textContent = 'Scegli cartella e salva';
+      hint.innerHTML = 'Ogni volta potrai scegliere <b>in quale cartella</b> salvare il PDF e il riepilogo.';
     } else {
       btn.textContent = 'Salva i moduli firmati';
-      hint.innerHTML = 'Si aprirà la condivisione: scegli <b>Salva su file → Moduli Pazienti</b>.';
+      hint.innerHTML = 'Si aprirà la condivisione: scegli <b>Salva su file</b> e la cartella che preferisci.';
     }
   }
 
@@ -733,8 +731,6 @@
   }
   function pdfFileName(){ return baseName()+'.pdf'; }
   function txtFileName(){ return baseName()+'_riepilogo.txt'; }
-  const YEAR_FOLDER = 'Anno'+yyyy;
-  const ROOT_FOLDER = 'Moduli Pazienti';
 
   function summaryText(){
     const d = gather();
@@ -767,65 +763,9 @@
   }
 
   /* ---------- SALVATAGGIO ---------- */
-  // Memorizza l'handle della cartella scelta. Durante la sessione resta in memoria;
-  // tra sessioni viene salvato in IndexedDB e ripristinato alla riapertura.
-  let dirHandle = null;
+  // Ad ogni salvataggio l'utente sceglie la cartella di destinazione.
+  // Niente cartella memorizzata, niente sottocartelle create in automatico.
   const supportsFS = ('showDirectoryPicker' in window);
-
-  // --- IndexedDB minimale per ricordare la cartella ---
-  function idbGet(key){
-    return new Promise((res)=>{
-      try{
-        const req = indexedDB.open('moduli-fisioexpert', 1);
-        req.onupgradeneeded = ()=> req.result.createObjectStore('handles');
-        req.onsuccess = ()=>{
-          const tx = req.result.transaction('handles','readonly');
-          const g = tx.objectStore('handles').get(key);
-          g.onsuccess = ()=> res(g.result || null);
-          g.onerror = ()=> res(null);
-        };
-        req.onerror = ()=> res(null);
-      }catch(e){ res(null); }
-    });
-  }
-  function idbSet(key, val){
-    return new Promise((res)=>{
-      try{
-        const req = indexedDB.open('moduli-fisioexpert', 1);
-        req.onupgradeneeded = ()=> req.result.createObjectStore('handles');
-        req.onsuccess = ()=>{
-          const tx = req.result.transaction('handles','readwrite');
-          tx.objectStore('handles').put(val, key);
-          tx.oncomplete = ()=> res(true);
-          tx.onerror = ()=> res(false);
-        };
-        req.onerror = ()=> res(false);
-      }catch(e){ res(false); }
-    });
-  }
-
-  // Verifica/richiede il permesso sull'handle salvato (un solo clic "Consenti", non la scelta cartella)
-  async function ensurePermission(handle){
-    if(!handle || !handle.queryPermission) return false;
-    const opts = { mode: 'readwrite' };
-    if(await handle.queryPermission(opts) === 'granted') return true;
-    if(await handle.requestPermission(opts) === 'granted') return true;
-    return false;
-  }
-
-  // Al caricamento, prova a ripristinare la cartella già usata
-  async function restoreDir(){
-    if(!supportsFS) return;
-    const saved = await idbGet('dir');
-    if(saved){ dirHandle = saved; }
-  }
-  restoreDir();
-
-  async function getYearFolder(){
-    // dirHandle = cartella "Moduli Pazienti" scelta dall'utente; dentro creiamo/AnnoYYYY
-    const yearDir = await dirHandle.getDirectoryHandle(YEAR_FOLDER, { create: true });
-    return yearDir;
-  }
 
   async function writeFile(dir, name, blob){
     const fh = await dir.getFileHandle(name, { create: true });
@@ -849,20 +789,12 @@
 
     if(supportsFS){
       try{
-        // Se abbiamo gia' una cartella (sessione o ripristinata), assicuriamoci il permesso
-        if(dirHandle){
-          const ok = await ensurePermission(dirHandle);
-          if(!ok){ dirHandle = null; }  // permesso negato: tornerà a chiedere la cartella
-        }
-        if(!dirHandle){
-          status.textContent = 'Scegli la cartella "Moduli Pazienti" (solo questa volta)…';
-          dirHandle = await window.showDirectoryPicker({ id:'moduli-pazienti', mode:'readwrite', startIn:'desktop' });
-          await idbSet('dir', dirHandle);  // la ricordiamo per le prossime volte
-        }
-        const yearDir = await getYearFolder();
-        await writeFile(yearDir, pdfFileName(), pdfBlob);
-        await writeFile(yearDir, txtFileName(), txtBlob);
-        status.innerHTML = `Salvato in <b>${ROOT_FOLDER} / ${YEAR_FOLDER} / ${pdfFileName()}</b>`;
+        status.textContent = 'Scegli la cartella in cui salvare…';
+        // Apre SEMPRE il selettore: l'utente decide ogni volta dove salvare.
+        const dir = await window.showDirectoryPicker({ id:'moduli-fisioexpert', mode:'readwrite', startIn:'documents' });
+        await writeFile(dir, pdfFileName(), pdfBlob);
+        await writeFile(dir, txtFileName(), txtBlob);
+        status.innerHTML = `Salvato in <b>${dir.name} / ${pdfFileName()}</b> (con il riepilogo .txt).`;
         status.className = 'save-status ok';
         return;
       }catch(err){
@@ -873,7 +805,7 @@
         // fallback al download classico
         downloadBlob(pdfBlob, pdfFileName());
         downloadBlob(txtBlob, txtFileName());
-        status.innerHTML = 'Cartella non accessibile: file scaricati nella cartella <b>Download</b>. Spostali in Moduli Pazienti/'+YEAR_FOLDER+'.';
+        status.innerHTML = 'Cartella non accessibile: file scaricati nella cartella <b>Download</b>.';
         status.className='save-status';
         return;
       }
@@ -888,14 +820,14 @@
           ],
           title: 'Moduli paziente'
         });
-        status.innerHTML = 'Usa <b>Salva su file → Moduli Pazienti</b> per archiviarlo.';
+        status.innerHTML = 'Usa <b>Salva su file</b> e scegli la cartella per archiviarlo.';
         status.className='save-status ok';
         return;
       }catch(err){ if(err && err.name==='AbortError'){ status.textContent='Condivisione annullata.'; return; } }
     }
     downloadBlob(pdfBlob, pdfFileName());
     downloadBlob(txtBlob, txtFileName());
-    status.innerHTML = 'File scaricati. Spostali in <b>Moduli Pazienti/'+YEAR_FOLDER+'</b>.';
+    status.innerHTML = 'File scaricati nella cartella <b>Download</b>.';
     status.className='save-status';
   }
 

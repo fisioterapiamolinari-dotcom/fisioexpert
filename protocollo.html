@@ -20,8 +20,10 @@
   body{font-family:var(--sans);background:var(--warm);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 
   nav{position:sticky;top:0;z-index:100;background:rgba(248,244,239,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 4rem;height:64px;display:flex;align-items:center;justify-content:space-between}
-  .logo{font-family:var(--serif);font-size:1.25rem;color:var(--ink);text-decoration:none;letter-spacing:0.01em}
-  .logo span{color:var(--accent)}
+  .logo{display:inline-flex;align-items:center;text-decoration:none}
+  .header-logo{height:36px;width:auto;display:block}
+  .logo-fallback{display:none;font-family:var(--serif);font-size:1.25rem;color:var(--ink);letter-spacing:0.01em}
+  .logo-fallback b{color:var(--accent);font-weight:inherit}
   .nav-cta{font-size:0.85rem;color:var(--white);background:var(--accent);text-decoration:none;font-weight:500;padding:9px 20px;border-radius:100px;transition:background .2s}
   .nav-cta:hover{background:var(--accent-dark)}
 
@@ -91,7 +93,9 @@
   .final-note{font-size:0.8rem;color:var(--ink-muted);margin-top:1rem}
 
   footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:2rem 4rem;font-size:0.8rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-  footer .logo{color:var(--white);font-size:1.05rem}
+  footer .logo{display:inline-flex;align-items:center}
+  footer .footer-logo{height:24px;width:auto;display:block;filter:invert(1);opacity:0.85}
+  footer .logo-fallback{color:var(--white);font-size:1.05rem}
   footer a{color:rgba(255,255,255,0.5);text-decoration:none}
   footer a:hover{color:var(--accent)}
 
@@ -112,7 +116,10 @@
 <body>
 
 <nav>
-  <a class="logo" href="/">fisio<span>·</span>expert</a>
+  <a class="logo" href="/">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+    <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+  </a>
   <a class="nav-cta" href="https://www.fisioexpert.it/booking">Prenota la valutazione</a>
 </nav>
 
@@ -265,7 +272,10 @@
 </main>
 
 <footer>
-  <span class="logo">fisio<span style="color:var(--accent)">·</span>expert</span>
+  <span class="logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="footer-logo" onerror="this.style.display='none'; document.getElementById('logoFallbackFooter').style.display='inline';">
+    <span id="logoFallbackFooter" class="logo-fallback">fisio<b>·</b>expert</span>
+  </span>
   <span>Dott. Gianmarco Molinari · Fisioterapista sportivo · P.IVA 14315091000 · <a href="https://www.fisioexpert.it">fisioexpert.it</a></span>
 </footer>
 

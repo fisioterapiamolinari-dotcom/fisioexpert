@@ -294,6 +294,32 @@
   .cal-day.available { background: var(--bg); font-weight: 500; cursor: pointer; }
   .cal-day.available:hover { border-color: var(--accent); }
   .cal-day.selected { background: var(--accent); color: var(--white); border-color: var(--accent); }
+  .cal-day.esaurito {
+    background: var(--bg);
+    opacity: 0.3;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+  .cal-day.attesa { position: relative; }
+  .cal-day.attesa::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulsa 0.9s ease-in-out infinite alternate;
+  }
+  @keyframes pulsa { from { opacity: 0.55; } to { opacity: 0.1; } }
+  .cal-stato {
+    min-height: 18px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 300;
+    opacity: 0.55;
+  }
+  .cal-stato .retry-btn { margin-top: 6px; padding: 5px 14px; font-size: 13px; }
 
   /* ── SLOTS ── */
   .retry-btn {
@@ -549,6 +575,7 @@
       </div>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-stato" id="cal-stato"></div>
 
     <div class="slots-wrap" id="slots-wrap" style="display:none">
       <div class="slots-title" id="slots-title"></div>
@@ -716,12 +743,17 @@ async function offerBiometricSave(patient) {
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznW1gbJU6L24Qt4XvAPYAViaEwISJvOXkgcNoNBTmkHeFvPdB46NGsmnqrVw2LFzgq/exec";
 const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook/fisioexpert-booking";
 
+const MESI_AVANTI = 1;        // finestra di prenotazione
+const GIORNI_FASE1 = 7;       // prima settimana: caricata subito
+const FRESCHEZZA_MS = 180000; // dopo 3 minuti un giorno viene riverificato
+
 const STUDIO = {
   id: 'fleming',
   name: 'Studio Fleming',
   address: 'Via Città di Castello 20, zona Fleming',
   durationMin: 45,
-  slotStepMin: 60,
+  // giorni di apertura: servono solo a colorare il calendario,
+  // gli orari veri arrivano dall'Apps Script
   days: {
     3: { start: '09:00', end: '20:00' },
     5: { start: '09:00', end: '20:00' }
@@ -733,7 +765,11 @@ const state = {
   patient: { nome: '', cognome: '', telefono: '', email: '' },
   date: null, time: null,
   calMonth: null,
-  cache: {}
+  slots: {},        // 'YYYY-MM-DD' -> ['13:00', ...]
+  letto: {},        // 'YYYY-MM-DD' -> timestamp dell'ultima lettura
+  errori: {},       // giorni che non e' stato possibile leggere
+  rangeOk: null,    // true se l'Apps Script supporta getSlotsRange
+  fase: 'attesa'    // attesa | settimana | resto | fatto
 };
 
 const $  = (s, r) => (r || document).querySelector(s);
@@ -742,8 +778,17 @@ const pad = n => String(n).padStart(2, '0');
 const fmtDate = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
 const fmtLong = d => d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 const fmtMonth = d => d.toLocaleDateString('it-IT', { month:'long', year:'numeric' });
-const isPast = d => { const t=new Date(); t.setHours(0,0,0,0); return d < t; };
+const oggiMezzanotte = () => { const t = new Date(); t.setHours(0,0,0,0); return t; };
+const isPast = d => d < oggiMezzanotte();
 const isWorkDay = d => !!STUDIO.days[d.getDay()];
+const piuGiorni = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+
+function ultimoGiorno() {
+  const l = oggiMezzanotte();
+  l.setMonth(l.getMonth() + MESI_AVANTI);
+  return l;
+}
+const oltreLimite = d => d > ultimoGiorno();
 
 /* ── NAVIGAZIONE ── */
 function goToStep(n) {
@@ -761,10 +806,10 @@ function goToStep(n) {
 
 $$('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(state.step - 1)));
 
-/* ── STEP 1: FORM ── */
+/* ── AVVIO: le disponibilita' partono subito, non allo step 2 ── */
 document.addEventListener('DOMContentLoaded', () => {
   initBiometricUI();
-  prefetchAll(); // avvia subito il caricamento delle disponibilità in background
+  avviaCaricamento();
 });
 
 $('#qualify-form').addEventListener('submit', e => {
@@ -781,23 +826,164 @@ $('#qualify-form').addEventListener('submit', e => {
   if (ok) goToStep(2);
 });
 
+/* ══════════════════════════════════════════
+   CARICAMENTO DISPONIBILITA'
+   Fase 1: settimana corrente, una sola chiamata.
+   Fase 2: il resto del mese, subito dopo, in background.
+══════════════════════════════════════════ */
+
+async function avviaCaricamento() {
+  const inizio = oggiMezzanotte();
+  const limite = ultimoGiorno();
+  const settima = piuGiorni(inizio, GIORNI_FASE1);
+  const fineFase1 = settima > limite ? limite : settima;
+
+  state.fase = 'settimana';
+  aggiornaStato();
+  await caricaIntervallo(inizio, fineFase1);
+
+  if (fineFase1 < limite) {
+    state.fase = 'resto';
+    aggiornaStato();
+    await caricaIntervallo(piuGiorni(fineFase1, 1), limite);
+  }
+
+  state.fase = 'fatto';
+  aggiornaStato();
+}
+
+// Elenco dei giorni lavorativi (non passati) dentro un intervallo
+function giorniUtili(da, a) {
+  const out = [];
+  for (let d = new Date(da); d <= a; d = piuGiorni(d, 1)) {
+    if (!isPast(d) && isWorkDay(d) && !oltreLimite(d)) out.push(fmtDate(d));
+  }
+  return out;
+}
+
+async function chiedi(url, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms || 15000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const testo = await r.text();
+    try { return JSON.parse(testo); }
+    catch { throw new Error('Risposta non JSON: ' + testo.slice(0, 120)); }
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Prova la chiamata unica sull'intervallo; se l'Apps Script non la
+// supporta, ripiega automaticamente sulle richieste giorno per giorno.
+async function caricaIntervallo(da, a) {
+  const lista = giorniUtili(da, a);
+  if (!lista.length) return;
+
+  if (state.rangeOk !== false) {
+    try {
+      const url = APPS_SCRIPT_URL
+        + '?action=getSlotsRange&studio=' + encodeURIComponent(STUDIO.id)
+        + '&from=' + fmtDate(da) + '&to=' + fmtDate(a);
+      const d = await chiedi(url, 25000);
+      const giorni = d && !Array.isArray(d) ? (d.giorni || d.days || d.slots) : null;
+      if (!giorni || typeof giorni !== 'object' || Array.isArray(giorni)) {
+        throw new Error('Formato risposta inatteso');
+      }
+      state.rangeOk = true;
+      const ora = Date.now();
+      lista.forEach(ymd => {
+        state.slots[ymd] = Array.isArray(giorni[ymd]) ? giorni[ymd] : [];
+        state.letto[ymd] = ora;
+        delete state.errori[ymd];
+      });
+      aggiornaCalendario();
+      return;
+    } catch (err) {
+      console.warn('getSlotsRange non disponibile:', err.message);
+      state.rangeOk = false;
+    }
+  }
+
+  await caricaUnoAUno(lista);
+}
+
+// Ripiego: massimo 3 richieste in volo, cosi' il browser non si blocca
+async function caricaUnoAUno(lista) {
+  let i = 0;
+  const worker = async () => {
+    while (i < lista.length) {
+      const ymd = lista[i++];
+      await caricaGiorno(ymd);
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+}
+
+async function caricaGiorno(ymd) {
+  try {
+    const url = APPS_SCRIPT_URL
+      + '?action=getSlots&studio=' + encodeURIComponent(STUDIO.id)
+      + '&date=' + encodeURIComponent(ymd);
+    const d = await chiedi(url, 15000);
+    const sl = Array.isArray(d) ? d : (d.slots || d.orari || d.available);
+    if (!Array.isArray(sl)) throw new Error('Formato risposta inatteso');
+    state.slots[ymd] = sl;
+    state.letto[ymd] = Date.now();
+    delete state.errori[ymd];
+  } catch (err) {
+    console.warn('Slot non letti per', ymd, err.message);
+    state.errori[ymd] = true;
+    delete state.slots[ymd];
+  }
+  aggiornaGiorno(ymd);
+}
+
+function aggiornaStato() {
+  const el = $('#cal-stato');
+  if (!el) return;
+  const errori = Object.keys(state.errori).length;
+  if (state.fase === 'fatto' && errori) {
+    el.innerHTML = 'Alcuni giorni non sono stati letti. '
+      + '<button type="button" class="retry-btn" id="ricarica-btn">Riprova</button>';
+    const b = $('#ricarica-btn');
+    if (b) b.addEventListener('click', () => { state.errori = {}; avviaCaricamento(); });
+    return;
+  }
+  const testi = {
+    attesa: '',
+    settimana: 'Carico le disponibilita\u2026',
+    resto: 'Prossimi giorni pronti \u00b7 carico il resto del mese\u2026',
+    fatto: ''
+  };
+  el.textContent = testi[state.fase] || '';
+}
+
 /* ── STEP 2: CALENDARIO ── */
 function initCalendar() {
-  state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  state.date = null; state.time = null;
-  $('#step2-next').disabled = true;
-  $('#slots-wrap').style.display = 'none';
-  if (!Object.keys(state.cache).length) prefetchAll(); // di norma già avviato allo step 1
+  if (!state.calMonth) state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   renderCal();
+  aggiornaStato();
+  if (state.fase === 'attesa') avviaCaricamento();
+}
+
+function classeGiorno(ymd, d) {
+  if (isPast(d) || !isWorkDay(d) || oltreLimite(d)) return 'disabled';
+  if (state.errori[ymd]) return 'available';           // cliccabile: riprova al volo
+  const sl = state.slots[ymd];
+  if (!sl) return 'available attesa';                  // non ancora letto
+  return sl.length ? 'available' : 'esaurito';
 }
 
 function renderCal() {
   const m = state.calMonth;
   $('#cal-month').textContent = fmtMonth(m);
-  const today = new Date(); today.setDate(1); today.setHours(0,0,0,0);
-  $('#cal-prev').disabled = m <= today;
-  const limit = new Date(); limit.setMonth(limit.getMonth()+3, 1); limit.setHours(0,0,0,0);
-  $('#cal-next').disabled = m >= limit;
+  const primoMese = oggiMezzanotte(); primoMese.setDate(1);
+  $('#cal-prev').disabled = m <= primoMese;
+  const limite = ultimoGiorno();
+  const meseLimite = new Date(limite.getFullYear(), limite.getMonth(), 1);
+  $('#cal-next').disabled = m >= meseLimite;
 
   const first = new Date(m.getFullYear(), m.getMonth(), 1);
   const last  = new Date(m.getFullYear(), m.getMonth()+1, 0);
@@ -807,12 +993,79 @@ function renderCal() {
   for (let day = 1; day <= last.getDate(); day++) {
     const d = new Date(m.getFullYear(), m.getMonth(), day);
     const ymd = fmtDate(d);
-    const ok = !isPast(d) && isWorkDay(d);
     const sel = state.date === ymd ? ' selected' : '';
-    html += `<div class="cal-day ${ok ? 'available' : 'disabled'}${sel}" data-date="${ymd}">${day}</div>`;
+    html += `<div class="cal-day ${classeGiorno(ymd, d)}${sel}" data-date="${ymd}">${day}</div>`;
   }
   $('#cal-grid').innerHTML = html;
   $$('.cal-day.available').forEach(el => el.addEventListener('click', () => selectDate(el.dataset.date)));
+}
+
+// Ridisegna solo se il calendario e' gia' a schermo
+function aggiornaCalendario() {
+  if (state.step === 2) renderCal();
+  aggiornaStato();
+}
+
+function aggiornaGiorno(ymd) {
+  if (state.step === 2) {
+    const cella = $('.cal-day[data-date="' + ymd + '"]');
+    if (cella) {
+      const d = new Date(ymd + 'T00:00:00');
+      const sel = state.date === ymd ? ' selected' : '';
+      cella.className = 'cal-day ' + classeGiorno(ymd, d) + sel;
+      if (cella.classList.contains('available')) cella.onclick = () => selectDate(ymd);
+    }
+    if (state.date === ymd) mostraSlot(ymd);
+  }
+  aggiornaStato();
+}
+
+async function selectDate(ymd) {
+  state.date = ymd; state.time = null;
+  $('#step2-next').disabled = true;
+  renderCal();
+  $('#slots-wrap').style.display = 'block';
+  $('#slots-title').textContent = fmtLong(new Date(ymd + 'T00:00:00'));
+
+  const scaduto = !state.letto[ymd] || (Date.now() - state.letto[ymd]) > FRESCHEZZA_MS;
+  if (state.slots[ymd]) {
+    mostraSlot(ymd);                       // istantaneo: gia' in memoria
+    if (scaduto) caricaGiorno(ymd);        // riverifica silenziosa in background
+    return;
+  }
+
+  $('#slots-content').innerHTML = '<div class="loading">Caricamento orari\u2026</div>';
+  await caricaGiorno(ymd);
+  mostraSlot(ymd);
+}
+
+function mostraSlot(ymd) {
+  const c = $('#slots-content');
+  if (state.errori[ymd]) {
+    c.innerHTML = '<div class="empty">Non riesco a leggere gli orari di questo giorno.<br>'
+      + '<button type="button" class="retry-btn" onclick="selectDate(\'' + ymd + '\')">Riprova</button></div>';
+    return;
+  }
+  const slots = state.slots[ymd];
+  if (!slots) { c.innerHTML = '<div class="loading">Caricamento orari\u2026</div>'; return; }
+  if (!slots.length) {
+    c.innerHTML = '<div class="empty">Nessun orario libero in questa giornata.</div>';
+    return;
+  }
+  const attivo = state.time;
+  c.innerHTML = '<div class="slots">' + slots.map(t =>
+    '<div class="slot' + (t === attivo ? ' selected' : '') + '" data-time="' + t + '">' + t + '</div>').join('') + '</div>';
+  $$('.slot', c).forEach(el => el.addEventListener('click', () => {
+    $$('.slot', c).forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    state.time = el.dataset.time;
+    $('#step2-next').disabled = false;
+  }));
+  // se l'orario scelto e' sparito dopo una riverifica, azzera la selezione
+  if (attivo && slots.indexOf(attivo) === -1) {
+    state.time = null;
+    $('#step2-next').disabled = true;
+  }
 }
 
 $('#cal-prev').addEventListener('click', () => {
@@ -826,124 +1079,31 @@ $('#cal-next').addEventListener('click', () => {
   renderCal();
 });
 
-async function selectDate(ymd) {
-  state.date = ymd; state.time = null;
-  $('#step2-next').disabled = true;
-  renderCal();
-  $('#slots-wrap').style.display = 'block';
-  $('#slots-title').textContent = fmtLong(new Date(ymd + 'T00:00:00'));
-  const c = $('#slots-content');
-  c.innerHTML = '<div class="loading">Caricamento orari…</div>';
-  try {
-    if (!state.cache[ymd]) prefetchDay(new Date(ymd + 'T00:00:00'));
-    const sl = await state.cache[ymd];
-    renderSlots(c, sl);
-  } catch (err) {
-    console.error('Slot non caricati per', ymd, err);
-    delete state.cache[ymd];
-    c.innerHTML = '<div class="empty">Non riesco a caricare gli orari in questo momento.<br>' +
-      '<button type="button" class="retry-btn" onclick="selectDate(\'' + ymd + '\')">Riprova</button></div>';
-  }
-}
-
-function renderSlots(c, slots) {
-  if (!slots || !slots.length) {
-    c.innerHTML = '<div class="empty">Nessuno slot disponibile per questo giorno.</div>';
-    return;
-  }
-  c.innerHTML = '<div class="slots">' + slots.map(t => `<div class="slot" data-time="${t}">${t}</div>`).join('') + '</div>';
-  $$('.slot', c).forEach(el => el.addEventListener('click', () => {
-    $$('.slot', c).forEach(s => s.classList.remove('selected'));
-    el.classList.add('selected');
-    state.time = el.dataset.time;
-    $('#step2-next').disabled = false;
-  }));
-}
-
-
-async function fetchSlots(sid, date) {
-  const r = await fetch(APPS_SCRIPT_URL + '?action=getSlots&studio=' + encodeURIComponent(sid) + '&date=' + encodeURIComponent(date));
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const raw = await r.text();
-  let d;
-  try { d = JSON.parse(raw); }
-  catch { console.error('Risposta non-JSON da Apps Script:', raw.slice(0, 200)); throw new Error('Risposta non valida'); }
-  const sl = Array.isArray(d) ? d : (d.slots || d.available || d.orari || null);
-  if (!Array.isArray(sl)) { console.error('Formato risposta inatteso:', d); throw new Error('Formato risposta inatteso'); }
-  return sl;
-}
-
-// Mette in cache gli slot di un singolo giorno (se non già richiesto)
-function prefetchDay(d) {
-  if (isPast(d) || !isWorkDay(d)) return null;
-  const ymd = fmtDate(new Date(d));
-  if (state.cache[ymd]) return state.cache[ymd]; // già in cache o in corso
-  state.cache[ymd] = fetchSlots(STUDIO.id, ymd)
-    .catch(err => {
-      delete state.cache[ymd]; // niente fallback: permette il retry
-      throw err;
-    });
-  return state.cache[ymd];
-}
-
-function prefetchAll() {
-  state.cache = {};
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  // ── FASE 1 — prima settimana, subito e in parallelo ──
-  // Sono pochi giorni: partono tutti insieme e occupano le connessioni
-  // del browser da soli, così i primi slot compaiono all'istante.
-  const weekEnd = new Date(today); weekEnd.setDate(weekEnd.getDate() + 7);
-  const fase1 = [];
-  for (let d = new Date(today); d < weekEnd; d.setDate(d.getDate() + 1)) {
-    const p = prefetchDay(new Date(d));
-    if (p) fase1.push(p);
-  }
-
-  // ── FASE 2 — i restanti 3 mesi, solo DOPO la prima settimana ──
-  // Attende che la fase 1 sia conclusa (anche in caso di errori), poi
-  // carica il resto a piccoli gruppi per non saturare la rete.
-  Promise.allSettled(fase1).then(() => {
-    const limit = new Date(); limit.setMonth(limit.getMonth() + 3); limit.setHours(0,0,0,0);
-    const giorni = [];
-    for (let d = new Date(weekEnd); d <= limit; d.setDate(d.getDate() + 1)) {
-      const dd = new Date(d);
-      if (!isPast(dd) && isWorkDay(dd)) giorni.push(dd);
-    }
-    caricaAGruppi(giorni, 0);
-  });
-}
-
-// Carica i giorni a blocchi di 4: la rete resta libera e la pagina reattiva
-function caricaAGruppi(giorni, i) {
-  if (i >= giorni.length) return;
-  const gruppo = giorni.slice(i, i + 4).map(d => prefetchDay(d)).filter(Boolean);
-  Promise.allSettled(gruppo).then(() => caricaAGruppi(giorni, i + 4));
-}
-
 $('#step2-next').addEventListener('click', () => { renderSummary(); goToStep(3); });
 
 /* ── STEP 3: RIEPILOGO ── */
 function renderSummary() {
   const d = new Date(state.date + 'T00:00:00');
   const row = (label, value) =>
-    `<div class="summary-row"><span class="summary-label">${label}</span><span class="summary-value">${value}</span></div>`;
+    '<div class="summary-row"><span class="summary-label">' + label +
+    '</span><span class="summary-value">' + value + '</span></div>';
   $('#summary').innerHTML =
     row('Paziente', esc(state.patient.nome) + ' ' + esc(state.patient.cognome)) +
     row('Telefono', esc(state.patient.telefono)) +
     row('Email', esc(state.patient.email)) +
-    row('Studio', esc(STUDIO.name) + `<small>${esc(STUDIO.address)}</small>`) +
+    row('Studio', esc(STUDIO.name) + '<small>' + esc(STUDIO.address) + '</small>') +
     row('Data', fmtLong(d)) +
     row('Orario', state.time + ' (' + STUDIO.durationMin + ' min)');
 }
 
-/* ── CONFERMA + N8N ── */
+/* ── CONFERMA ── */
 $('#confirm-btn').addEventListener('click', async () => {
   const btn = $('#confirm-btn');
   btn.disabled = true;
-  btn.textContent = 'Invio in corso…';
+  btn.textContent = 'Invio in corso\u2026';
 
-  /* 1 — Apps Script → Google Calendar */
+  /* 1 — Apps Script -> Google Calendar */
+  let esito;
   try {
     const r = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
@@ -962,7 +1122,9 @@ $('#confirm-btn').addEventListener('click', async () => {
       })
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
-  } catch(e) {
+    const testo = await r.text();
+    try { esito = JSON.parse(testo); } catch (x) { esito = { ok: true }; }
+  } catch (e) {
     console.error('Prenotazione non registrata:', e);
     btn.disabled = false;
     btn.textContent = 'Conferma prenotazione';
@@ -970,7 +1132,25 @@ $('#confirm-btn').addEventListener('click', async () => {
     return;
   }
 
-  /* 2 — n8n Webhook → CRM + email */
+  // Slot preso da qualcun altro mentre il paziente compilava
+  if (esito && esito.ok === false) {
+    btn.disabled = false;
+    btn.textContent = 'Conferma prenotazione';
+    if (esito.error === 'occupato') {
+      const giorno = state.date;
+      state.time = null;
+      delete state.slots[giorno];
+      delete state.letto[giorno];
+      alert('Quell\'orario e\' appena stato prenotato da qualcun altro. Scegline un altro.');
+      goToStep(2);
+      selectDate(giorno);
+    } else {
+      alert('Non sono riuscito a registrare la prenotazione: ' + (esito.error || 'errore sconosciuto'));
+    }
+    return;
+  }
+
+  /* 2 — n8n Webhook -> CRM + email */
   try {
     await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
@@ -990,9 +1170,9 @@ $('#confirm-btn').addEventListener('click', async () => {
         timestamp: new Date().toISOString()
       })
     });
-  } catch(e) { console.warn('n8n webhook:', e); }
+  } catch (e) { console.warn('n8n webhook:', e); }
 
-  /* 3 — Mostra successo */
+  /* 3 — Successo */
   $('#confirm-pre').style.display = 'none';
   $('#confirm-success').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });

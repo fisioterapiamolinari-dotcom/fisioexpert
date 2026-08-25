@@ -2,57 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://fisioexpert.it/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/chi-sono.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/esercizi.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/booking.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/bookingfleming.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/blog/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/privacy-policy.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/policy-cancellazione.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://fisioexpert.it/blog/dolore-ginocchio-ufficio-roma-eur.html</loc>
+    <lastmod>2026-08-25</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://fisioexpert.it/blog/dolore-spalla-notte-cause-soluzioni.html</loc>
+    <lastmod>2026-08-25</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://fisioexpert.it/blog/riabilitazione-ginocchio-roma-eur.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/blog/mal-di-ginocchio.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://fisioexpert.it/blog/mal-di-anca.html</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-25</lastmod>
     <priority>0.7</priority>
   </url>
 </urlset>

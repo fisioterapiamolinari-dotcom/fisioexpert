@@ -2,472 +2,453 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>La tua scheda esercizi | Fisio Expert</title>
-<meta name="theme-color" content="#f47920">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="I miei esercizi">
-<link rel="apple-touch-icon" href="/icona-esercizi.png">
+<title>Componi scheda esercizi | Fisio Expert</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --ink: #1a1a1a; --ink-soft: #4a4a4a; --ink-muted: #8a8a8a;
-  --accent: #f47920; --accent-light: rgba(244,121,32,0.12); --accent-dark: #d4660e;
-  --warm: #f8f4ef; --warm-dark: #ede8e0; --white: #ffffff;
-  --border: rgba(26,26,26,0.1);
-  --green: #2e9e5b; --green-light: rgba(46,158,91,0.12);
-  --serif: 'DM Serif Display', Georgia, serif;
-  --sans: 'DM Sans', system-ui, sans-serif;
-  --mono: 'Montserrat', system-ui, sans-serif;
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
 }
-body {
-  font-family: var(--sans); background: var(--warm); color: var(--ink);
-  line-height: 1.6; -webkit-tap-highlight-color: transparent;
-  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.55; padding-bottom:120px; }
+.wrap { max-width:860px; margin:0 auto; padding:0 20px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; }
+header .wrap { display:flex; align-items:center; justify-content:space-between; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.tag { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
+
+h1 { font-family:var(--serif); font-weight:400; font-size:30px; margin:28px 0 4px; }
+.sotto { color:var(--ink-soft); font-size:15px; margin-bottom:20px; }
+
+.card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:8px; display:block; }
+
+input, select, textarea {
+  width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+  padding:11px 13px; border:1px solid var(--border); border-radius:10px;
+  background:var(--white); outline:none;
 }
-.wrap { max-width: 640px; margin: 0 auto; padding: 0 18px; }
-
-/* Header */
-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 0; padding-top: calc(16px + env(safe-area-inset-top)); }
-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.logo { display: inline-flex; align-items: center; text-decoration: none; }
-.header-logo { height: 36px; width: auto; display: block; }
-.logo-fallback { display: none; font-family: var(--mono); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--ink); }
-.logo-fallback b { color: var(--accent); font-weight: inherit; }
-.chi { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--ink-muted); text-align: right; }
-
-/* Intestazione scheda */
-.testata { padding: 26px 0 6px; }
-.testata h1 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.15; margin-bottom: 6px; }
-.testata p { font-size: 15px; color: var(--ink-soft); }
+input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:80px; }
+.riga2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
 /* Fasi */
-.fasi { display: flex; gap: 8px; overflow-x: auto; padding: 18px 0 4px; scrollbar-width: none; }
-.fasi::-webkit-scrollbar { display: none; }
-.fase-pill {
-  flex-shrink: 0; font-family: var(--mono); font-weight: 700; font-size: 12px;
-  padding: 9px 15px; border-radius: 100px; border: 1.5px solid var(--border);
-  background: var(--white); color: var(--ink-soft); cursor: pointer;
-}
-.fase-pill.attiva { background: var(--accent); border-color: var(--accent); color: var(--white); }
-.fase-pill.bloccata { opacity: .5; cursor: default; }
+.barra-fasi { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+.pill { font-family:var(--mono); font-weight:700; font-size:12px; padding:9px 15px; border-radius:100px;
+        border:1.5px solid var(--border); background:var(--white); color:var(--ink-soft); cursor:pointer; }
+.pill.attiva { background:var(--accent); border-color:var(--accent); color:var(--white); }
+.pill.aggiungi { border-style:dashed; color:var(--accent); }
 
-.card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-top: 16px; }
-.card h2 { font-family: var(--serif); font-weight: 400; font-size: 20px; margin-bottom: 10px; }
-.etichetta { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 10px; }
+/* Esercizi in scheda */
+.es-riga { border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:10px; background:var(--white); }
+.es-testa { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.es-titolo { flex:1; font-weight:500; font-size:15px; }
+.mini { background:none; border:1px solid var(--border); border-radius:8px; width:30px; height:30px;
+        cursor:pointer; color:var(--ink-muted); font-size:14px; flex-shrink:0; }
+.mini:hover { border-color:var(--accent); color:var(--accent); }
+.mini.elimina:hover { border-color:var(--rosso); color:var(--rosso); }
+.campi { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.campi label { font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px;
+               text-transform:uppercase; color:var(--ink-muted); display:block; margin-bottom:3px; }
+.campi input { padding:8px 10px; font-size:14px; }
+.campo-nota { margin-top:8px; }
+.vuoto { color:var(--ink-muted); font-size:14px; padding:20px; text-align:center;
+         border:1px dashed var(--border); border-radius:12px; }
 
-/* Esercizio */
-.esercizio {
-  background: var(--white); border: 1px solid var(--border); border-radius: 14px;
-  padding: 16px; margin-top: 12px; cursor: pointer; transition: border-color .15s, background .15s;
-}
-.esercizio.fatto { border-color: var(--green); background: var(--green-light); }
-.es-top { display: flex; align-items: flex-start; gap: 14px; }
-.es-info { flex: 1; min-width: 0; }
-.es-nome { font-weight: 500; font-size: 16px; line-height: 1.35; }
-.es-dose { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
-.es-nota { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
-.spunta {
-  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
-  border: 2px solid var(--border); background: var(--white);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; color: transparent; transition: all .15s;
-}
-.esercizio.fatto .spunta { border-color: var(--green); background: var(--green); color: var(--white); }
-.es-desc { font-size: 14px; color: var(--ink-soft); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: none; }
-.esercizio.aperto .es-desc { display: block; }
-.es-toggle { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .5px; color: var(--accent); background: none; border: none; padding: 8px 0 0; cursor: pointer; }
+/* Selettore libreria */
+.filtri { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.filtri select, .filtri input { width:auto; flex:1; min-width:140px; }
+.libreria { max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:12px; }
+.lib-voce { padding:11px 14px; border-bottom:1px solid var(--border); cursor:pointer; display:flex;
+            justify-content:space-between; align-items:center; gap:10px; }
+.lib-voce:last-child { border-bottom:none; }
+.lib-voce:hover { background:var(--accent-light); }
+.lib-nome { font-size:14px; }
+.lib-area { font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px;
+            text-transform:uppercase; color:var(--ink-muted); flex-shrink:0; }
 
-/* Calendario */
-.cal-testa { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
-.cal-mese { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: var(--ink-muted); }
-.serie-num { font-family: var(--mono); font-weight: 800; font-size: 15px; color: var(--accent); }
-.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-.cal-gg { font-family: var(--mono); font-weight: 700; font-size: 10px; color: var(--ink-muted); text-align: center; padding-bottom: 4px; }
-.cal-cella { aspect-ratio: 1; border-radius: 9px; background: var(--warm-dark); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--ink-muted); }
-.cal-cella.vuota { background: transparent; }
-.cal-cella.fatto { background: var(--accent); color: var(--white); font-weight: 600; }
-.cal-cella.oggi { box-shadow: 0 0 0 2px var(--ink); }
-.riepilogo { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
+/* Barra salva */
+.barra { position:fixed; left:0; right:0; bottom:0; background:var(--white);
+         border-top:1px solid var(--border); padding:14px 20px; z-index:20; }
+.barra .wrap { display:flex; gap:12px; align-items:center; }
+.btn { font-family:var(--mono); font-weight:800; font-size:14px; letter-spacing:.5px;
+       padding:15px 26px; border-radius:100px; border:none; cursor:pointer; }
+.btn-primario { background:var(--accent); color:var(--white); flex:1; }
+.btn-primario:active { background:var(--accent-dark); }
+.btn-primario:disabled { background:var(--ink-muted); cursor:default; }
+.btn-secondario { background:var(--white); color:var(--ink-soft); border:1.5px solid var(--border); }
 
-/* Barra check-in */
-.barra {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-  background: var(--white); border-top: 1px solid var(--border);
-  padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
-}
-.barra-inner { max-width: 640px; margin: 0 auto; }
-.btn-fatto {
-  width: 100%; font-family: var(--mono); font-weight: 800; font-size: 16px; letter-spacing: .5px;
-  background: var(--accent); color: var(--white); border: none;
-  padding: 18px; border-radius: 100px; cursor: pointer;
-}
-.btn-fatto:active { background: var(--accent-dark); }
-.btn-fatto.registrato { background: var(--green); }
-.sotto-barra { text-align: center; font-size: 13px; color: var(--ink-muted); margin-top: 8px; min-height: 20px; }
-.sotto-barra button { background: none; border: none; color: var(--ink-muted); font-size: 13px; text-decoration: underline; cursor: pointer; font-family: var(--sans); }
-
-/* Avvisi */
-.avviso { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 14px; padding: 16px; margin-top: 16px; font-size: 14px; color: var(--ink-soft); }
-.avviso strong { color: var(--ink); }
-.avviso .chiudi { float: right; background: none; border: none; font-size: 20px; color: var(--ink-muted); cursor: pointer; line-height: 1; margin: -4px -4px 0 8px; }
-.stato-carico { text-align: center; padding: 60px 20px; color: var(--ink-muted); }
-footer { text-align: center; font-size: 12px; color: var(--ink-muted); padding: 28px 18px 10px; }
+/* Risultato */
+.risultato { background:var(--white); border:2px solid var(--green); border-radius:16px; padding:20px; margin-bottom:16px; }
+.link-box { background:var(--warm); border:1px solid var(--border); border-radius:10px; padding:12px;
+            font-family:monospace; font-size:13px; word-break:break-all; margin:10px 0; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <a href="https://fisioexpert.it" class="logo">
+    <a href="https://fisioexpert.it" style="display:inline-flex;align-items:center;text-decoration:none">
       <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
            onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
       <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
     </a>
-    <div class="chi" id="chi"></div>
+    <span class="tag">Componi scheda</span>
   </div>
 </header>
 
-<main class="wrap" id="contenuto">
-  <div class="stato-carico" id="caricamento">Carico la tua scheda…</div>
-</main>
+<div class="wrap">
+  <h1>Nuova scheda esercizi</h1>
+  <p class="sotto">Scegli il paziente, componi le fasi, salva. Ti esce il link da mandare su WhatsApp.</p>
 
-<div class="barra" id="barra" style="display:none">
-  <div class="barra-inner">
-    <button class="btn-fatto" id="btnFatto" onclick="registraSeduta()">Fatto oggi ✓</button>
-    <div class="sotto-barra" id="sottoBarra"></div>
+  <div id="risultato"></div>
+
+  <!-- PAZIENTE -->
+  <div class="card">
+    <label class="etichetta">Paziente</label>
+    <div class="riga2">
+      <select id="selPaziente" onchange="cambiaPaziente()"></select>
+      <input type="tel" id="telefono" placeholder="Telefono (senza +39)">
+    </div>
+    <div id="nomeLibero" style="display:none;margin-top:12px">
+      <input type="text" id="nomeAltro" placeholder="Nome e cognome">
+    </div>
+  </div>
+
+  <!-- FASI -->
+  <div class="card">
+    <label class="etichetta">Fasi del percorso</label>
+    <div class="barra-fasi" id="barraFasi"></div>
+
+    <div class="riga2" style="margin-bottom:16px">
+      <div>
+        <label class="etichetta">Nome di questa fase</label>
+        <input type="text" id="nomeFase" oninput="rinominaFase(this.value)">
+      </div>
+      <div>
+        <label class="etichetta">Sedute per sbloccare la successiva</label>
+        <input type="number" id="sogliaFase" min="0" oninput="cambiaSoglia(this.value)"
+               placeholder="0 = sblocco solo manuale">
+      </div>
+    </div>
+
+    <label class="etichetta">Esercizi di questa fase</label>
+    <div id="eserciziFase"></div>
+  </div>
+
+  <!-- LIBRERIA -->
+  <div class="card">
+    <label class="etichetta">Aggiungi dalla libreria</label>
+    <div class="filtri">
+      <select id="filtroArea" onchange="disegnaLibreria()"></select>
+      <input type="text" id="cerca" placeholder="Cerca per nome…" oninput="disegnaLibreria()">
+    </div>
+    <div class="libreria" id="libreria"></div>
+  </div>
+
+  <!-- INDICAZIONI -->
+  <div class="card">
+    <label class="etichetta">Indicazioni generali (facoltative)</label>
+    <textarea id="indicazioni" placeholder="Es. ghiaccio 15 minuti dopo ogni seduta. Se il dolore supera 6/10, fermati e scrivimi."></textarea>
   </div>
 </div>
 
-<footer>Fisio Expert Roma · +39 328 273 8164<br>Se qualcosa fa male più del solito, scrivimi prima di continuare.</footer>
+<div class="barra">
+  <div class="wrap">
+    <button class="btn btn-secondario" onclick="svuota()">Azzera</button>
+    <button class="btn btn-primario" id="btnSalva" onclick="salva()">Salva e genera link</button>
+  </div>
+</div>
 
+<script src="listapazienti.js"></script>
+<script src="listaesercizi.js"></script>
 <script>
 /* ============================================================
-   CONFIGURAZIONE — incolla qui l'URL della Web App Apps Script
+   CONFIGURAZIONE
    ============================================================ */
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEjX6FDCMghnBoIIxOQG7YsX_vZklK6U_OuwN3ip3G7eq7m255kpn-6dAS4LIls1QyWQ/exec';
+const BASE_SITO = 'https://fisioexpert.it';
 
-const ID = new URLSearchParams(location.search).get('id') || '';
-const K_CACHE = 'fe_scheda_' + ID;
-const K_CODA  = 'fe_coda_' + ID;
-const GIORNI = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-const MESI = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+/* ---------- Stato ---------- */
+let fasi = [ nuovaFase('Fase 1') ];
+let faseCorrente = 0;
+let idScheda = '';   // valorizzato dopo il primo salvataggio
 
-let scheda = null;
-let faseVista = 0;
-let spunte = {};      // indice esercizio → true
-let inviato = false;  // seduta di oggi già registrata
-
-/* ---------- Utilità ---------- */
-function oggiISO() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function leggiLocale(chiave, fallback) {
-  try { const v = localStorage.getItem(chiave); return v ? JSON.parse(v) : fallback; }
-  catch (e) { return fallback; }
-}
-function scriviLocale(chiave, valore) {
-  try { localStorage.setItem(chiave, JSON.stringify(valore)); } catch (e) {}
+function nuovaFase(nome) {
+  return { nome: nome, sbloccata: false, sogliaSessioni: 0, esercizi: [] };
 }
 
-/* ---------- Manifest generato al volo (installazione su Android) ---------- */
-(function () {
-  const manifest = {
-    name: 'I miei esercizi · Fisio Expert',
-    short_name: 'Esercizi',
-    start_url: location.pathname + location.search,
-    display: 'standalone',
-    background_color: '#f8f4ef',
-    theme_color: '#f47920',
-    icons: [{ src: '/icona-esercizi.png', sizes: '180x180', type: 'image/png' }]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-  const link = document.createElement('link');
-  link.rel = 'manifest';
-  link.href = URL.createObjectURL(blob);
-  document.head.appendChild(link);
-})();
-
-/* ---------- Caricamento ---------- */
-async function carica() {
-  if (!ID) { erroreFatale('Manca il codice della scheda nel link. Chiedi a Gianmarco di rimandartelo.'); return; }
-
-  const cache = leggiLocale(K_CACHE, null);
-  if (cache) { scheda = cache; disegna(); }
-
-  try {
-    const r = await fetch(APPS_SCRIPT_URL + '?action=scheda&id=' + encodeURIComponent(ID));
-    const d = await r.json();
-    if (!d.ok) throw new Error(d.errore || 'Scheda non trovata');
-    scheda = d;
-    scriviLocale(K_CACHE, d);
-    disegna();
-  } catch (e) {
-    if (!scheda) erroreFatale('Non riesco a caricare la scheda. Controlla la connessione e riapri il link.');
-  }
-  svuotaCoda();
-}
-
-function erroreFatale(messaggio) {
-  document.getElementById('contenuto').innerHTML = '<div class="avviso" style="margin-top:40px">' + messaggio + '</div>';
-}
-
-/* ---------- Storico: server + code locali non ancora inviate ---------- */
-function storicoCompleto() {
-  const date = (scheda.storico || []).map(function (s) { return s.data; });
-  leggiLocale(K_CODA, []).forEach(function (c) {
-    if (!c.annulla && date.indexOf(c.data) === -1) date.push(c.data);
+/* ---------- Avvio ---------- */
+function avvio() {
+  const sel = document.getElementById('selPaziente');
+  sel.innerHTML = '<option value="">— scegli —</option>';
+  LISTA_PAZIENTI.forEach(function (p, i) {
+    sel.innerHTML += '<option value="' + i + '">' + esc(p.nome) + '</option>';
   });
-  const annullate = leggiLocale(K_CODA, []).filter(function (c) { return c.annulla; }).map(function (c) { return c.data; });
-  return date.filter(function (d) { return annullate.indexOf(d) === -1; }).sort();
-}
+  sel.innerHTML += '<option value="altro">Altro (scrivo il nome)</option>';
 
-function serieAttuale(date) {
-  const set = {};
-  date.forEach(function (d) { set[d] = true; });
-  const d = new Date();
-  if (!set[oggiISO()]) d.setDate(d.getDate() - 1);
-  let n = 0;
-  while (true) {
-    const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    if (!set[iso]) break;
-    n++;
-    d.setDate(d.getDate() - 1);
-  }
-  return n;
-}
-
-/* ---------- Disegno ---------- */
-function disegna() {
-  const fasi = scheda.fasi || [];
-  faseVista = Math.min(scheda.faseAttiva || 0, fasi.length - 1);
-  const date = storicoCompleto();
-  inviato = date.indexOf(oggiISO()) !== -1;
-
-  document.getElementById('chi').textContent = scheda.paziente || '';
-
-  let html = '';
-
-  html += '<div class="testata">';
-  html += '<h1>' + esc(scheda.paziente ? scheda.paziente.split(' ')[0] : 'La tua scheda') + ', ecco i tuoi esercizi</h1>';
-  html += '<p>Segna la seduta quando l\'hai finita. Un tocco e basta.</p>';
-  html += '</div>';
-
-  if (fasi.length > 1) {
-    html += '<div class="fasi" id="fasi"></div>';
-  }
-
-  html += '<div id="listaEsercizi"></div>';
-
-  if (scheda.indicazioni) {
-    html += '<div class="card"><div class="etichetta">Indicazioni generali</div><p style="color:var(--ink-soft);font-size:15px">' + esc(scheda.indicazioni).replace(/\n/g, '<br>') + '</p></div>';
-  }
-
-  html += '<div class="card" id="cardCal"></div>';
-
-  if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone && !leggiLocale('fe_installa_chiuso', false)) {
-    html += '<div class="avviso" id="avvisoInstalla">'
-          + '<button class="chiudi" onclick="chiudiAvviso()">×</button>'
-          + '<strong>Tienila a portata di mano.</strong> Dal menu del browser scegli "Aggiungi a schermata Home": '
-          + 'ti resta un\'icona accanto a WhatsApp e non devi più cercare il link.'
-          + '</div>';
-  }
-
-  document.getElementById('caricamento')?.remove();
-  document.getElementById('contenuto').innerHTML = html;
+  const fa = document.getElementById('filtroArea');
+  fa.innerHTML = '<option value="">Tutte le aree</option>';
+  AREE.forEach(function (a) { fa.innerHTML += '<option>' + esc(a) + '</option>'; });
 
   disegnaFasi();
   disegnaEsercizi();
-  disegnaCalendario(date);
-  aggiornaBarra();
-  document.getElementById('barra').style.display = 'block';
+  disegnaLibreria();
 }
 
+function cambiaPaziente() {
+  const v = document.getElementById('selPaziente').value;
+  const libero = document.getElementById('nomeLibero');
+  if (v === 'altro') {
+    libero.style.display = 'block';
+    document.getElementById('telefono').value = '';
+  } else {
+    libero.style.display = 'none';
+    if (v !== '') document.getElementById('telefono').value = LISTA_PAZIENTI[v].telefono || '';
+  }
+}
+
+function nomePaziente() {
+  const v = document.getElementById('selPaziente').value;
+  if (v === 'altro') return document.getElementById('nomeAltro').value.trim();
+  if (v === '') return '';
+  return LISTA_PAZIENTI[v].nome;
+}
+
+/* ---------- Fasi ---------- */
 function disegnaFasi() {
-  const cont = document.getElementById('fasi');
-  if (!cont) return;
-  cont.innerHTML = '';
-  (scheda.fasi || []).forEach(function (f, i) {
+  const c = document.getElementById('barraFasi');
+  c.innerHTML = '';
+  fasi.forEach(function (f, i) {
     const b = document.createElement('button');
-    b.className = 'fase-pill' + (i === faseVista ? ' attiva' : '') + (f.sbloccata ? '' : ' bloccata');
-    b.textContent = (f.sbloccata ? '' : '🔒 ') + (f.nome || ('Fase ' + (i + 1)));
-    if (f.sbloccata) b.onclick = function () { faseVista = i; spunte = {}; disegnaFasi(); disegnaEsercizi(); aggiornaBarra(); };
-    cont.appendChild(b);
+    b.className = 'pill' + (i === faseCorrente ? ' attiva' : '');
+    b.textContent = f.nome + ' (' + f.esercizi.length + ')';
+    b.onclick = function () { faseCorrente = i; disegnaFasi(); disegnaEsercizi(); };
+    c.appendChild(b);
   });
-}
 
-function disegnaEsercizi() {
-  const fase = (scheda.fasi || [])[faseVista];
-  const cont = document.getElementById('listaEsercizi');
-  if (!fase) { cont.innerHTML = ''; return; }
-
-  let html = '';
-  const superata = faseVista < (scheda.faseAttiva || 0);
-  if (superata) {
-    html += '<div class="avviso" style="background:var(--warm-dark);border-color:var(--border)">Questa fase è già stata completata. La stai solo rivedendo.</div>';
+  if (fasi.length < 6) {
+    const piu = document.createElement('button');
+    piu.className = 'pill aggiungi';
+    piu.textContent = '+ fase';
+    piu.onclick = function () {
+      fasi.push(nuovaFase('Fase ' + (fasi.length + 1)));
+      faseCorrente = fasi.length - 1;
+      disegnaFasi(); disegnaEsercizi();
+    };
+    c.appendChild(piu);
   }
 
-  (fase.esercizi || []).forEach(function (e, i) {
-    html += '<div class="esercizio' + (spunte[i] ? ' fatto' : '') + '" id="es' + i + '" onclick="tocca(' + i + ')">'
-          +   '<div class="es-top">'
-          +     '<div class="es-info">'
-          +       '<div class="es-nome">' + esc(e.nome) + '</div>'
-          +       '<div class="es-dose">' + esc([e.serie ? e.serie + ' serie' : '', e.rip || ''].filter(Boolean).join(' × ')) + '</div>'
-          +       (e.note ? '<div class="es-nota">' + esc(e.note) + '</div>' : '')
-          +     '</div>'
-          +     '<div class="spunta">✓</div>'
-          +   '</div>'
-          +   (e.desc ? '<button class="es-toggle" onclick="event.stopPropagation();apri(' + i + ')">Come si esegue</button>'
-          +             '<div class="es-desc">' + esc(e.desc) + '</div>' : '')
+  if (fasi.length > 1) {
+    const meno = document.createElement('button');
+    meno.className = 'pill';
+    meno.style.color = 'var(--rosso)';
+    meno.textContent = '− elimina questa';
+    meno.onclick = function () {
+      if (!confirm('Elimino ' + fasi[faseCorrente].nome + '?')) return;
+      fasi.splice(faseCorrente, 1);
+      faseCorrente = Math.max(0, faseCorrente - 1);
+      disegnaFasi(); disegnaEsercizi();
+    };
+    c.appendChild(meno);
+  }
+
+  document.getElementById('nomeFase').value = fasi[faseCorrente].nome;
+  document.getElementById('sogliaFase').value = fasi[faseCorrente].sogliaSessioni || '';
+}
+
+function rinominaFase(v) { fasi[faseCorrente].nome = v; disegnaFasi(); }
+function cambiaSoglia(v) { fasi[faseCorrente].sogliaSessioni = Number(v) || 0; }
+
+/* ---------- Esercizi della fase ---------- */
+function disegnaEsercizi() {
+  const lista = fasi[faseCorrente].esercizi;
+  const c = document.getElementById('eserciziFase');
+
+  if (!lista.length) {
+    c.innerHTML = '<div class="vuoto">Nessun esercizio. Scegline dalla libreria qui sotto.</div>';
+    return;
+  }
+
+  let html = '';
+  lista.forEach(function (e, i) {
+    html += '<div class="es-riga">'
+      + '<div class="es-testa">'
+      +   '<span class="es-titolo">' + esc(e.nome) + '</span>'
+      +   '<button class="mini" onclick="muovi(' + i + ',-1)" title="Su">&#8593;</button>'
+      +   '<button class="mini" onclick="muovi(' + i + ',1)" title="Giù">&#8595;</button>'
+      +   '<button class="mini elimina" onclick="togli(' + i + ')" title="Elimina">&times;</button>'
+      + '</div>'
+      + '<div class="campi">'
+      +   campo(i, 'serie', 'Serie', e.serie)
+      +   campo(i, 'rip', 'Ripetizioni', e.rip)
+      +   campo(i, 'riposo', 'Riposo', e.riposo)
+      +   campo(i, 'rpe', 'RPE', e.rpe)
+      + '</div>'
+      + '<div class="campo-nota">'
+      +   '<label class="etichetta" style="margin-bottom:3px">Note</label>'
+      +   '<input type="text" value="' + esc(e.note) + '" placeholder="Es. tenuta 2 secondi"'
+      +     ' oninput="modifica(' + i + ',&quot;note&quot;,this.value)">'
+      + '</div>'
+      + '</div>';
+  });
+  c.innerHTML = html;
+}
+
+function campo(i, chiave, etichetta, valore) {
+  return '<div><label>' + etichetta + '</label>'
+       + '<input type="text" value="' + esc(valore) + '"'
+       + ' oninput="modifica(' + i + ',&quot;' + chiave + '&quot;,this.value)"></div>';
+}
+
+function modifica(i, chiave, valore) { fasi[faseCorrente].esercizi[i][chiave] = valore; }
+
+function togli(i) {
+  fasi[faseCorrente].esercizi.splice(i, 1);
+  disegnaEsercizi(); disegnaFasi();
+}
+
+function muovi(i, delta) {
+  const lista = fasi[faseCorrente].esercizi;
+  const j = i + delta;
+  if (j < 0 || j >= lista.length) return;
+  const tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp;
+  disegnaEsercizi();
+}
+
+/* ---------- Libreria ---------- */
+function disegnaLibreria() {
+  const area = document.getElementById('filtroArea').value;
+  const q = document.getElementById('cerca').value.toLowerCase().trim();
+
+  const c = document.getElementById('libreria');
+  let html = '';
+  let trovati = 0;
+
+  LIBRERIA_ESERCIZI.forEach(function (e, indice) {
+    if (area && e.area !== area) return;
+    if (q && e.nome.toLowerCase().indexOf(q) === -1) return;
+    trovati++;
+    html += '<div class="lib-voce" onclick="aggiungi(' + indice + ')">'
+          + '<span class="lib-nome">' + esc(e.nome) + '</span>'
+          + '<span class="lib-area">' + esc(e.area) + '</span>'
           + '</div>';
   });
 
-  cont.innerHTML = html;
+  c.innerHTML = trovati ? html : '<div class="vuoto" style="border:none">Nessun esercizio trovato.</div>';
 }
 
-function disegnaCalendario(date) {
-  const set = {};
-  date.forEach(function (d) { set[d] = true; });
-  const oggi = new Date();
-  const anno = oggi.getFullYear(), mese = oggi.getMonth();
-  const primo = new Date(anno, mese, 1);
-  const offset = (primo.getDay() + 6) % 7;
-  const giorniMese = new Date(anno, mese + 1, 0).getDate();
-  const serie = serieAttuale(date);
-
-  let html = '<div class="cal-testa"><span class="cal-mese">' + MESI[mese] + ' ' + anno + '</span>';
-  if (serie > 0) html += '<span class="serie-num">' + serie + ' ' + (serie === 1 ? 'giorno' : 'giorni') + ' di fila</span>';
-  html += '</div><div class="cal">';
-
-  GIORNI.forEach(function (g) { html += '<div class="cal-gg">' + g + '</div>'; });
-  for (let i = 0; i < offset; i++) html += '<div class="cal-cella vuota"></div>';
-
-  let nelMese = 0;
-  for (let g = 1; g <= giorniMese; g++) {
-    const iso = anno + '-' + String(mese + 1).padStart(2, '0') + '-' + String(g).padStart(2, '0');
-    const fatto = !!set[iso];
-    if (fatto) nelMese++;
-    html += '<div class="cal-cella' + (fatto ? ' fatto' : '') + (g === oggi.getDate() ? ' oggi' : '') + '">' + g + '</div>';
-  }
-  html += '</div><div class="riepilogo">' + nelMese + ' sedute questo mese · ' + date.length + ' da quando hai iniziato</div>';
-
-  document.getElementById('cardCal').innerHTML = html;
+function aggiungi(indice) {
+  const e = LIBRERIA_ESERCIZI[indice];
+  fasi[faseCorrente].esercizi.push({
+    nome: e.nome, serie: e.serie, rip: e.rip,
+    riposo: e.riposo || '60s', rpe: e.rpe || '',
+    note: e.note || '', desc: e.desc || ''
+  });
+  disegnaEsercizi(); disegnaFasi();
 }
 
-/* ---------- Interazione ---------- */
-function tocca(i) {
-  spunte[i] = !spunte[i];
-  document.getElementById('es' + i).classList.toggle('fatto', !!spunte[i]);
-  aggiornaBarra();
-}
-function apri(i) {
-  document.getElementById('es' + i).classList.toggle('aperto');
-}
-function chiudiAvviso() {
-  scriviLocale('fe_installa_chiuso', true);
-  document.getElementById('avvisoInstalla').remove();
-}
+/* ---------- Salvataggio ---------- */
+async function salva() {
+  const paziente = nomePaziente();
+  if (!paziente) { alert('Scegli o scrivi il nome del paziente.'); return; }
+  if (!fasi[0].esercizi.length) { alert('La prima fase è vuota: aggiungi almeno un esercizio.'); return; }
 
-function aggiornaBarra() {
-  const btn = document.getElementById('btnFatto');
-  const sotto = document.getElementById('sottoBarra');
-  const superata = faseVista < (scheda.faseAttiva || 0);
+  const btn = document.getElementById('btnSalva');
+  btn.disabled = true;
+  btn.textContent = 'Salvo…';
 
-  if (superata) {
-    btn.style.display = 'none';
-    sotto.textContent = 'Fase completata.';
-    return;
-  }
-  btn.style.display = 'block';
+  const daInviare = fasi.map(function (f, i) {
+    return { nome: f.nome, sbloccata: i === 0, sogliaSessioni: f.sogliaSessioni || 0, esercizi: f.esercizi };
+  });
 
-  if (inviato) {
-    btn.textContent = 'Seduta di oggi registrata ✓';
-    btn.classList.add('registrato');
-    btn.disabled = true;
-    sotto.innerHTML = '<button onclick="annullaSeduta()">Non l\'ho fatta, annulla</button>';
-  } else {
-    const n = Object.keys(spunte).filter(function (k) { return spunte[k]; }).length;
-    btn.textContent = n > 0 ? ('Fatto ✓ (' + n + ' esercizi)') : 'Fatto oggi ✓';
-    btn.classList.remove('registrato');
+  try {
+    const r = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'salvaScheda',
+        id: idScheda,
+        paziente: paziente,
+        telefono: document.getElementById('telefono').value.trim(),
+        faseAttiva: 0,
+        indicazioni: document.getElementById('indicazioni').value.trim(),
+        fasi: daInviare
+      })
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.errore || 'Errore sconosciuto');
+
+    idScheda = d.id;
+    mostraLink(d.id, paziente);
+  } catch (e) {
+    alert('Non sono riuscito a salvare: ' + e.message);
+  } finally {
     btn.disabled = false;
-    sotto.textContent = n > 0 ? '' : 'Se non spunti nulla, conto la seduta come completa.';
+    btn.textContent = 'Salva e genera link';
   }
 }
 
-/* ---------- Invio ---------- */
-function registraSeduta() {
-  const fase = (scheda.fasi || [])[faseVista] || { esercizi: [] };
-  const tutti = fase.esercizi || [];
-  const scelti = Object.keys(spunte).filter(function (k) { return spunte[k]; }).map(Number);
-  const nomi = (scelti.length ? scelti.map(function (i) { return tutti[i].nome; }) : tutti.map(function (e) { return e.nome; }));
+function mostraLink(id, paziente) {
+  const link = BASE_SITO + '/paziente.html?id=' + id;
+  const tel = document.getElementById('telefono').value.replace(/\D/g, '');
+  const testo = encodeURIComponent(
+    'Ciao ' + paziente.split(' ')[0] + ', ecco la tua scheda esercizi:\n' + link +
+    '\n\nAprila e aggiungila alla schermata Home del telefono. Segna "Fatto" ogni volta che la completi.'
+  );
+  const wa = tel ? 'https://wa.me/39' + tel + '?text=' + testo : '';
 
-  const messaggio = {
-    action: 'checkin',
-    id: ID,
-    data: oggiISO(),
-    fase: faseVista,
-    eserciziFatti: nomi,
-    eserciziTotali: tutti.length
-  };
-
-  inviato = true;
-  aggiornaBarra();
-  disegnaCalendario(storicoCompleto().concat([oggiISO()]));
-  accodaEInvia(messaggio);
+  document.getElementById('risultato').innerHTML =
+      '<div class="risultato">'
+    + '<label class="etichetta" style="color:var(--green)">Scheda salvata</label>'
+    + '<div class="link-box">' + link + '</div>'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +   '<button class="btn btn-secondario" onclick="copia(&quot;' + link + '&quot;)">Copia link</button>'
+    + (wa ? '<a class="btn btn-primario" style="text-decoration:none;flex:0;display:inline-block" href="' + wa + '" target="_blank">Manda su WhatsApp</a>' : '')
+    +   '<a class="btn btn-secondario" style="text-decoration:none" href="' + link + '" target="_blank">Apri anteprima</a>'
+    + '</div>'
+    + '<p style="font-size:13px;color:var(--ink-muted);margin-top:12px">'
+    +   'Se modifichi e risalvi, il link resta lo stesso: il paziente vedrà la versione aggiornata.'
+    + '</p>'
+    + '</div>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function annullaSeduta() {
-  inviato = false;
-  spunte = {};
-  aggiornaBarra();
-  disegnaEsercizi();
-  accodaEInvia({ action: 'checkin', id: ID, data: oggiISO(), annulla: true });
-  disegnaCalendario(storicoCompleto().filter(function (d) { return d !== oggiISO(); }));
+function copia(testo) {
+  navigator.clipboard.writeText(testo).then(function () { alert('Link copiato.'); });
 }
 
-/* La coda locale garantisce che un check-in fatto senza campo parta alla riapertura. */
-function accodaEInvia(messaggio) {
-  const coda = leggiLocale(K_CODA, []).filter(function (c) { return c.data !== messaggio.data; });
-  coda.push(messaggio);
-  scriviLocale(K_CODA, coda);
-  svuotaCoda();
+function svuota() {
+  if (!confirm('Azzero tutto e ricomincio?')) return;
+  fasi = [ nuovaFase('Fase 1') ];
+  faseCorrente = 0;
+  idScheda = '';
+  document.getElementById('selPaziente').value = '';
+  document.getElementById('telefono').value = '';
+  document.getElementById('nomeAltro').value = '';
+  document.getElementById('nomeLibero').style.display = 'none';
+  document.getElementById('indicazioni').value = '';
+  document.getElementById('risultato').innerHTML = '';
+  disegnaFasi(); disegnaEsercizi();
 }
-
-async function svuotaCoda() {
-  const coda = leggiLocale(K_CODA, []);
-  if (!coda.length || APPS_SCRIPT_URL.indexOf('INSERISCI') === 0) return;
-
-  const rimaste = [];
-  for (const messaggio of coda) {
-    try {
-      const r = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(messaggio)
-      });
-      const d = await r.json();
-      if (!d.ok) throw new Error(d.errore || 'errore');
-    } catch (e) {
-      rimaste.push(messaggio);
-    }
-  }
-  scriviLocale(K_CODA, rimaste);
-}
-
-window.addEventListener('online', svuotaCoda);
-document.addEventListener('visibilitychange', function () { if (!document.hidden) svuotaCoda(); });
 
 function esc(s) {
   return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-carica();
+avvio();
 </script>
 
 </body>

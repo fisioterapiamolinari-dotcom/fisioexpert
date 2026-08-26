@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prenota una chiamata — Fisio Expert Roma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #f47920;
+    --accent-light: rgba(244,121,32,0.10);
+    --bg: #f8f4ef;
+    --ink: #1a1a1a;
+    --white: #ffffff;
+    --border: rgba(26,26,26,0.10);
+    --border-strong: rgba(26,26,26,0.18);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.55;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(26,26,26,0.06);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 20px 32px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header .logo-link { text-decoration: none; display: inline-flex; align-items: center; }
+  .header-logo {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+  .logo-fallback {
+    display: none;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .logo-fallback b { color: #f47920; font-weight: inherit; }
+  .header-meta {
+    font-size: 13px;
+    color: var(--ink);
+    opacity: 0.5;
+    font-weight: 300;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress {
+    display: flex;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .progress-step {
+    flex: 1;
+    height: 3px;
+    background: var(--border-strong);
+    border-radius: 2px;
+    transition: background 0.35s ease;
+  }
+  .progress-step.active { background: var(--accent); }
+  .progress-step.done { background: var(--accent); opacity: 0.4; }
+
+  /* ── STEP LABEL ── */
+  .step-label {
+    display: flex;
+    gap: 6px;
+    padding: 10px 32px 0;
+  }
+  .step-label span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    opacity: 0.35;
+    flex: 1;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .step-label span.active { color: var(--accent); opacity: 1; }
+
+  /* ── STEPS ── */
+  .step {
+    padding: 32px;
+    display: none;
+  }
+  .step.active {
+    display: block;
+    animation: fadeUp 0.22s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .step-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .step-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .step-subtitle {
+    font-size: 14px;
+    color: var(--ink);
+    opacity: 0.6;
+    font-weight: 300;
+    margin-bottom: 28px;
+  }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 7px;
+    letter-spacing: 0.01em;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--sans);
+    font-size: 15px;
+    background: var(--white);
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field textarea { resize: vertical; min-height: 100px; font-weight: 300; line-height: 1.5; }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(244,121,32,0.10);
+  }
+  .field-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+    font-weight: 400;
+  }
+  .field.error input,
+  .field.error textarea { border-color: #c0392b; }
+  .field.error .field-error { display: block; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; gap: 0; } }
+
+  /* ── BUTTONS ── */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 13px 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: var(--white); }
+  .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.32; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border-strong); background: var(--bg); }
+
+  /* ── STUDIO INFO BOX ── */
+  .studio-info {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .studio-info-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .studio-info-name { font-weight: 500; font-size: 15px; margin-bottom: 3px; }
+  .studio-info-detail { font-size: 13px; opacity: 0.6; font-weight: 300; line-height: 1.6; }
+
+  /* ── CALENDAR ── */
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .cal-month {
+    font-family: var(--serif);
+    font-size: 19px;
+    text-transform: capitalize;
+  }
+  .cal-nav { display: flex; gap: 6px; }
+  .cal-nav button {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--ink);
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+  }
+  .cal-nav button:hover:not(:disabled) { border-color: var(--accent); }
+  .cal-nav button:disabled { opacity: 0.28; cursor: not-allowed; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-dow {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 0 6px;
+    color: var(--ink);
+    opacity: 0.45;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    cursor: default;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    border: 1.5px solid transparent;
+    color: var(--ink);
+  }
+  .cal-day.disabled { opacity: 0.18; }
+  .cal-day.available { background: var(--bg); font-weight: 500; cursor: pointer; }
+  .cal-day.available:hover { border-color: var(--accent); }
+  .cal-day.selected { background: var(--accent); color: var(--white); border-color: var(--accent); }
+  .cal-day.esaurito {
+    background: var(--bg);
+    opacity: 0.3;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+  .cal-day.attesa { position: relative; }
+  .cal-day.attesa::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulsa 0.9s ease-in-out infinite alternate;
+  }
+  @keyframes pulsa { from { opacity: 0.55; } to { opacity: 0.1; } }
+  .cal-stato {
+    min-height: 18px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 300;
+    opacity: 0.55;
+  }
+  .cal-stato .retry-btn { margin-top: 6px; padding: 5px 14px; font-size: 13px; }
+
+  /* ── SLOTS ── */
+  .retry-btn {
+    margin-top: 10px; padding: 8px 18px;
+    border: 1px solid var(--accent); background: var(--white); color: var(--accent);
+    border-radius: var(--radius-sm); font-family: var(--sans); font-size: 14px; cursor: pointer;
+  }
+  .retry-btn:hover { background: var(--accent-light); }
+
+  .slots-wrap { margin-top: 22px; }
+  .slots-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+    opacity: 0.65;
+  }
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 7px;
+  }
+  .slot {
+    padding: 10px 6px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: var(--sans);
+    color: var(--ink);
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .slot:hover { border-color: var(--accent); }
+  .slot.selected { background: var(--accent); color: var(--white); border-color: var(--accent); }
+  .loading, .empty {
+    text-align: center;
+    padding: 16px;
+    color: var(--ink);
+    opacity: 0.55;
+    font-size: 14px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── SUMMARY ── */
+  .summary {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { color: var(--ink); opacity: 0.55; font-weight: 300; flex-shrink: 0; }
+  .summary-value { font-weight: 500; text-align: right; word-break: break-word; }
+  .summary-value small { display: block; font-weight: 300; font-size: 12px; opacity: 0.65; }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
+
+  /* ── SUCCESS ── */
+  .success { text-align: center; padding: 8px 0 16px; }
+  .success-icon {
+    width: 60px; height: 60px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 26px;
+  }
+  .success-title { font-family: var(--serif); font-size: 26px; margin-bottom: 10px; line-height: 1.1; }
+  .success-text {
+    color: var(--ink);
+    opacity: 0.70;
+    margin-bottom: 24px;
+    font-weight: 300;
+    font-size: 15px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.65;
+  }
+  .wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #25d366;
+    color: var(--white);
+    padding: 13px 24px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    font-family: var(--sans);
+    transition: opacity 0.2s;
+  }
+  .wa-btn:hover { opacity: 0.88; }
+
+  /* ── BIOMETRIC ── */
+  .bio-banner {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .bio-title { font-weight: 500; font-size: 14px; }
+  .bio-sub { font-size: 12px; opacity: 0.55; font-weight: 300; margin-top: 2px; }
+  .bio-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 9px 16px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .bio-btn:hover { opacity: 0.88; }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 8px 40px; }
+    .header { padding: 16px 20px 14px; }
+    .progress { padding: 12px 20px; }
+    .step-label { padding: 8px 20px 0; }
+    .step { padding: 24px 20px; }
+    .step-title { font-size: 24px; }
+    .summary { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <a href="https://fisioexpert.it" class="logo-link">
+      <img
+        src="/logo.png"
+        width="671" height="135"
+        alt="fisio·expert"
+        class="header-logo"
+        onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';"
+      >
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <div class="header-meta">Chiamata telefonica · 15 minuti</div>
+  </div>
+
+  <!-- ── PROGRESS ── -->
+  <div class="progress">
+    <div class="progress-step active" data-p="1"></div>
+    <div class="progress-step" data-p="2"></div>
+    <div class="progress-step" data-p="3"></div>
+  </div>
+  <div class="step-label">
+    <span data-label="1" class="active">Dati</span>
+    <span data-label="2">Data e ora</span>
+    <span data-label="3">Conferma</span>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 1 — DATI PAZIENTE
+  ════════════════════════════════ -->
+  <div class="step active" data-step="1">
+    <p class="step-eyebrow">Richiedi una chiamata</p>
+    <h1 class="step-title">Lasciaci i tuoi dati</h1>
+    <p class="step-subtitle">Ti chiamiamo noi al numero che indichi</p>
+
+    <!-- Info studio fissa -->
+    <div class="studio-info">
+      <div class="studio-info-dot"></div>
+      <div>
+        <div class="studio-info-name">Chiamata telefonica</div>
+        <div class="studio-info-detail">
+          Ti richiamiamo noi: nessun indirizzo da raggiungere.<br>
+          Quarti d'ora liberi tra una seduta e l'altra in studio EUR.<br>
+          Durata: 15 minuti
+        </div>
+      </div>
+    </div>
+
+    <form id="qualify-form" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" autocomplete="given-name" required placeholder="Mario">
+          <div class="field-error">Inserisci il tuo nome</div>
+        </div>
+        <div class="field">
+          <label for="cognome">Cognome</label>
+          <input type="text" id="cognome" name="cognome" autocomplete="family-name" required placeholder="Rossi">
+          <div class="field-error">Inserisci il tuo cognome</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="telefono">Telefono</label>
+        <input type="tel" id="telefono" name="telefono" autocomplete="tel" placeholder="+39 333 123 4567" required>
+        <div class="field-error">Inserisci un numero di telefono valido</div>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="nome@esempio.it" required>
+        <div class="field-error">Inserisci un indirizzo email valido</div>
+      </div>
+      <div class="actions">
+        <span></span>
+        <button type="submit" class="btn btn-primary">Continua →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 2 — CALENDARIO
+  ════════════════════════════════ -->
+  <div class="step" data-step="2">
+    <p class="step-eyebrow">Chiamata telefonica</p>
+    <h1 class="step-title">Quando ti richiamiamo?</h1>
+    <p class="step-subtitle">Quarti d'ora liberi tra le sedute EUR · chiamata di 15 min</p>
+
+    <div class="cal-header">
+      <div class="cal-month" id="cal-month"></div>
+      <div class="cal-nav">
+        <button type="button" id="cal-prev" aria-label="Mese precedente">←</button>
+        <button type="button" id="cal-next" aria-label="Mese successivo">→</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-stato" id="cal-stato"></div>
+
+    <div class="slots-wrap" id="slots-wrap" style="display:none">
+      <div class="slots-title" id="slots-title"></div>
+      <div id="slots-content"></div>
+    </div>
+
+    <div class="actions" style="margin-top:28px;">
+      <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+      <button type="button" class="btn btn-primary" id="step2-next" disabled>Continua →</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 3 — CONFERMA
+  ════════════════════════════════ -->
+  <div class="step" data-step="3">
+    <div id="confirm-pre">
+      <p class="step-eyebrow">Quasi fatto</p>
+      <h1 class="step-title">Conferma la chiamata</h1>
+      <p class="step-subtitle">Controlla che sia tutto corretto</p>
+      <div class="summary" id="summary"></div>
+      <div class="notice">
+        Riceverai una <strong>email di conferma</strong> e un <strong>messaggio WhatsApp</strong> il giorno prima: ti chiameremo noi al numero +39 351 395 7722.
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-back>← Indietro</button>
+        <button type="button" class="btn btn-primary" id="confirm-btn">Conferma prenotazione</button>
+      </div>
+    </div>
+
+    <div id="confirm-success" style="display:none">
+      <div class="success">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Prenotazione ricevuta!</h1>
+        <p class="success-text">
+          Ti mando una email di conferma a breve. Per modificare o annullare scrivi entro 24 ore dall'appuntamento.
+        </p>
+        <a href="https://wa.me/393282738164" class="wa-btn" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Scrivici su WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ══════════════════════════════
+     WEBAUTHN — Face ID / Touch ID
+══════════════════════════════ -->
+<script>
+const STORAGE_KEY = 'fisioexpert_patient';
+
+const webAuthnAvailable = () =>
+  window.PublicKeyCredential &&
+  typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+
+function savePatientLocally(p) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {}
+}
+function loadPatientLocally() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+}
+function randomChallenge() {
+  const a = new Uint8Array(32); crypto.getRandomValues(a); return a;
+}
+
+async function registerBiometric(patient) {
+  const challenge = randomChallenge();
+  const userId = new TextEncoder().encode(patient.telefono.replace(/\D/g,'').slice(-8) || 'fisiouser');
+  try {
+    await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: 'Fisio Expert Roma', id: location.hostname || 'localhost' },
+        user: { id: userId, name: patient.telefono, displayName: patient.nome + ' ' + patient.cognome },
+        pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+        timeout: 60000,
+      }
+    });
+    savePatientLocally(patient);
+    return true;
+  } catch(e) { console.warn('WebAuthn register:', e.message); return false; }
+}
+
+async function authenticateBiometric() {
+  const challenge = randomChallenge();
+  try {
+    await navigator.credentials.get({ publicKey: { challenge, userVerification: 'required', timeout: 60000 } });
+    return loadPatientLocally();
+  } catch(e) { console.warn('WebAuthn auth:', e.message); return null; }
+}
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function initBiometricUI() {
+  const saved = loadPatientLocally();
+  if (!saved) return;
+  if (!webAuthnAvailable()) return;
+  const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if (!supported) return;
+
+  const form = document.getElementById('qualify-form');
+  const banner = document.createElement('div');
+  banner.className = 'bio-banner';
+  banner.innerHTML = `
+    <div>
+      <div class="bio-title">Bentornato, ${esc(saved.nome)}!</div>
+      <div class="bio-sub">Usa Face ID per compilare automaticamente</div>
+    </div>
+    <button class="bio-btn" id="biometric-btn">🔒 Face ID</button>`;
+  form.parentNode.insertBefore(banner, form);
+
+  document.getElementById('biometric-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('biometric-btn');
+    btn.textContent = '…'; btn.disabled = true;
+    const patient = await authenticateBiometric();
+    if (patient) {
+      ['nome','cognome','telefono','email'].forEach(f => {
+        const el = document.getElementById(f);
+        if (el && patient[f]) { el.value = patient[f]; el.closest('.field').classList.remove('error'); }
+      });
+      banner.innerHTML = `<div style="color:#2e7d32;font-size:13px;padding:4px 0;">✓ Dati compilati — controlla e premi Continua</div>`;
+    } else {
+      btn.textContent = '🔒 Face ID'; btn.disabled = false;
+    }
+  });
+}
+
+async function offerBiometricSave(patient) {
+  if (!webAuthnAvailable()) return;
+  const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if (!supported) return;
+  const already = loadPatientLocally();
+  if (already && already.telefono === patient.telefono) { savePatientLocally(patient); return; }
+
+  const wrap = document.querySelector('#confirm-success .success');
+  const prompt = document.createElement('div');
+  prompt.style.cssText = 'margin-top:22px;padding:16px 18px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;text-align:left;';
+  prompt.innerHTML = `
+    <div style="font-weight:500;font-size:14px;margin-bottom:3px;">Velocizza la prossima prenotazione</div>
+    <div style="font-size:12px;opacity:0.6;font-weight:300;margin-bottom:14px;">Salva i tuoi dati con Face ID: la prossima volta il form si compila da solo.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button id="save-bio-btn" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;">🔒 Salva con Face ID</button>
+      <button id="skip-bio-btn" style="background:transparent;color:var(--ink);border:1.5px solid var(--border);border-radius:8px;padding:9px 16px;font-family:var(--sans);font-size:13px;cursor:pointer;">No grazie</button>
+    </div>`;
+  wrap.appendChild(prompt);
+
+  document.getElementById('save-bio-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('save-bio-btn'); btn.textContent = '…'; btn.disabled = true;
+    const ok = await registerBiometric(patient);
+    prompt.innerHTML = ok
+      ? '<div style="color:#2e7d32;font-size:13px;">✓ Dati salvati. La prossima volta basterà il Face ID.</div>'
+      : '<div style="color:#c0392b;font-size:13px;">Non è stato possibile salvare. Riprova la prossima volta.</div>';
+  });
+  document.getElementById('skip-bio-btn').addEventListener('click', () => prompt.remove());
+}
+</script>
+
+<!-- ══════════════════════════════
+     LOGICA PRINCIPALE
+══════════════════════════════ -->
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiYzlVaxPj7J8yF-_dJrzvV5ETfS0vs-VsNZfog3SrWVXnmGMbUEPfToWKE7VWOH3VSA/exec";
+const N8N_WEBHOOK_URL = "https://gianmarcomolinari.app.n8n.cloud/webhook/fisioexpert-booking";
+
+const MESI_AVANTI = 1;        // finestra di prenotazione
+const GIORNI_FASE1 = 7;       // prima settimana: caricata subito
+const FRESCHEZZA_MS = 180000; // dopo 3 minuti un giorno viene riverificato
+
+const STUDIO = {
+  id: 'chiamata',
+  name: 'Chiamata telefonica',
+  address: '',
+  durationMin: 15,
+  // stessi giorni dell'EUR: servono solo a colorare il calendario,
+  // gli slot veri (sfasati di 45') arrivano dall'Apps Script
+  days: {
+    2: [['09:00', '13:00'], ['15:00', '20:00']],
+    4: [['09:00', '13:00'], ['15:00', '20:00']],
+    6: [['08:00', '14:00']]
+  }
+};
+
+const state = {
+  step: 1,
+  patient: { nome: '', cognome: '', telefono: '', email: '' },
+  date: null, time: null,
+  calMonth: null,
+  slots: {},        // 'YYYY-MM-DD' -> ['13:00', ...]
+  letto: {},        // 'YYYY-MM-DD' -> timestamp dell'ultima lettura
+  errori: {},       // giorni che non e' stato possibile leggere
+  rangeOk: null,    // true se l'Apps Script supporta getSlotsRange
+  fase: 'attesa'    // attesa | settimana | resto | fatto
+};
+
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const pad = n => String(n).padStart(2, '0');
+const fmtDate = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const fmtLong = d => d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+const fmtMonth = d => d.toLocaleDateString('it-IT', { month:'long', year:'numeric' });
+const oggiMezzanotte = () => { const t = new Date(); t.setHours(0,0,0,0); return t; };
+const isPast = d => d < oggiMezzanotte();
+const isWorkDay = d => !!STUDIO.days[d.getDay()];
+const piuGiorni = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+
+function ultimoGiorno() {
+  const l = oggiMezzanotte();
+  l.setMonth(l.getMonth() + MESI_AVANTI);
+  return l;
+}
+const oltreLimite = d => d > ultimoGiorno();
+
+/* ── NAVIGAZIONE ── */
+function goToStep(n) {
+  state.step = n;
+  $$('.step').forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+  $$('[data-p]').forEach(el => {
+    const p = +el.dataset.p;
+    el.classList.toggle('active', p === n);
+    el.classList.toggle('done', p < n);
+  });
+  $$('[data-label]').forEach(el => el.classList.toggle('active', +el.dataset.label === n));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 2) initCalendar();
+}
+
+$$('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(state.step - 1)));
+
+/* ── AVVIO: le disponibilita' partono subito, non allo step 2 ── */
+document.addEventListener('DOMContentLoaded', () => {
+  initBiometricUI();
+  avviaCaricamento();
+});
+
+$('#qualify-form').addEventListener('submit', e => {
+  e.preventDefault();
+  let ok = true;
+  ['nome','cognome','telefono','email'].forEach(f => {
+    const el = $('#'+f), val = el.value.trim();
+    const v = f === 'telefono' ? /^[+0-9 ()\-]{6,}$/.test(val)
+             : f === 'email'   ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+             : val.length >= 2;
+    el.closest('.field').classList.toggle('error', !v);
+    if (!v) ok = false; else state.patient[f] = val;
+  });
+  if (ok) goToStep(2);
+});
+
+/* ══════════════════════════════════════════
+   CARICAMENTO DISPONIBILITA'
+   Fase 1: settimana corrente, una sola chiamata.
+   Fase 2: il resto del mese, subito dopo, in background.
+══════════════════════════════════════════ */
+
+async function avviaCaricamento() {
+  const inizio = oggiMezzanotte();
+  const limite = ultimoGiorno();
+  const settima = piuGiorni(inizio, GIORNI_FASE1);
+  const fineFase1 = settima > limite ? limite : settima;
+
+  state.fase = 'settimana';
+  aggiornaStato();
+  await caricaIntervallo(inizio, fineFase1);
+
+  if (fineFase1 < limite) {
+    state.fase = 'resto';
+    aggiornaStato();
+    await caricaIntervallo(piuGiorni(fineFase1, 1), limite);
+  }
+
+  state.fase = 'fatto';
+  aggiornaStato();
+}
+
+// Elenco dei giorni lavorativi (non passati) dentro un intervallo
+function giorniUtili(da, a) {
+  const out = [];
+  for (let d = new Date(da); d <= a; d = piuGiorni(d, 1)) {
+    if (!isPast(d) && isWorkDay(d) && !oltreLimite(d)) out.push(fmtDate(d));
+  }
+  return out;
+}
+
+async function chiedi(url, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms || 15000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const testo = await r.text();
+    try { return JSON.parse(testo); }
+    catch { throw new Error('Risposta non JSON: ' + testo.slice(0, 120)); }
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Prova la chiamata unica sull'intervallo; se l'Apps Script non la
+// supporta, ripiega automaticamente sulle richieste giorno per giorno.
+async function caricaIntervallo(da, a) {
+  const lista = giorniUtili(da, a);
+  if (!lista.length) return;
+
+  if (state.rangeOk !== false) {
+    try {
+      const url = APPS_SCRIPT_URL
+        + '?action=getSlotsRange&studio=' + encodeURIComponent(STUDIO.id)
+        + '&from=' + fmtDate(da) + '&to=' + fmtDate(a);
+      const d = await chiedi(url, 25000);
+      const giorni = d && !Array.isArray(d) ? (d.giorni || d.days || d.slots) : null;
+      if (!giorni || typeof giorni !== 'object' || Array.isArray(giorni)) {
+        throw new Error('Formato risposta inatteso');
+      }
+      state.rangeOk = true;
+      const ora = Date.now();
+      lista.forEach(ymd => {
+        state.slots[ymd] = Array.isArray(giorni[ymd]) ? giorni[ymd] : [];
+        state.letto[ymd] = ora;
+        delete state.errori[ymd];
+      });
+      aggiornaCalendario();
+      return;
+    } catch (err) {
+      console.warn('getSlotsRange non disponibile:', err.message);
+      state.rangeOk = false;
+    }
+  }
+
+  await caricaUnoAUno(lista);
+}
+
+// Ripiego: massimo 3 richieste in volo, cosi' il browser non si blocca
+async function caricaUnoAUno(lista) {
+  let i = 0;
+  const worker = async () => {
+    while (i < lista.length) {
+      const ymd = lista[i++];
+      await caricaGiorno(ymd);
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+}
+
+async function caricaGiorno(ymd) {
+  try {
+    const url = APPS_SCRIPT_URL
+      + '?action=getSlots&studio=' + encodeURIComponent(STUDIO.id)
+      + '&date=' + encodeURIComponent(ymd);
+    const d = await chiedi(url, 15000);
+    const sl = Array.isArray(d) ? d : (d.slots || d.orari || d.available);
+    if (!Array.isArray(sl)) throw new Error('Formato risposta inatteso');
+    state.slots[ymd] = sl;
+    state.letto[ymd] = Date.now();
+    delete state.errori[ymd];
+  } catch (err) {
+    console.warn('Slot non letti per', ymd, err.message);
+    state.errori[ymd] = true;
+    delete state.slots[ymd];
+  }
+  aggiornaGiorno(ymd);
+}
+
+function aggiornaStato() {
+  const el = $('#cal-stato');
+  if (!el) return;
+  const errori = Object.keys(state.errori).length;
+  if (state.fase === 'fatto' && errori) {
+    el.innerHTML = 'Alcuni giorni non sono stati letti. '
+      + '<button type="button" class="retry-btn" id="ricarica-btn">Riprova</button>';
+    const b = $('#ricarica-btn');
+    if (b) b.addEventListener('click', () => { state.errori = {}; avviaCaricamento(); });
+    return;
+  }
+  const testi = {
+    attesa: '',
+    settimana: 'Carico le disponibilita\u2026',
+    resto: 'Prossimi giorni pronti \u00b7 carico il resto del mese\u2026',
+    fatto: ''
+  };
+  el.textContent = testi[state.fase] || '';
+}
+
+/* ── STEP 2: CALENDARIO ── */
+function initCalendar() {
+  if (!state.calMonth) state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  renderCal();
+  aggiornaStato();
+  if (state.fase === 'attesa') avviaCaricamento();
+}
+
+function classeGiorno(ymd, d) {
+  if (isPast(d) || !isWorkDay(d) || oltreLimite(d)) return 'disabled';
+  if (state.errori[ymd]) return 'available';           // cliccabile: riprova al volo
+  const sl = state.slots[ymd];
+  if (!sl) return 'available attesa';                  // non ancora letto
+  return sl.length ? 'available' : 'esaurito';
+}
+
+function renderCal() {
+  const m = state.calMonth;
+  $('#cal-month').textContent = fmtMonth(m);
+  const primoMese = oggiMezzanotte(); primoMese.setDate(1);
+  $('#cal-prev').disabled = m <= primoMese;
+  const limite = ultimoGiorno();
+  const meseLimite = new Date(limite.getFullYear(), limite.getMonth(), 1);
+  $('#cal-next').disabled = m >= meseLimite;
+
+  const first = new Date(m.getFullYear(), m.getMonth(), 1);
+  const last  = new Date(m.getFullYear(), m.getMonth()+1, 0);
+  const fw = (first.getDay() + 6) % 7;
+  let html = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i = 0; i < fw; i++) html += '<div></div>';
+  for (let day = 1; day <= last.getDate(); day++) {
+    const d = new Date(m.getFullYear(), m.getMonth(), day);
+    const ymd = fmtDate(d);
+    const sel = state.date === ymd ? ' selected' : '';
+    html += `<div class="cal-day ${classeGiorno(ymd, d)}${sel}" data-date="${ymd}">${day}</div>`;
+  }
+  $('#cal-grid').innerHTML = html;
+  $$('.cal-day.available').forEach(el => el.addEventListener('click', () => selectDate(el.dataset.date)));
+}
+
+// Ridisegna solo se il calendario e' gia' a schermo
+function aggiornaCalendario() {
+  if (state.step === 2) renderCal();
+  aggiornaStato();
+}
+
+function aggiornaGiorno(ymd) {
+  if (state.step === 2) {
+    const cella = $('.cal-day[data-date="' + ymd + '"]');
+    if (cella) {
+      const d = new Date(ymd + 'T00:00:00');
+      const sel = state.date === ymd ? ' selected' : '';
+      cella.className = 'cal-day ' + classeGiorno(ymd, d) + sel;
+      if (cella.classList.contains('available')) cella.onclick = () => selectDate(ymd);
+    }
+    if (state.date === ymd) mostraSlot(ymd);
+  }
+  aggiornaStato();
+}
+
+async function selectDate(ymd) {
+  state.date = ymd; state.time = null;
+  $('#step2-next').disabled = true;
+  renderCal();
+  $('#slots-wrap').style.display = 'block';
+  $('#slots-title').textContent = fmtLong(new Date(ymd + 'T00:00:00'));
+
+  const scaduto = !state.letto[ymd] || (Date.now() - state.letto[ymd]) > FRESCHEZZA_MS;
+  if (state.slots[ymd]) {
+    mostraSlot(ymd);                       // istantaneo: gia' in memoria
+    if (scaduto) caricaGiorno(ymd);        // riverifica silenziosa in background
+    return;
+  }
+
+  $('#slots-content').innerHTML = '<div class="loading">Caricamento orari\u2026</div>';
+  await caricaGiorno(ymd);
+  mostraSlot(ymd);
+}
+
+function mostraSlot(ymd) {
+  const c = $('#slots-content');
+  if (state.errori[ymd]) {
+    c.innerHTML = '<div class="empty">Non riesco a leggere gli orari di questo giorno.<br>'
+      + '<button type="button" class="retry-btn" onclick="selectDate(\'' + ymd + '\')">Riprova</button></div>';
+    return;
+  }
+  const slots = state.slots[ymd];
+  if (!slots) { c.innerHTML = '<div class="loading">Caricamento orari\u2026</div>'; return; }
+  if (!slots.length) {
+    c.innerHTML = '<div class="empty">Nessun orario libero in questa giornata.</div>';
+    return;
+  }
+  const attivo = state.time;
+  c.innerHTML = '<div class="slots">' + slots.map(t =>
+    '<div class="slot' + (t === attivo ? ' selected' : '') + '" data-time="' + t + '">' + t + '</div>').join('') + '</div>';
+  $$('.slot', c).forEach(el => el.addEventListener('click', () => {
+    $$('.slot', c).forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    state.time = el.dataset.time;
+    $('#step2-next').disabled = false;
+  }));
+  // se l'orario scelto e' sparito dopo una riverifica, azzera la selezione
+  if (attivo && slots.indexOf(attivo) === -1) {
+    state.time = null;
+    $('#step2-next').disabled = true;
+  }
+}
+
+$('#cal-prev').addEventListener('click', () => {
+  if ($('#cal-prev').disabled) return;
+  state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth()-1, 1);
+  renderCal();
+});
+$('#cal-next').addEventListener('click', () => {
+  if ($('#cal-next').disabled) return;
+  state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth()+1, 1);
+  renderCal();
+});
+
+$('#step2-next').addEventListener('click', () => { renderSummary(); goToStep(3); });
+
+/* ── STEP 3: RIEPILOGO ── */
+function renderSummary() {
+  const d = new Date(state.date + 'T00:00:00');
+  const row = (label, value) =>
+    '<div class="summary-row"><span class="summary-label">' + label +
+    '</span><span class="summary-value">' + value + '</span></div>';
+  $('#summary').innerHTML =
+    row('Paziente', esc(state.patient.nome) + ' ' + esc(state.patient.cognome)) +
+    row('Telefono', esc(state.patient.telefono)) +
+    row('Email', esc(state.patient.email)) +
+    row('Studio', esc(STUDIO.name) + '<small>' + esc(STUDIO.address) + '</small>') +
+    row('Data', fmtLong(d)) +
+    row('Orario', state.time + ' (' + STUDIO.durationMin + ' min)');
+}
+
+/* ── CONFERMA ── */
+$('#confirm-btn').addEventListener('click', async () => {
+  const btn = $('#confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso\u2026';
+
+  /* 1 — Apps Script -> Google Calendar */
+  let esito;
+  try {
+    const r = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'book',
+        studio: STUDIO.id,
+        studioName: STUDIO.name,
+        date: state.date,
+        time: state.time,
+        duration: STUDIO.durationMin,
+        nome: state.patient.nome,
+        cognome: state.patient.cognome,
+        telefono: state.patient.telefono,
+        email: state.patient.email
+      })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const testo = await r.text();
+    try { esito = JSON.parse(testo); } catch (x) { esito = { ok: true }; }
+  } catch (e) {
+    console.error('Prenotazione non registrata:', e);
+    btn.disabled = false;
+    btn.textContent = 'Conferma prenotazione';
+    alert('Non sono riuscito a registrare la prenotazione. Riprova tra qualche istante o scrivici su WhatsApp.');
+    return;
+  }
+
+  // Slot preso da qualcun altro mentre il paziente compilava
+  if (esito && esito.ok === false) {
+    btn.disabled = false;
+    btn.textContent = 'Conferma prenotazione';
+    if (esito.error === 'occupato') {
+      const giorno = state.date;
+      state.time = null;
+      delete state.slots[giorno];
+      delete state.letto[giorno];
+      alert('Quell\'orario e\' appena stato prenotato da qualcun altro. Scegline un altro.');
+      goToStep(2);
+      selectDate(giorno);
+    } else {
+      alert('Non sono riuscito a registrare la prenotazione: ' + (esito.error || 'errore sconosciuto'));
+    }
+    return;
+  }
+
+  /* 2 — n8n Webhook -> CRM + email */
+  try {
+    await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome: state.patient.nome,
+        cognome: state.patient.cognome,
+        nomeCompleto: state.patient.nome + ' ' + state.patient.cognome,
+        telefono: state.patient.telefono,
+        email: state.patient.email,
+        studio: STUDIO.name,
+        studioId: STUDIO.id,
+        studioIndirizzo: STUDIO.address,
+        data: state.date,
+        orario: state.time,
+        durata: STUDIO.durationMin,
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (e) { console.warn('n8n webhook:', e); }
+
+  /* 3 — Successo */
+  $('#confirm-pre').style.display = 'none';
+  $('#confirm-success').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  offerBiometricSave(state.patient);
+});
+</script>
+
+</body>
+</html>

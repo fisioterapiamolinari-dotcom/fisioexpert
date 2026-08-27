@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Gestione libreria esercizi | Fisio Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --green-light:rgba(46,158,91,0.12); --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+}
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.55; padding-bottom:130px; }
+.wrap { max-width:900px; margin:0 auto; padding:0 20px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; }
+header .wrap { display:flex; align-items:center; justify-content:space-between; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.tag { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
+
+h1 { font-family:var(--serif); font-weight:400; font-size:30px; margin:28px 0 4px; }
+.sotto { color:var(--ink-soft); font-size:15px; margin-bottom:20px; }
+
+.card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px;
+             text-transform:uppercase; color:var(--ink-muted); margin-bottom:8px; display:block; }
+
+input, select, textarea {
+  width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+  padding:11px 13px; border:1px solid var(--border); border-radius:10px; background:var(--white); outline:none;
+}
+input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:110px; }
+
+.filtri { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+.filtri input, .filtri select { flex:1; min-width:150px; width:auto; }
+
+/* Elenco */
+.voce { background:var(--white); border:1px solid var(--border); border-radius:12px;
+        padding:13px 16px; margin-bottom:8px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.voce:hover { border-color:var(--accent); }
+.voce.nuovo { border-color:var(--green); background:var(--green-light); }
+.voce.modificato { border-color:var(--accent); background:var(--accent-light); }
+.voce-info { flex:1; min-width:0; }
+.voce-nome { font-weight:500; font-size:15px; }
+.voce-dett { font-size:13px; color:var(--ink-muted); margin-top:1px; }
+.voce-area { font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px;
+             text-transform:uppercase; color:var(--ink-muted); flex-shrink:0; }
+.stato { font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px;
+         text-transform:uppercase; padding:3px 8px; border-radius:100px; flex-shrink:0; }
+.stato.nuovo { background:var(--green); color:var(--white); }
+.stato.modificato { background:var(--accent); color:var(--white); }
+
+/* Editor */
+.editor { background:var(--white); border:2px solid var(--accent); border-radius:16px; padding:20px; margin-bottom:16px; }
+.griglia4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.griglia2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.campo { margin-bottom:14px; }
+
+.btn { font-family:var(--mono); font-weight:800; font-size:13px; letter-spacing:.5px;
+       padding:13px 22px; border-radius:100px; border:none; cursor:pointer; }
+.btn-primario { background:var(--accent); color:var(--white); }
+.btn-primario:active { background:var(--accent-dark); }
+.btn-secondario { background:var(--white); color:var(--ink-soft); border:1.5px solid var(--border); }
+.btn-rosso { background:var(--white); color:var(--rosso); border:1.5px solid var(--rosso); }
+.btn-verde { background:var(--green); color:var(--white); }
+.azioni { display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Barra bassa */
+.barra { position:fixed; left:0; right:0; bottom:0; background:var(--white);
+         border-top:1px solid var(--border); padding:14px 20px; z-index:30; }
+.barra .wrap { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.conteggio { flex:1; font-size:14px; color:var(--ink-soft); min-width:160px; }
+.conteggio b { color:var(--accent); }
+
+.vuoto { color:var(--ink-muted); font-size:14px; padding:30px; text-align:center;
+         border:1px dashed var(--border); border-radius:12px; }
+.avviso { background:var(--accent-light); border:1px solid var(--accent); border-radius:12px;
+          padding:14px 16px; font-size:14px; margin-bottom:16px; color:var(--ink-soft); }
+.avviso b { color:var(--ink); }
+.errore { background:rgba(192,57,43,.1); border:1px solid var(--rosso); border-radius:10px;
+          padding:11px 14px; font-size:14px; color:var(--rosso); margin-bottom:12px; }
+.aree-elenco { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.chip { font-family:var(--mono); font-weight:700; font-size:11px; padding:7px 13px; border-radius:100px;
+        background:var(--warm-dark); color:var(--ink-soft); display:flex; align-items:center; gap:7px; }
+.chip button { background:none; border:none; color:var(--ink-muted); cursor:pointer; font-size:14px; padding:0; }
+.chip button:hover { color:var(--rosso); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="https://fisioexpert.it" style="display:inline-flex;align-items:center;text-decoration:none">
+      <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <span class="tag">Libreria esercizi</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Gestione libreria</h1>
+  <p class="sotto">Aggiungi, modifica ed elimina. Alla fine scarichi il file e lo sostituisci su GitHub.</p>
+
+  <div class="avviso">
+    <b>Come funziona.</b> Le modifiche restano su questo browser finché non scarichi il file.
+    Se chiudi la pagina le ritrovi, ma finché non sostituisci <code>listaesercizi.js</code> su GitHub
+    la pagina di composizione continua a usare la versione vecchia.
+  </div>
+
+  <div id="editorZona"></div>
+
+  <div class="card">
+    <div class="azioni" style="margin-bottom:16px">
+      <button class="btn btn-primario" onclick="nuovo()">+ Nuovo esercizio</button>
+      <button class="btn btn-secondario" onclick="mostraAree()">Gestisci aree</button>
+    </div>
+
+    <div id="zonaAree"></div>
+
+    <div class="filtri">
+      <input type="text" id="cerca" placeholder="Cerca per nome…" oninput="disegna()">
+      <select id="filtroArea" onchange="disegna()"></select>
+    </div>
+
+    <div id="elenco"></div>
+  </div>
+</div>
+
+<div class="barra">
+  <div class="wrap">
+    <span class="conteggio" id="conteggio"></span>
+    <button class="btn btn-secondario" onclick="ripristina()">Annulla tutto</button>
+    <button class="btn btn-secondario" onclick="copiaFile()">Copia</button>
+    <button class="btn btn-verde" onclick="scaricaFile()">Scarica listaesercizi.js</button>
+  </div>
+</div>
+
+<script src="listaesercizi.js"></script>
+<script>
+const CHIAVE = 'fe_libreria_bozza';
+
+let esercizi = [];
+let aree = [];
+let originale = '';      // impronta della libreria di partenza
+let inModifica = null;   // indice in modifica, -1 = nuovo
+
+/* ---------- Avvio ---------- */
+function avvio() {
+  const partenza = {
+    esercizi: JSON.parse(JSON.stringify(LIBRERIA_ESERCIZI)),
+    aree: AREE.slice()
+  };
+  originale = JSON.stringify(partenza);
+
+  const bozza = leggiBozza();
+  if (bozza) {
+    esercizi = bozza.esercizi;
+    aree = bozza.aree;
+  } else {
+    esercizi = partenza.esercizi;
+    aree = partenza.aree;
+  }
+
+  disegnaFiltroAree();
+  disegna();
+}
+
+function leggiBozza() {
+  try {
+    const v = localStorage.getItem(CHIAVE);
+    return v ? JSON.parse(v) : null;
+  } catch (e) { return null; }
+}
+
+function salvaBozza() {
+  try {
+    localStorage.setItem(CHIAVE, JSON.stringify({ esercizi: esercizi, aree: aree }));
+  } catch (e) {}
+  aggiornaConteggio();
+}
+
+function modificato() {
+  return JSON.stringify({ esercizi: esercizi, aree: aree }) !== originale;
+}
+
+function aggiornaConteggio() {
+  const c = document.getElementById('conteggio');
+  const n = esercizi.length;
+  c.innerHTML = modificato()
+    ? '<b>' + n + ' esercizi · modifiche non ancora scaricate</b>'
+    : n + ' esercizi · nessuna modifica';
+}
+
+/* ---------- Elenco ---------- */
+function disegnaFiltroAree() {
+  const f = document.getElementById('filtroArea');
+  const scelta = f.value;
+  f.innerHTML = '<option value="">Tutte le aree</option>';
+  aree.forEach(function (a) { f.innerHTML += '<option>' + esc(a) + '</option>'; });
+  f.value = scelta;
+}
+
+function disegna() {
+  const q = document.getElementById('cerca').value.toLowerCase().trim();
+  const area = document.getElementById('filtroArea').value;
+  const c = document.getElementById('elenco');
+
+  let html = '';
+  let trovati = 0;
+
+  esercizi.forEach(function (e, i) {
+    if (area && e.area !== area) return;
+    if (q && e.nome.toLowerCase().indexOf(q) === -1) return;
+    trovati++;
+
+    const dettagli = [e.serie ? e.serie + ' serie' : '', e.rip, e.riposo ? 'riposo ' + e.riposo : '',
+                      e.rpe ? 'RPE ' + e.rpe : ''].filter(Boolean).join(' · ');
+
+    html += '<div class="voce" onclick="apri(' + i + ')">'
+          + '<div class="voce-info">'
+          +   '<div class="voce-nome">' + esc(e.nome) + '</div>'
+          +   '<div class="voce-dett">' + esc(dettagli) + '</div>'
+          + '</div>'
+          + '<span class="voce-area">' + esc(e.area) + '</span>'
+          + '</div>';
+  });
+
+  c.innerHTML = trovati ? html : '<div class="vuoto">Nessun esercizio trovato.</div>';
+  aggiornaConteggio();
+}
+
+/* ---------- Editor ---------- */
+function nuovo() { apri(-1); }
+
+function apri(i) {
+  inModifica = i;
+  const e = (i === -1)
+    ? { nome:'', area: aree[0] || '', serie:'3', rip:'', riposo:'60s', rpe:'', note:'', desc:'' }
+    : esercizi[i];
+
+  let opzioni = '';
+  aree.forEach(function (a) {
+    opzioni += '<option' + (a === e.area ? ' selected' : '') + '>' + esc(a) + '</option>';
+  });
+
+  document.getElementById('editorZona').innerHTML =
+      '<div class="editor">'
+    + '<label class="etichetta">' + (i === -1 ? 'Nuovo esercizio' : 'Modifica esercizio') + '</label>'
+    + '<div id="erroreEditor"></div>'
+    + '<div class="campo"><label class="etichetta">Nome</label>'
+    +   '<input type="text" id="fNome" value="' + esc(e.nome) + '" placeholder="Es. Copenhagen adduttori"></div>'
+    + '<div class="campo"><label class="etichetta">Area</label>'
+    +   '<select id="fArea">' + opzioni + '</select></div>'
+    + '<div class="campo"><div class="griglia4">'
+    +   campo('fSerie', 'Serie', e.serie)
+    +   campo('fRip', 'Ripetizioni', e.rip)
+    +   campo('fRiposo', 'Riposo', e.riposo)
+    +   campo('fRpe', 'RPE', e.rpe)
+    + '</div></div>'
+    + '<div class="campo"><label class="etichetta">Note brevi</label>'
+    +   '<input type="text" id="fNote" value="' + esc(e.note) + '" placeholder="Es. elastico dietro le ginocchia"></div>'
+    + '<div class="campo"><label class="etichetta">Come si esegue (lo legge il paziente)</label>'
+    +   '<textarea id="fDesc" placeholder="Descrizione con le tue parole, quelle che usi in studio.">' + esc(e.desc) + '</textarea></div>'
+    + '<div class="azioni">'
+    +   '<button class="btn btn-primario" onclick="conferma()">' + (i === -1 ? 'Aggiungi' : 'Salva') + '</button>'
+    +   '<button class="btn btn-secondario" onclick="chiudi()">Annulla</button>'
+    + (i === -1 ? '' : '<button class="btn btn-rosso" onclick="elimina()">Elimina</button>')
+    + '</div>'
+    + '</div>';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function campo(id, etichetta, valore) {
+  return '<div><label class="etichetta" style="font-size:9px">' + etichetta + '</label>'
+       + '<input type="text" id="' + id + '" value="' + esc(valore) + '"></div>';
+}
+
+function conferma() {
+  const nome = document.getElementById('fNome').value.trim();
+  if (!nome) {
+    document.getElementById('erroreEditor').innerHTML = '<div class="errore">Il nome non può restare vuoto.</div>';
+    return;
+  }
+
+  const doppio = esercizi.findIndex(function (e, i) {
+    return i !== inModifica && e.nome.toLowerCase() === nome.toLowerCase();
+  });
+  if (doppio !== -1) {
+    document.getElementById('erroreEditor').innerHTML =
+      '<div class="errore">Esiste già un esercizio con questo nome.</div>';
+    return;
+  }
+
+  const dati = {
+    nome: nome,
+    area: document.getElementById('fArea').value,
+    serie: document.getElementById('fSerie').value.trim(),
+    rip: document.getElementById('fRip').value.trim(),
+    riposo: document.getElementById('fRiposo').value.trim(),
+    rpe: document.getElementById('fRpe').value.trim(),
+    note: document.getElementById('fNote').value.trim(),
+    desc: document.getElementById('fDesc').value.trim()
+  };
+
+  if (inModifica === -1) esercizi.push(dati);
+  else esercizi[inModifica] = dati;
+
+  esercizi.sort(function (a, b) {
+    if (a.area !== b.area) return aree.indexOf(a.area) - aree.indexOf(b.area);
+    return a.nome.localeCompare(b.nome, 'it');
+  });
+
+  salvaBozza();
+  chiudi();
+  disegna();
+}
+
+function elimina() {
+  if (!confirm('Elimino "' + esercizi[inModifica].nome + '" dalla libreria?')) return;
+  esercizi.splice(inModifica, 1);
+  salvaBozza();
+  chiudi();
+  disegna();
+}
+
+function chiudi() {
+  inModifica = null;
+  document.getElementById('editorZona').innerHTML = '';
+}
+
+/* ---------- Aree ---------- */
+function mostraAree() {
+  const z = document.getElementById('zonaAree');
+  if (z.innerHTML) { z.innerHTML = ''; return; }
+
+  let chips = '';
+  aree.forEach(function (a, i) {
+    const usata = esercizi.some(function (e) { return e.area === a; });
+    chips += '<span class="chip">' + esc(a)
+           + (usata ? '' : '<button onclick="togliArea(' + i + ')" title="Elimina">&times;</button>')
+           + '</span>';
+  });
+
+  z.innerHTML = '<div class="card" style="background:var(--warm);margin-bottom:16px">'
+    + '<label class="etichetta">Aree</label>'
+    + '<div class="griglia2">'
+    +   '<input type="text" id="nuovaArea" placeholder="Nome della nuova area">'
+    +   '<button class="btn btn-secondario" onclick="aggiungiArea()">Aggiungi area</button>'
+    + '</div>'
+    + '<div class="aree-elenco">' + chips + '</div>'
+    + '<p style="font-size:13px;color:var(--ink-muted);margin-top:10px">'
+    +   'Le aree già usate da almeno un esercizio non si possono eliminare.</p>'
+    + '</div>';
+}
+
+function aggiungiArea() {
+  const v = document.getElementById('nuovaArea').value.trim();
+  if (!v) return;
+  if (aree.indexOf(v) !== -1) { alert('Questa area esiste già.'); return; }
+  aree.push(v);
+  salvaBozza();
+  disegnaFiltroAree();
+  document.getElementById('zonaAree').innerHTML = '';
+  mostraAree();
+}
+
+function togliArea(i) {
+  aree.splice(i, 1);
+  salvaBozza();
+  disegnaFiltroAree();
+  document.getElementById('zonaAree').innerHTML = '';
+  mostraAree();
+}
+
+/* ---------- Generazione del file ---------- */
+function generaFile() {
+  const righe = esercizi.map(function (e) {
+    return '  { nome: ' + JSON.stringify(e.nome)
+         + ', area: ' + JSON.stringify(e.area)
+         + ', serie: ' + JSON.stringify(e.serie)
+         + ', rip: ' + JSON.stringify(e.rip)
+         + ', riposo: ' + JSON.stringify(e.riposo)
+         + ', rpe: ' + JSON.stringify(e.rpe)
+         + ', note: ' + JSON.stringify(e.note)
+         + ', desc: ' + JSON.stringify(e.desc)
+         + ' }';
+  });
+
+  const righeAree = aree.map(function (a) { return JSON.stringify(a); }).join(', ');
+
+  return '/* ============================================================\n'
+       + '   FISIO EXPERT - Libreria esercizi\n'
+       + '   ------------------------------------------------------------\n'
+       + '   Generato da gestione-esercizi.html il '
+       + new Date().toLocaleDateString('it-IT') + '.\n'
+       + '   Meglio modificarlo da quella pagina che a mano.\n'
+       + '   ============================================================ */\n\n'
+       + 'const AREE = [' + righeAree + '];\n\n'
+       + 'const LIBRERIA_ESERCIZI = [\n'
+       + righe.join(',\n') + '\n];\n';
+}
+
+function scaricaFile() {
+  const blob = new Blob([generaFile()], { type: 'text/javascript;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'listaesercizi.js';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function copiaFile() {
+  navigator.clipboard.writeText(generaFile()).then(function () {
+    alert('File copiato. Incollalo su GitHub sostituendo tutto listaesercizi.js.');
+  }, function () {
+    alert('Non sono riuscito a copiare. Usa il pulsante Scarica.');
+  });
+}
+
+function ripristina() {
+  if (!confirm('Annullo tutte le modifiche e torno alla libreria attualmente online?')) return;
+  try { localStorage.removeItem(CHIAVE); } catch (e) {}
+  const partenza = JSON.parse(originale);
+  esercizi = partenza.esercizi;
+  aree = partenza.aree;
+  chiudi();
+  disegnaFiltroAree();
+  disegna();
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.addEventListener('beforeunload', function (e) {
+  if (modificato()) { e.preventDefault(); e.returnValue = ''; }
+});
+
+avvio();
+</script>
+
+</body>
+</html>

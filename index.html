@@ -311,6 +311,7 @@ nav.hide{transform:translateY(-100%)}
 
 /* ---------- BLOG ---------- */
 .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.8rem}
+.blog-viewall{display:flex;justify-content:center;margin-top:2.6rem}
 .blog-card{text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;display:block;transition:border-color .2s,transform .2s,box-shadow .25s}
 .blog-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow)}
 .blog-card-tag{font-size:.7rem;font-weight:600;letter-spacing:.1em;color:var(--accent-2);text-transform:uppercase;margin-bottom:.7rem}
@@ -679,6 +680,9 @@ footer a:hover{color:var(--accent)}
         <span class="blog-card-cta">Leggi l'articolo &rarr;</span>
       </a>
 <!-- ARTICOLI:END -->
+    </div>
+    <div class="blog-viewall reveal">
+      <a href="/blog/" class="btn-fill">Vedi tutti gli articoli &rarr;</a>
     </div>
   </div>
 </section>

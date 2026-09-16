@@ -3,6 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
+     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+
+  window.fxCookie = (function () {
+    var ID_ADS = 'AW-18400590631';
+    var CHIAVE = 'fx_consenso_cookie';
+    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
+        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
+      } catch (e) {}
+      return null;
+    }
+
+    function salva(scelta) {
+      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
+    }
+
+    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
+    function caricaGoogle() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      // send_page_view:false — non ci serve il page_view automatico di Google Ads
+      // (misuriamo solo l'evento di conversione a mano); così l'URL della pagina,
+      // query string comprese, non viene mai inviato di default.
+      gtag('config', ID_ADS, { send_page_view: false });
+    }
+
+    function cancellaCookieGoogle() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
+          });
+        }
+      });
+    }
+
+    if (leggi() === 'si') caricaGoogle();
+
+    return {
+      scelta: leggi,
+      accetta: function () { salva('si'); caricaGoogle(); },
+      rifiuta: function () {
+        salva('no');
+        if (caricato) {
+          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+        }
+        cancellaCookieGoogle();
+      },
+      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
+      conversione: function (etichetta) {
+        if (!caricato || !etichetta) return;
+        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
+      }
+    };
+  })();
+</script>
 <title>Pannello · Fisio Expert Roma</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -170,7 +253,73 @@ footer a:hover { color: var(--accent); }
   </div>
 </main>
 
-<footer><div class="wrap"><p>© 2026 Fisio Expert Roma · Pannello a uso interno</p></div></footer>
+<footer><div class="wrap"><p>© 2026 Fisio Expert Roma · Pannello a uso interno · <a href="#" data-preferenze-cookie>Preferenze cookie</a></p></div></footer>
+
+<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
+<style>
+  .cc-banner {
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: calc(100% - 40px); max-width: 380px;
+    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
+    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
+  }
+  .cc-banner[hidden] { display: none; }
+  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
+  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
+  .cc-testo a { color: #d4660e; text-decoration: underline; }
+  .cc-chiudi {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
+    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
+  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .cc-btn {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
+    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
+  }
+  .cc-rifiuta { background: #1a1a1a; }
+  .cc-rifiuta:hover { background: #3a3a3a; }
+  .cc-accetta { background: #f47920; }
+  .cc-accetta:hover { background: #d4660e; }
+  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .cc-banner {
+      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
+      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
+      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .cc-titolo { font-size: 19px; }
+    .cc-testo { font-size: 13.5px; }
+  }
+</style>
+<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
+  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
+  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
+  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
+  <div class="cc-pulsanti">
+    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
+    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var banner = document.getElementById('ccBanner');
+    if (!banner || !window.fxCookie) return;
+    function mostra() { banner.hidden = false; }
+    function nascondi() { banner.hidden = true; }
+    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
+    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
+      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
+    });
+    if (fxCookie.scelta() === null) mostra();
+  })();
+</script>
 
 </body>
 </html>

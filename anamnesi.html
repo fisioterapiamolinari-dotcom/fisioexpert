@@ -3,7 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Anamnesi e diagnosi · Fisio Expert Roma</title>
+<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
+     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+
+  window.fxCookie = (function () {
+    var ID_ADS = 'AW-18400590631';
+    var CHIAVE = 'fx_consenso_cookie';
+    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
+        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
+      } catch (e) {}
+      return null;
+    }
+
+    function salva(scelta) {
+      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
+    }
+
+    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
+    function caricaGoogle() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      // send_page_view:false — non ci serve il page_view automatico di Google Ads
+      // (misuriamo solo l'evento di conversione a mano); così l'URL della pagina,
+      // query string comprese, non viene mai inviato di default.
+      gtag('config', ID_ADS, { send_page_view: false });
+    }
+
+    function cancellaCookieGoogle() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
+          });
+        }
+      });
+    }
+
+    if (leggi() === 'si') caricaGoogle();
+
+    return {
+      scelta: leggi,
+      accetta: function () { salva('si'); caricaGoogle(); },
+      rifiuta: function () {
+        salva('no');
+        if (caricato) {
+          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+        }
+        cancellaCookieGoogle();
+      },
+      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
+      conversione: function (etichetta) {
+        if (!caricato || !etichetta) return;
+        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
+      }
+    };
+  })();
+</script>
+<title>Questionario · Fisio Expert Roma</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -32,7 +115,7 @@
   header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
   .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.5px; color: var(--ink); display: inline-flex; align-items: center; }
   .logo b { color: var(--accent); font-weight: inherit; }
-  .header-logo { height: 56px; width: auto; display: block; }
+  .header-logo { height: 36px; width: auto; display: block; }
   .logo-fallback { display: none; font-family: var(--serif); font-size: 22px; }
   .logo-fallback b { color: var(--accent); }
   .step-count { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1px; color: var(--ink-muted); text-transform: uppercase; }
@@ -213,91 +296,6 @@
   input[type=range] { width: 100%; accent-color: var(--accent); margin: 10px 0; }
   .goal-tag { display:inline-block; font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .5px; color: var(--accent); background: var(--accent-light); padding: 5px 12px; border-radius: 100px; margin-bottom: 8px; }
 
-
-  /* ===== SELROW a lato singolo (sigla fino a 6 caratteri) ===== */
-  .selrow { grid-template-columns: 1fr 88px 88px auto; }
-  .seg-head { grid-template-columns: 1fr 88px 88px auto; }
-  .selrow input[type=text] { letter-spacing: .5px; }
-
-  /* ===== DISTRETTI ===== */
-  .mod-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .mod-card { border: 1.5px solid var(--border); border-radius: 14px; padding: 16px; cursor: pointer; background: var(--white); transition: all .15s; }
-  .mod-card.on { border-color: var(--accent); background: var(--accent-light); }
-  .mod-card h4 { font-family: var(--serif); font-weight: 400; font-size: 19px; margin-bottom: 3px; line-height: 1.15; }
-  .mod-card .cnt { font-family: var(--mono); font-weight: 700; font-size: 11px; color: var(--ink-muted); }
-  .mod-card.on .cnt { color: var(--accent); }
-  @media (min-width: 640px) { .mod-grid { grid-template-columns: 1fr 1fr 1fr; } }
-
-  /* ===== PANNELLO IPOTESI ===== */
-  .panel { position: sticky; top: 96px; z-index: 15; background: var(--white); border: 1.5px solid var(--accent); border-radius: 16px; padding: 14px 16px; margin-bottom: 18px; box-shadow: 0 6px 20px rgba(26,26,26,.06); }
-  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .panel-head .lb { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-muted); }
-  .hyp { margin-top: 11px; }
-  .hyp .row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 14px; }
-  .hyp .nm { line-height: 1.25; }
-  .hyp .pc { font-family: var(--mono); font-weight: 700; font-size: 12.5px; color: var(--accent); flex-shrink: 0; }
-  .bar { height: 6px; background: var(--warm-dark); border-radius: 99px; margin-top: 5px; overflow: hidden; }
-  .bar span { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
-  .hyp.dim .pc { color: var(--ink-muted); }
-  .hyp.dim .bar span { background: var(--ink-muted); opacity: .45; }
-  .nextq { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; font-size: 13px; color: var(--ink-soft); cursor: pointer; }
-  .nextq b { color: var(--accent); }
-
-  /* ===== DOMANDE ===== */
-  .qsec { font-family: var(--mono); font-weight: 700; font-size: 11.5px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--accent); margin: 24px 0 10px; }
-  .q { border: 1.5px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 13px; background: var(--white); }
-  .q.answered { border-color: rgba(46,125,82,.35); }
-  .q.suggerita { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-  .q .badge { display: inline-block; font-family: var(--mono); font-weight: 700; font-size: 9.5px; letter-spacing: .9px; text-transform: uppercase; color: var(--accent); background: var(--accent-light); border-radius: 7px; padding: 3px 8px; margin-bottom: 9px; }
-  .q .qt { font-family: var(--serif); font-size: 20px; line-height: 1.2; margin-bottom: 4px; }
-  .q .why { font-size: 12.5px; color: var(--ink-muted); margin-bottom: 12px; font-style: italic; }
-  .q .multi-note { font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
-  .opts { display: flex; flex-direction: column; gap: 9px; }
-  .opt { display: flex; align-items: flex-start; gap: 11px; border: 1.5px solid var(--border); border-radius: 13px; padding: 13px 14px; background: var(--white); cursor: pointer; transition: all .13s; }
-  .opt:active { background: var(--warm); }
-  .opt.on { border-color: var(--accent); background: var(--accent-light); }
-  .opt .box { width: 23px; height: 23px; border-radius: 7px; }
-  .opt.on .box { background: var(--accent); border-color: var(--accent); }
-  .opt .box svg { width: 13px; height: 13px; opacity: 0; }
-  .opt.on .box svg { opacity: 1; }
-  .opt .tx { font-size: 15px; line-height: 1.4; }
-  .opt .fl { display: inline-block; font-family: var(--mono); font-weight: 700; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; color: var(--bad, #b3261e); background: rgba(179,38,30,.09); border-radius: 6px; padding: 2px 7px; margin-top: 5px; }
-
-  /* ===== TEST ===== */
-  .test { border: 1.5px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 13px; background: var(--white); }
-  .test.cons { border-color: var(--accent); }
-  .test .nm { font-family: var(--serif); font-size: 20px; line-height: 1.2; }
-  .test .mt { font-family: var(--mono); font-weight: 700; font-size: 10.5px; letter-spacing: .6px; color: var(--accent); margin-top: 3px; }
-  .test .ds { font-size: 13.5px; color: var(--ink-soft); margin-top: 7px; }
-  .test .tgt { font-size: 12.5px; color: var(--ink-muted); margin-top: 4px; }
-  .testlinks { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-  .testlinks a { font-family: var(--mono); font-weight: 700; font-size: 10.5px; letter-spacing: .6px; text-transform: uppercase; color: var(--accent); text-decoration: none; border: 1.5px solid var(--border); border-radius: 100px; padding: 7px 13px; }
-  .esiti { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-top: 13px; }
-  .esito { text-align: center; border: 1.5px solid var(--border); border-radius: 11px; padding: 10px 4px; font-family: var(--mono); font-weight: 700; font-size: 11.5px; letter-spacing: .6px; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; background: var(--white); }
-  .esito.on[data-e="pos"] { border-color: #b3261e; background: rgba(179,38,30,.09); color: #b3261e; }
-  .esito.on[data-e="neg"] { border-color: var(--ok); background: var(--ok-light); color: var(--ok); }
-  .esito.on[data-e="na"] { border-color: var(--ink-muted); background: var(--warm-dark); color: var(--ink-soft); }
-
-  /* ===== BANDIERE E RISULTATI ===== */
-  .flags { border: 1.5px solid #b3261e; background: rgba(179,38,30,.09); border-radius: 16px; padding: 18px; margin-bottom: 16px; }
-  .flags h2 { color: #b3261e; font-family: var(--serif); font-size: 21px; margin-bottom: 8px; }
-  .flags ul { margin: 0; padding-left: 20px; }
-  .flags li { font-size: 14.5px; color: var(--ink); margin-bottom: 5px; }
-  .res { border: 1.5px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 13px; background: var(--white); }
-  .res.top { border-color: var(--accent); }
-  .res .rk { font-family: var(--mono); font-weight: 800; font-size: 11px; letter-spacing: 1px; color: var(--ink-muted); }
-  .res .nm { font-family: var(--serif); font-size: 22px; line-height: 1.15; margin: 2px 0 4px; }
-  .res .sn { font-size: 13.5px; color: var(--ink-soft); }
-  .ev { margin-top: 12px; }
-  .ev .t { font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin: 10px 0 5px; }
-  .ev .t.pro { color: var(--ok); }
-  .ev .t.con { color: #b3261e; }
-  .ev ul { margin: 0; padding: 0; }
-  .ev li { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 3px; list-style: none; padding-left: 14px; position: relative; }
-  .ev li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 99px; background: var(--ink-muted); }
-  .ev .pro li::before { background: var(--ok); }
-  .ev .con li::before { background: #b3261e; }
-  .disclaimer { font-size: 12.5px; color: var(--ink-muted); border-left: 3px solid var(--accent); padding-left: 12px; }
 </style>
 </head>
 <body>
@@ -305,8 +303,8 @@
 <header>
   <div class="wrap">
     <div class="logo">
-      <img src="data:image/png;base64,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" alt="fisio·expert" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-      <span class="logo-fallback">fisio<b>·</b>expert</span>
+      <img src="data:image/png;base64,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" width="716" height="144" alt="fisio·expert" class="header-logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
     </div>
     <div class="step-count" id="stepCount">Passo 1 / 7</div>
   </div>
@@ -458,7 +456,6 @@
       </div>
     </section>
 
-    
     <!-- STEP 1: DATI -->
     <section class="step" data-step="1">
       <div class="eyebrow">Anagrafica</div>
@@ -468,26 +465,14 @@
         <div class="grid">
           <div class="field full"><label>Nome e cognome <span class="req">*</span></label><input type="text" id="nome"><div class="err" id="errNome">Inserisci il nome</div></div>
           <div class="field"><label>Data di nascita</label><input type="date" id="nascita"></div>
-          <div class="field"><label>Data della visita</label><input type="date" id="dataval"></div>
-          <div class="field"><label>Telefono / WhatsApp</label><input type="tel" id="tel" placeholder="+39 ..."></div>
-          <div class="field"><label>Email</label><input type="email" id="email"></div>
+          <div class="field"><label>Telefono / WhatsApp</label><input type="tel" id="tel"></div>
+          <div class="field full"><label>Email</label><input type="email" id="email"></div>
           <div class="field full"><label>Lavoro</label><input type="text" id="lavoro" placeholder="es. impiegato, muratore, insegnante..."><div class="hint">Che tipo di attività svolgi durante la giornata</div></div>
         </div>
-        <h3 style="margin-top:20px;">Com'è arrivato allo studio?</h3>
-        <div class="pills" data-pill="fonte">
-          <button type="button" class="pill" data-val="Passaparola">Passaparola</button>
-          <button type="button" class="pill" data-val="Google">Google</button>
-          <button type="button" class="pill" data-val="Instagram / YouTube">Instagram / YouTube</button>
-          <button type="button" class="pill" data-val="Medico o specialista">Medico / specialista</button>
-          <button type="button" class="pill" data-val="Gi&agrave; paziente">Già paziente</button>
-          <button type="button" class="pill" data-val="Altro">Altro</button>
-        </div>
-        <div class="field full" style="margin-top:12px;"><label>Dettaglio (chi lo ha mandato, quale contenuto)</label><input type="text" id="fonte_note" placeholder="es. inviato dal dott. Rossi"></div>
         <h3 style="margin-top:20px;">Sport praticato</h3>
         <div class="field full"><input type="text" id="sport" placeholder="es. corsa, nuoto, calcio, palestra..."></div>
-        <h3>Con che frequenza si allena?</h3>
+        <h3>Con che frequenza?</h3>
         <div class="pills" data-pill="frequenza">
-          <button type="button" class="pill" data-val="Non si allena">Non si allena</button>
           <button type="button" class="pill" data-val="1-2 volte/sett">1-2 vlt/sett</button>
           <button type="button" class="pill" data-val="3-4 volte/sett">3-4 vlt/sett</button>
           <button type="button" class="pill" data-val="5+ volte/sett">5+ vlt/sett</button>
@@ -499,27 +484,43 @@
     <section class="step" data-step="2">
       <div class="eyebrow">Il motivo della visita</div>
       <h1 class="title">Qual è il disturbo</h1>
-      <p class="lead">Racconta il problema e indica dove fa male.</p>
+      <p class="lead">Raccontaci il problema e indica dove fa male.</p>
       <div class="card">
         <div class="field full"><label>Descrivi il problema</label><textarea id="motivo" placeholder="Cosa senti, da dove parte, cosa ti limita"></textarea></div>
-        <div class="field full" style="margin-top:16px;"><label>Da quanto tempo è presente</label><input type="text" id="durata" placeholder="es. 3 settimane, 2 mesi..."></div>
         <h3 style="margin-top:20px;">Segmento doloroso</h3>
-        <p class="hint" style="margin-bottom:10px;">Tocca la zona dolorosa: ogni lato si seleziona da solo. Se il disturbo è bilaterale, tocca entrambi i lati. Per ognuna puoi aggiungere una sigla (fino a 6 caratteri, es. Re-La) e la localizzazione.</p>
+        <p class="hint" style="margin-bottom:10px;">Tocca sulla figura le zone dolorose: si illumineranno. Per ognuna aggiungi una sigla, la localizzazione e il lato (Dx, Sx o entrambi).</p>
         <div class="bodywrap">
           <div class="bodyfig"><svg id="svgFront" viewBox="0 0 200 440" xmlns="http://www.w3.org/2000/svg"></svg><div class="cap">Anteriore</div></div>
           <div class="bodyfig"><svg id="svgBack" viewBox="0 0 200 440" xmlns="http://www.w3.org/2000/svg"></svg><div class="cap">Posteriore</div></div>
         </div>
         <h3>Zone selezionate</h3>
-        <div class="seg-head"><span>Segmento</span><span style="text-align:center">Sigla</span><span style="text-align:center">Loc.</span><span></span></div>
+        <div class="seg-head"><span>Segmento</span><span style="text-align:center">Sigla</span><span style="text-align:center">Loc.</span><span>Lato</span><span></span></div>
         <div id="sellist"><p class="hint" style="padding:6px 10px">Nessuna zona selezionata.</p></div>
       </div>
     </section>
 
-    <!-- STEP 3: DOLORE -->
+    <!-- STEP 3: ANAMNESI (tempi + esordio) -->
     <section class="step" data-step="3">
+      <div class="eyebrow">Anamnesi</div>
+      <h1 class="title">Da quando e come</h1>
+      <p class="lead">La storia del disturbo nel tempo.</p>
+      <div class="card">
+        <div class="field full"><label>Da quanto tempo è presente?</label><input type="text" id="durata" placeholder="es. 3 settimane, 2 mesi..."></div>
+        <div class="field full" style="margin-top:16px;"><label>Quando è stato il primo evento doloroso?</label><input type="text" id="primo_evento" placeholder="es. dopo una partita il mese scorso"></div>
+        <h3 style="margin-top:20px;">Com'è iniziato?</h3>
+        <div class="pills" data-pill="esordio">
+          <button type="button" class="pill" data-val="Trauma diretto">Trauma diretto</button>
+          <button type="button" class="pill" data-val="Graduale">Graduale</button>
+          <button type="button" class="pill" data-val="Ignota">Ignota</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: DOLORE -->
+    <section class="step" data-step="4">
       <div class="eyebrow">Caratteristiche</div>
       <h1 class="title">Il dolore</h1>
-      <p class="lead">Intensità e comportamento del sintomo.</p>
+      <p class="lead">Aiutaci a capire intensità e comportamento.</p>
       <div class="card">
         <label>Quanto è intenso ORA? <span class="hint" style="text-transform:none;letter-spacing:0;font-weight:400;">(0 nessuno · 10 massimo)</span></label>
         <input type="range" min="0" max="10" value="0" id="vas" oninput="document.getElementById('vasval').textContent=this.value">
@@ -534,8 +535,8 @@
       </div>
     </section>
 
-    <!-- STEP 4: STORIA -->
-    <section class="step" data-step="4">
+    <!-- STEP 5: STORIA -->
+    <section class="step" data-step="5">
       <div class="eyebrow">Storia clinica</div>
       <h1 class="title">Il tuo passato</h1>
       <p class="lead">Informazioni utili a inquadrare il quadro.</p>
@@ -546,8 +547,8 @@
       </div>
     </section>
 
-    <!-- STEP 5: OBIETTIVI -->
-    <section class="step" data-step="5">
+    <!-- STEP 6: OBIETTIVI -->
+    <section class="step" data-step="6">
       <div class="eyebrow">Dove vuoi arrivare</div>
       <h1 class="title">I tuoi obiettivi</h1>
       <p class="lead">Fissiamo insieme i traguardi su tre orizzonti.</p>
@@ -561,62 +562,16 @@
       </div>
     </section>
 
-    <!-- STEP 6: DISTRETTO -->
-    <section class="step" data-step="6">
-      <div class="eyebrow">Ragionamento clinico</div>
-      <h1 class="title">Scegli il distretto</h1>
-      <p class="lead">Da qui in avanti compili tu. Puoi scegliere più di un distretto: le ipotesi vengono messe in competizione tra loro.</p>
-      <div class="card">
-        <div class="mod-grid" id="modGrid"></div>
-      </div>
-      <div class="card">
-        <p class="hint">Le domande generali su esordio e comportamento del sintomo vengono aggiunte a qualunque distretto. La fascia d'età viene compilata da sola se hai inserito la data di nascita.</p>
-      </div>
-    </section>
-
-    <!-- STEP 7: DOMANDE -->
+    <!-- STEP 7: FINE -->
     <section class="step" data-step="7">
-      <div class="eyebrow">Ragionamento clinico</div>
-      <h1 class="title">Le domande</h1>
-      <p class="lead">Rispondi in ordine libero. Il pannello in alto si riordina a ogni risposta e ti indica la domanda che al momento separa meglio le prime due ipotesi.</p>
-      <div class="panel" id="panelQ"></div>
-      <div id="flagsQ"></div>
-      <div id="qList"></div>
-    </section>
-
-    <!-- STEP 8: TEST -->
-    <section class="step" data-step="8">
-      <div class="eyebrow">Esame fisico</div>
-      <h1 class="title">I test</h1>
-      <p class="lead">In evidenza i test che discriminano le ipotesi in testa. Un test negativo pesa quanto uno positivo: registralo sempre.</p>
-      <div class="panel" id="panelT"></div>
-      <div id="tList"></div>
-    </section>
-
-    <!-- STEP 9: SINTESI -->
-    <section class="step" data-step="9">
-      <div class="eyebrow">Sintesi</div>
-      <h1 class="title">Il quadro</h1>
-      <p class="lead">Questo è quello che dicono i dati raccolti. La diagnosi la scrivi tu.</p>
-      <div id="flagsR"></div>
-      <div id="resList"></div>
-      <div class="card">
-        <h2>Conclusione clinica</h2>
-        <p class="hint" style="margin-bottom:14px;">Quello che finisce in cartella e nel referto del paziente è questo, non il punteggio.</p>
-        <div class="field full"><label>Diagnosi / ipotesi di lavoro</label><textarea id="dxFinale" placeholder="es. Tendinopatia rotulea in fase reattiva, arto dx"></textarea></div>
-        <div class="field full" style="margin-top:14px;"><label>Spiegazione per il paziente</label><textarea id="spiegaPz" placeholder="Si compila da sola con l'ipotesi in testa: correggila come vuoi"></textarea><div class="hint" style="margin-top:6px;">Va nel PDF del paziente, in parole semplici. <span id="rigenera" style="color:var(--accent);cursor:pointer;font-weight:600;">Riprendi dall'ipotesi in testa</span></div></div>
-        <div class="field full" style="margin-top:14px;"><label>Ragionamento e diagnosi differenziale</label><textarea id="ragionamento" placeholder="Cosa ti ha convinto, cosa hai escluso e perché"></textarea></div>
-        <div class="field full" style="margin-top:14px;"><label>Piano: trattamento, accertamenti, invii</label><textarea id="piano" placeholder="Cosa si fa da oggi, cosa si rivaluta e quando"></textarea></div>
-      </div>
       <div class="card center">
         <div class="done-icon"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
-        <h2>Scheda completata</h2>
+        <h1 class="title">Questionario completato</h1>
+        <p class="lead" style="margin:0 auto 8px;">Il riepilogo è pronto. Scaricalo in PDF per la cartella del paziente o invialo su WhatsApp.</p>
         <div class="summary" id="summary"></div>
-        <button class="btn btn-primary" id="btnPdf" style="margin-top:18px;width:100%;">PDF clinico completo</button>
-        <button class="btn btn-ghost" id="btnPdfPaz" style="margin-top:12px;width:100%;">PDF per il paziente (sola diagnosi)</button>
-        <a class="btn btn-ghost" id="btnWa" style="margin-top:12px;width:100%;" target="_blank" rel="noopener">Invia riepilogo su WhatsApp</a>
-        <button class="btn btn-ghost" id="btnRestart" style="margin-top:12px;width:100%;">Nuova scheda</button>
-        <p class="disclaimer" style="margin-top:18px;text-align:left;">Strumento di supporto al ragionamento clinico. I punteggi derivano da pesi assegnati a priori, non da una probabilità reale: non sostituiscono l'esame obiettivo né l'imaging quando indicato.</p>
+        <button class="btn btn-primary" id="btnDownload" style="margin-top:18px; width:100%;">Scarica PDF</button>
+        <a class="btn btn-ghost" id="btnWa" style="margin-top:12px; width:100%;" target="_blank">Invia su WhatsApp</a>
+        <button class="btn btn-ghost" id="btnRestart" style="margin-top:12px; width:100%;">Nuovo questionario</button>
       </div>
     </section>
 
@@ -631,1300 +586,371 @@
 </div>
 
 <script>
-/* ==========================================================================
-   DATABASE CLINICO — si estende da qui, senza toccare il motore sotto.
-   Ogni opzione di risposta e ogni esito di test assegna punti alle ipotesi:
-   +3 molto suggestivo · +2 suggestivo · +1 compatibile
-   -1 poco compatibile · -2 improbabile · -3 praticamente escluso
-   Aggiungere una nuova ipotesi = una riga in IPOTESI + i pesi nelle opzioni.
-   ========================================================================== */
-
-const DISTRETTI = [
-  { k: 'anca',      n: 'Anca e bacino',    d: 'Inguine, trocantere, gluteo, ischio, pube' },
-  { k: 'ginocchio', n: 'Ginocchio',        d: 'Anteriore, interlinee, legamenti, rotula' },
-  { k: 'caviglia',  n: 'Caviglia e piede', d: 'Legamenti, achilleo, tallone, avampiede' }
-];
-
-const IPOTESI = {
-  anca: [
-    { id:'a_fai',    n:'Conflitto femoro-acetabolare / lesione del labbro', s:'Dolore inguinale profondo nel giovane sportivo, peggiora in flessione e rotazione interna.',
-      pz:'La testa del femore e il bordo della cavit\u00e0 dell\u2019anca si toccano prima del dovuto quando la gamba va in flessione profonda. L\u2019anello di fibrocartilagine che fa da guarnizione si irrita e d\u00e0 dolore all\u2019inguine. Si lavora su mobilit\u00e0, forza e sul modo in cui carichi l\u2019anca nei gesti che provocano il conflitto.' },
-    { id:'a_gtps',   n:'Dolore laterale d\u2019anca (tendinopatia glutea)',   s:'Dolore sul gran trocantere, tipico dormendo sul fianco e in appoggio monopodalico.',
-      pz:'I tendini dei glutei si inseriscono sulla sporgenza ossea che senti sul lato dell\u2019anca. Quando vengono compressi \u2014 dormendo su quel fianco, incrociando le gambe, stando in piedi su una gamba sola \u2014 si irritano e fanno male. Si guarisce togliendo la compressione e rinforzando i glutei in modo progressivo.' },
-    { id:'a_coxa',   n:'Coxartrosi',                                          s:'Dolore inguinale con perdita di rotazione interna, rigidit\u00e0 mattutina breve, over 50.',
-      pz:'La cartilagine che riveste l\u2019anca si \u00e8 assottigliata e l\u2019articolazione lavora con pi\u00f9 attrito: dolore all\u2019inguine e rigidit\u00e0, soprattutto dopo il riposo. Non \u00e8 una condanna al dolore: l\u2019esercizio mirato \u00e8 il trattamento con le prove pi\u00f9 solide e riduce sintomi e disabilit\u00e0 nella maggior parte dei casi.' },
-    { id:'a_ham',    n:'Tendinopatia prossimale degli ischiocrurali',         s:'Dolore all\u2019ischio, peggiora da seduti a lungo e in allungo durante la corsa veloce.',
-      pz:'Il tendine dei muscoli posteriori della coscia si attacca all\u2019osso su cui ci si siede. Sotto carichi ripetuti in allungamento \u2014 corsa veloce, affondi profondi \u2014 la sua struttura si altera e diventa dolente, e la seduta prolungata lo comprime. Il recupero \u00e8 graduale e si basa sul carico progressivo del tendine.' },
-    { id:'a_add',    n:'Dolore inguinale legato all\u2019adduttore (pubalgia)', s:'Dolore su pube e adduttori nello sport di cambio direzione e calcio.',
-      pz:'I muscoli che chiudono le gambe si inseriscono sul pube e lavorano tantissimo nei calci e nei cambi di direzione. Quando il carico supera la capacit\u00e0 di recupero, quella zona si infiamma e fa male allo scatto e al tiro. Si recupera rinforzando adduttori e core e rivedendo i carichi di allenamento.' },
-    { id:'a_dgs',    n:'Sindrome glutea profonda / piriforme',                s:'Dolore gluteo profondo con irradiazione posteriore, peggiora da seduti.',
-      pz:'Il nervo sciatico passa in profondit\u00e0 sotto i muscoli del gluteo. Se in quel punto viene compresso o irritato, compare un dolore profondo che pu\u00f2 scendere dietro la coscia e peggiora stando seduti. Il trattamento punta a liberare lo scorrimento del nervo e a rinforzare l\u2019anca.' },
-    { id:'a_rad',    n:'Dolore riferito lombare / radicolopatia',             s:'Origine rachidea: il dolore d\u2019anca \u00e8 un sintomo, non la sede del problema.',
-      pz:'Il dolore che senti all\u2019anca o alla gamba non nasce l\u00ec: arriva da una radice nervosa irritata nella parte bassa della schiena. \u00c8 il motivo per cui trattare solo il punto dolente non funziona. Si lavora sulla schiena, sulla sensibilit\u00e0 del nervo e sul recupero graduale del movimento.' },
-    { id:'a_stress', n:'Frattura da stress del collo del femore',             s:'Dolore inguinale in carico dopo aumento rapido del volume di corsa. Richiede imaging urgente.',
-      pz:'L\u2019osso si rimodella di continuo: se il carico cresce pi\u00f9 in fretta di quanto riesca a ripararsi, si formano microlesioni. Nel collo del femore vanno prese sul serio, perch\u00e9 continuare a correre pu\u00f2 farle progredire. Servono accertamenti e un periodo di scarico prima di ricostruire il carico.' }
-  ],
-  ginocchio: [
-    { id:'g_lca',     n:'Lesione del legamento crociato anteriore',  s:'Trauma torsionale con pop, versamento rapido e senso di cedimento.',
-      pz:'Il crociato anteriore \u00e8 il legamento che impedisce alla tibia di scivolare in avanti e controlla le rotazioni. Quando si lesiona, il ginocchio perde stabilit\u00e0 nei cambi di direzione e spesso si gonfia subito. Il percorso prevede il recupero di movimento, forza e controllo, con o senza intervento a seconda del caso.' },
-    { id:'g_menisco', n:'Lesione meniscale',                         s:'Dolore d\u2019interlinea, gonfiore lento, blocco o scatto in accovacciamento.',
-      pz:'Il menisco \u00e8 un cuscinetto di fibrocartilagine che distribuisce il carico tra femore e tibia. Una lesione d\u00e0 dolore sul lato dell\u2019articolazione, gonfiore lento e a volte scatti o blocchi. Molte lesioni rispondono bene alla riabilitazione senza bisogno di intervento.' },
-    { id:'g_pfps',    n:'Dolore femoro-rotuleo',                     s:'Dolore anteriore diffuso, scale in discesa e seduta prolungata.',
-      pz:'La rotula scorre dentro una gola del femore. Quando il carico su quella superficie diventa eccessivo per come si muove il ginocchio, compare dolore davanti, tipico in discesa dalle scale e dopo essere stati seduti a lungo. \u00c8 una condizione che risponde bene al rinforzo e alla gestione dei carichi.' },
-    { id:'g_rotulea', n:'Tendinopatia rotulea',                      s:'Dolore puntiforme all\u2019apice della rotula legato al carico di salto.',
-      pz:'Il tendine che collega la rotula alla tibia assorbe le forze del salto e dell\u2019atterraggio. Se il carico cresce troppo in fretta, la sua struttura si altera e compare un dolore preciso sotto la rotula, che scalda all\u2019inizio dell\u2019attivit\u00e0 e torna dopo. Guarisce con un carico progressivo, non con il riposo assoluto.' },
-    { id:'g_lcm',     n:'Lesione del collaterale mediale',           s:'Trauma in valgo, dolore mediale sopra l\u2019interlinea, lassit\u00e0 a 30\u00b0.',
-      pz:'Il collaterale mediale \u00e8 il legamento sul lato interno del ginocchio e resiste alle spinte che lo fanno cedere verso l\u2019interno. Si lesiona in un trauma diretto o in torsione. \u00c8 uno dei legamenti che guarisce meglio da solo: servono protezione iniziale e poi recupero progressivo di forza e stabilit\u00e0.' },
-    { id:'g_itbs',    n:'Sindrome della bandelletta ileotibiale',    s:'Dolore laterale che compare a una distanza prevedibile di corsa, peggio in discesa.',
-      pz:'La bandelletta \u00e8 una fascia robusta che corre lungo il lato esterno della coscia fino al ginocchio. Con la corsa ripetuta i tessuti sotto di essa si irritano e compare dolore laterale, sempre dopo la stessa distanza e peggio in discesa. Si risolve rinforzando l\u2019anca e correggendo il carico di corsa.' },
-    { id:'g_artrosi', n:'Gonartrosi',                                s:'Over 50, rigidit\u00e0 mattutina breve, crepitio, dolore meccanico progressivo.',
-      pz:'La cartilagine del ginocchio si \u00e8 assottigliata e l\u2019articolazione lavora con pi\u00f9 attrito: dolore che compare camminando, rigidit\u00e0 breve dopo il riposo, a volte scrosci. Il movimento non consuma il ginocchio, lo nutre: il rinforzo e l\u2019attivit\u00e0 regolare sono la parte pi\u00f9 efficace del trattamento.' },
-    { id:'g_lcp',     n:'Lesione del crociato posteriore',           s:'Trauma da cruscotto o caduta sul ginocchio flesso, dolore posteriore, sag tibiale.',
-      pz:'Il crociato posteriore impedisce alla tibia di scivolare indietro e si lesiona tipicamente con un colpo sul ginocchio piegato. D\u00e0 dolore dietro e una sensazione di instabilit\u00e0 nelle discese. Nella maggior parte dei casi si tratta senza intervento, con un lavoro mirato sul quadricipite.' }
-  ],
-  caviglia: [
-    { id:'c_lat',     n:'Distorsione laterale (peroneo-astragalico anteriore)', s:'Trauma in inversione, gonfiore e dolore anteriormente al malleolo laterale.',
-      pz:'I legamenti sul lato esterno della caviglia si sono stirati o lesionati quando il piede \u00e8 andato in dentro. Oltre al legamento si perde per qualche settimana il senso di posizione della caviglia: \u00e8 la ragione principale delle ricadute. Il lavoro di equilibrio e forza serve esattamente a questo.' },
-    { id:'c_sind',    n:'Lesione della sindesmosi (high ankle sprain)',         s:'Trauma in rotazione esterna e dorsiflessione, dolore sopra la caviglia, carico doloroso a lungo.',
-      pz:'Tibia e perone sono tenuti insieme sopra la caviglia da legamenti robusti. Quando il piede ruota all\u2019esterno, quella connessione si lesiona: il dolore \u00e8 sopra la caviglia, non sotto il malleolo. Guarisce pi\u00f9 lentamente di una distorsione comune e i tempi vanno rispettati.' },
-    { id:'c_ach',     n:'Tendinopatia achillea',                               s:'Dolore e rigidit\u00e0 sul tendine, peggio ai primi passi, migliora scaldandosi.',
-      pz:'Il tendine d\u2019Achille trasmette la spinta del polpaccio al tallone e regge carichi molto elevati. Quando il lavoro supera la capacit\u00e0 di recupero, la struttura del tendine si altera: rigidit\u00e0 al mattino, dolore che scalda e torna dopo. Il tendine risponde al carico graduale, non al riposo.' },
-    { id:'c_rott',    n:'Rottura del tendine d\u2019Achille',                    s:'Schiocco improvviso, perdita della spinta, Thompson positivo. Va inviato subito.',
-      pz:'Il tendine d\u2019Achille si \u00e8 interrotto: tipicamente si avverte uno schiocco secco e non si riesce pi\u00f9 a spingere sulla punta. Va vista subito da uno specialista per decidere tra trattamento chirurgico e conservativo. In entrambi i casi il recupero \u00e8 lungo ma ben codificato.' },
-    { id:'c_plant',   n:'Fasciopatia plantare',                                s:'Dolore al tallone plantare ai primi passi del mattino, punto elettivo mediale.',
-      pz:'La fascia plantare \u00e8 la struttura che sostiene l\u2019arco del piede. Sotto carico eccessivo si irrita nel punto in cui si attacca al tallone: il segno tipico sono i primi passi del mattino, dolorosissimi e poi in miglioramento. Rinforzo, carico graduale e gestione delle calzature sono la base del trattamento.' },
-    { id:'c_post',    n:'Conflitto posteriore di caviglia',                    s:'Dolore posteriore profondo in flessione plantare massima, tipico di danza e calcio.',
-      pz:'Portando il piede in punta massima, le strutture dietro la caviglia vengono schiacciate tra tibia e calcagno. Nei gesti che ripetono quella posizione \u2014 danza, calcio \u2014 compare dolore profondo posteriore. Si lavora su carico, controllo e talvolta sulla riduzione dei gesti in punta estrema.' },
-    { id:'c_mt',      n:'Frattura da stress metatarsale',                      s:'Dolore puntiforme sull\u2019osso dopo aumento di carico, gonfiore dorsale, peggiora in carico.',
-      pz:'L\u2019osso del piede ha accumulato pi\u00f9 carico di quanto riuscisse a riparare e si sono formate microlesioni. Il dolore \u00e8 preciso su un punto osseo e peggiora camminando o correndo. Serve un periodo di scarico e poi una ricostruzione graduale del carico, altrimenti ricompare.' },
-    { id:'c_tp',      n:'Disfunzione del tibiale posteriore',                  s:'Dolore mediale, arco che cede, difficolt\u00e0 a sollevarsi sulla punta da un piede solo.',
-      pz:'Il tibiale posteriore \u00e8 il muscolo che sostiene l\u2019arco del piede da dentro. Quando il suo tendine si sfianca, l\u2019arco tende a cedere e compaiono dolore mediale e fatica a sollevarsi sulla punta da un piede solo. Il rinforzo mirato e il supporto del piede ne rallentano l\u2019evoluzione.' },
-    { id:'c_mor',     n:'Neuroma di Morton',                                   s:'Bruciore e formicolio tra terzo e quarto dito, peggio con scarpe strette.',
-      pz:'Un nervo che passa tra le ossa dell\u2019avampiede si ispessisce e viene compresso, in genere tra terzo e quarto dito. D\u00e0 bruciore, formicolio e la sensazione di avere un sassolino nella scarpa, peggio con calzature strette. Spesso si gestisce cambiando calzatura e scaricando la zona.' }
-  ]
-};
-
-/* ------------------------------- DOMANDE ------------------------------- */
-/* tipo: 'single' una risposta · 'multi' più risposte
-   fl: testo della bandiera da mostrare se l'opzione è selezionata          */
-
-const DOMANDE = [
-
-  /* ====================== COMUNI A TUTTI I DISTRETTI ==================== */
-  { id:'q_eta', d:'comune', sez:'Inquadramento', tipo:'single',
-    q:'Fascia d\u2019età', why:'Sposta le probabilità di base prima ancora di sapere dove fa male.',
-    op:[
-      { t:'Meno di 18 anni',  p:{ g_pfps:1, g_rotulea:1, c_post:1, g_artrosi:-3, a_coxa:-3, c_tp:-2 } },
-      { t:'18-35 anni',       p:{ g_lca:1, a_fai:2, a_add:1, c_sind:1, c_post:1, g_artrosi:-3, a_coxa:-3, c_tp:-2 } },
-      { t:'36-50 anni',       p:{ g_menisco:1, a_ham:1, c_ach:1, a_gtps:1, c_plant:1, a_fai:-1 } },
-      { t:'Oltre 50 anni',    p:{ g_artrosi:3, a_coxa:3, g_menisco:1, a_gtps:2, c_tp:2, c_mor:1, g_lca:-1, a_fai:-2, c_post:-1 } }
-    ]},
-
-  { id:'q_esordio', d:'comune', sez:'Inquadramento', tipo:'single',
-    q:'Com\u2019è iniziato il disturbo?', why:'Il meccanismo separa il trauma acuto dal sovraccarico: è il dato singolo più discriminante.',
-    op:[
-      { t:'Trauma acuto identificabile, ricorda il gesto esatto', p:{ g_lca:3, g_menisco:2, g_lcm:3, g_lcp:3, c_lat:3, c_sind:3, c_rott:3, a_add:1, g_rotulea:-2, g_itbs:-2, c_plant:-2, a_gtps:-2, c_ach:-2, g_artrosi:-2, a_coxa:-2, c_mor:-2 } },
-      { t:'Aumento recente di volume o intensità dell\u2019allenamento', p:{ g_rotulea:2, g_itbs:3, c_ach:2, c_plant:2, c_mt:3, a_stress:3, a_ham:2, g_pfps:1, g_lca:-2, g_lcm:-2, c_lat:-2, g_lcp:-2 } },
-      { t:'Graduale, senza causa riconoscibile', p:{ g_artrosi:2, a_coxa:2, a_fai:2, a_gtps:2, g_pfps:2, c_tp:2, c_mor:2, c_ach:1, a_rad:1, g_lca:-3, g_lcm:-3, c_lat:-3, c_rott:-3, g_lcp:-3 } },
-      { t:'Dopo un periodo di inattività o cambio di scarpe/superficie', p:{ c_plant:2, c_ach:2, g_rotulea:1, g_itbs:1, g_pfps:1 } }
-    ]},
-
-  { id:'q_gonfiore', d:'comune', sez:'Inquadramento', tipo:'single',
-    q:'Comportamento del gonfiore', why:'Il gonfiore entro due ore orienta verso sangue in articolazione; quello lento verso una reazione sinoviale.',
-    op:[
-      { t:'Comparso entro 1-2 ore dal trauma (emartro)', p:{ g_lca:3, g_lcp:1, g_menisco:1, c_lat:2, g_rotulea:-2, g_pfps:-2 }, fl:'Versamento entro 2 ore dal trauma: valutare emartro e indicazione a imaging.' },
-      { t:'Comparso dopo 12-24 ore', p:{ g_menisco:2, g_lcm:1, c_lat:1, c_sind:1, g_lca:-1 } },
-      { t:'Compare solo dopo l\u2019attività e regredisce', p:{ g_menisco:1, g_artrosi:1, a_coxa:1, c_mt:1, g_rotulea:1 } },
-      { t:'Nessun gonfiore evidente', p:{ g_pfps:1, a_gtps:1, a_rad:1, c_mor:1, a_dgs:1, g_lca:-2, c_lat:-2, c_rott:-1 } }
-    ]},
-
-  { id:'q_carico', d:'comune', sez:'Inquadramento', tipo:'single',
-    q:'Riesce a caricare e a fare quattro passi?', why:'Criterio d\u2019ingresso alle regole di Ottawa e primo filtro sulla frattura.',
-    op:[
-      { t:'Sì, cammina senza grosse limitazioni', p:{ c_mt:-1, a_stress:-2 } },
-      { t:'Cammina zoppicando ma ci riesce', p:{ c_mt:1, c_sind:1, a_stress:1 } },
-      { t:'No, non riesce a caricare', p:{ c_mt:2, a_stress:3, c_rott:2, g_lca:1 }, fl:'Impossibilità a caricare: applicare le regole di Ottawa ed escludere frattura prima di procedere.' }
-    ]},
-
-  { id:'q_notturno', d:'comune', sez:'Comportamento del sintomo', tipo:'single',
-    q:'Dolore notturno', why:'Il dolore che sveglia a prescindere dalla posizione non è meccanico e va rivalutato.',
-    op:[
-      { t:'Assente o solo cercando la posizione', p:{} },
-      { t:'Presente dormendo sul fianco dolente', p:{ a_gtps:3, a_coxa:1 } },
-      { t:'Si sveglia per il dolore, non trova posizione', p:{ a_stress:2, a_coxa:1, g_artrosi:1 }, fl:'Dolore notturno non posizionale: rivalutare le bandiere rosse sistemiche prima di trattare.' }
-    ]},
-
-  { id:'q_rigidita', d:'comune', sez:'Comportamento del sintomo', tipo:'single',
-    q:'Rigidità dopo il riposo', why:'Sotto i 30 minuti è meccanica, oltre i 45 apre il capitolo infiammatorio.',
-    op:[
-      { t:'Assente', p:{ g_artrosi:-1, a_coxa:-1 } },
-      { t:'Pochi minuti, poi si scioglie', p:{ g_artrosi:2, a_coxa:2, c_ach:1, c_plant:1 } },
-      { t:'Oltre 45 minuti, tutte le mattine', p:{ g_artrosi:-1, a_coxa:-1 }, fl:'Rigidità mattutina prolungata: considerare una forma infiammatoria e un parere reumatologico.' }
-    ]},
-
-  { id:'q_riscaldamento', d:'comune', sez:'Comportamento del sintomo', tipo:'single',
-    q:'Come si comporta durante l\u2019attività?', why:'Il pattern "scalda, migliora, poi torna a freddo" è la firma delle tendinopatie.',
-    op:[
-      { t:'Fa male all\u2019inizio, migliora scaldandosi, torna dopo', p:{ c_ach:3, g_rotulea:3, a_ham:2, c_plant:2, a_gtps:1 } },
-      { t:'Peggiora progressivamente con il proseguire dell\u2019attività', p:{ g_itbs:3, c_mt:2, a_stress:2, g_artrosi:1, a_coxa:1 } },
-      { t:'Compare solo oltre una certa soglia, sempre la stessa', p:{ g_itbs:3, c_mt:2, a_stress:2 } },
-      { t:'Costante, indipendente dall\u2019attività', p:{ a_rad:2, a_stress:1, g_rotulea:-2, c_ach:-2, g_itbs:-2 } }
-    ]},
-
-  { id:'q_irradiazione', d:'comune', sez:'Comportamento del sintomo', tipo:'single',
-    q:'Il dolore si irradia o si accompagna a sintomi nervosi?', why:'Formicolii e irradiazione a calza spostano il sospetto sul sistema nervoso.',
-    op:[
-      { t:'No, resta localizzato', p:{ a_rad:-2, a_dgs:-2, c_mor:-1 } },
-      { t:'Si irradia lungo la coscia posteriore fino sotto il ginocchio', p:{ a_rad:3, a_dgs:2, a_ham:-1 } },
-      { t:'Formicolio o intorpidimento nel piede o nelle dita', p:{ a_rad:2, c_mor:2 } },
-      { t:'Scarica elettrica con colpo di tosse o starnuto', p:{ a_rad:3 } }
-    ]},
-
-  /* ============================ ANCA / BACINO ========================== */
-  { id:'a_sede', d:'anca', sez:'Sede', tipo:'single',
-    q:'Dove indica il dolore con la mano?', why:'Nel bacino la sede indicata dal paziente vale più di qualunque descrizione verbale.',
-    op:[
-      { t:'Inguine, a pinza sopra il gran trocantere (segno a C)', p:{ a_fai:3, a_coxa:3, a_stress:2, a_gtps:-2 } },
-      { t:'Direttamente sul gran trocantere, lato esterno', p:{ a_gtps:3, a_fai:-2, a_coxa:-1 } },
-      { t:'Gluteo profondo', p:{ a_dgs:3, a_rad:2, a_gtps:-1 } },
-      { t:'Sull\u2019ischio, dove ci si siede', p:{ a_ham:3, a_dgs:1 } },
-      { t:'Pube e radice degli adduttori', p:{ a_add:3, a_fai:1 } }
-    ]},
-
-  { id:'a_seduta', d:'anca', sez:'Attività', tipo:'single',
-    q:'Effetto della seduta prolungata', why:'Separa la tendinopatia ischiocrurale dal conflitto e dal dolore gluteo profondo.',
-    op:[
-      { t:'Dolore stando seduto su superfici dure, meglio in piedi', p:{ a_ham:3, a_dgs:2 } },
-      { t:'Rigidità e dolore inguinale quando si alza dopo essere stato seduto', p:{ a_fai:2, a_coxa:2 } },
-      { t:'Indifferente', p:{ a_ham:-2, a_dgs:-1 } }
-    ]},
-
-  { id:'a_rom', d:'anca', sez:'Movimento', tipo:'single',
-    q:'Riesce a mettersi calze e scarpe dal lato dolente?', why:'Domanda funzionale semplice che smaschera una restrizione articolare vera.',
-    op:[
-      { t:'Sì, senza problemi', p:{ a_coxa:-2, a_fai:-1 } },
-      { t:'Con fastidio, deve cercare la posizione', p:{ a_fai:2, a_coxa:1 } },
-      { t:'No, non ci arriva', p:{ a_coxa:3, a_fai:1 } }
-    ]},
-
-  { id:'a_gesto', d:'anca', sez:'Movimento', tipo:'multi',
-    q:'Quali gesti scatenano il dolore?', why:'Ogni gesto carica una struttura diversa: la somma orienta più del singolo.',
-    op:[
-      { t:'Accovacciarsi profondo o salire in auto', p:{ a_fai:3, a_coxa:1 } },
-      { t:'Stare in piedi su una gamba sola (lavarsi, vestirsi)', p:{ a_gtps:3, a_coxa:1 } },
-      { t:'Allungo di corsa veloce o affondo profondo', p:{ a_ham:3 } },
-      { t:'Calciare, cambiare direzione, chiudere le gambe', p:{ a_add:3 } },
-      { t:'Salire le scale o correre in salita', p:{ a_gtps:2, a_ham:1, a_coxa:1 } }
-    ]},
-
-  { id:'a_click', d:'anca', sez:'Movimento', tipo:'single',
-    q:'Click, scatti o sensazione di blocco all\u2019inguine?', why:'Il click meccanico riproducibile aumenta il sospetto di patologia intra-articolare.',
-    op:[
-      { t:'No', p:{ a_fai:-1 } },
-      { t:'Click o scatto udibile, indolore', p:{ a_fai:1 } },
-      { t:'Click doloroso o sensazione di qualcosa che si incastra', p:{ a_fai:3, a_coxa:1 } }
-    ]},
-
-  { id:'a_stresspat', d:'anca', sez:'Bandiere', tipo:'single',
-    q:'Carico di corsa nelle ultime 4-6 settimane', why:'La frattura da stress del collo femorale si perde quasi sempre per non aver chiesto questo.',
-    op:[
-      { t:'Stabile o ridotto', p:{ a_stress:-2, c_mt:-1 } },
-      { t:'Aumentato in modo graduale', p:{ a_stress:1, c_mt:1 } },
-      { t:'Aumentato bruscamente (nuovo piano, gara, ripresa intensa)', p:{ a_stress:3, c_mt:2, a_ham:1, g_itbs:1 } },
-      { t:'Aumentato e in più ha amenorrea, disturbi alimentari o bassa disponibilità energetica', p:{ a_stress:3, c_mt:2 }, fl:'Sospetta bassa disponibilità energetica associata a dolore osseo in carico: indicato imaging e inquadramento medico.' }
-    ]},
-
-  /* =============================== GINOCCHIO =========================== */
-  { id:'g_sede', d:'ginocchio', sez:'Sede', tipo:'single',
-    q:'Dove indica il dolore?', why:'Il dito su un punto preciso vale più di un\u2019area indicata col palmo.',
-    op:[
-      { t:'Anteriore, diffuso, indica con tutta la mano', p:{ g_pfps:3, g_rotulea:-1 } },
-      { t:'Punto preciso sull\u2019apice della rotula', p:{ g_rotulea:3, g_pfps:-1 } },
-      { t:'Interlinea mediale', p:{ g_menisco:3, g_lcm:1, g_artrosi:1 } },
-      { t:'Interlinea laterale', p:{ g_menisco:2, g_artrosi:1 } },
-      { t:'Laterale, sopra l\u2019interlinea, sul condilo', p:{ g_itbs:3, g_menisco:-1 } },
-      { t:'Posteriore o profondo', p:{ g_lcp:2, g_menisco:1 } }
-    ]},
-
-  { id:'g_pop', d:'ginocchio', sez:'Trauma', tipo:'single',
-    q:'Al momento del trauma ha sentito o udito uno schiocco?', why:'Pop udibile più versamento rapido: il crociato sale molto in probabilità.',
-    op:[
-      { t:'Sì, netto', p:{ g_lca:3, g_menisco:1 } },
-      { t:'No', p:{ g_lca:-2 } },
-      { t:'Non c\u2019è stato un trauma', p:{ g_lca:-3, g_lcm:-3, g_lcp:-3, g_pfps:1, g_rotulea:1, g_artrosi:1, g_itbs:1 } }
-    ]},
-
-  { id:'g_mecc', d:'ginocchio', sez:'Trauma', tipo:'single',
-    q:'Meccanismo del trauma', why:'Valgo, torsione e cruscotto caricano strutture completamente diverse.',
-    op:[
-      { t:'Torsione con piede fisso a terra, senza contatto', p:{ g_lca:3, g_menisco:2 } },
-      { t:'Colpo sul lato esterno del ginocchio, gamba spinta in dentro', p:{ g_lcm:3, g_lca:1 } },
-      { t:'Ginocchio flesso, tibia spinta indietro (cruscotto, caduta sul ginocchio)', p:{ g_lcp:3, g_lca:-1 } },
-      { t:'Accovacciamento profondo o rialzarsi da accosciata', p:{ g_menisco:3, g_lca:-1 } },
-      { t:'Nessun trauma', p:{ g_lca:-3, g_lcm:-3, g_lcp:-3 } }
-    ]},
-
-  { id:'g_ced', d:'ginocchio', sez:'Sintomi meccanici', tipo:'single',
-    q:'Sensazione di cedimento', why:'Distinguere il cedimento vero da quello antalgico evita di sovrastimare l\u2019instabilità.',
-    op:[
-      { t:'No', p:{ g_lca:-2 } },
-      { t:'Sì, ma solo quando fa male (cede per il dolore)', p:{ g_pfps:2, g_artrosi:1, g_lca:-1 } },
-      { t:'Sì, scappa via nei cambi di direzione anche senza dolore', p:{ g_lca:3, g_menisco:1 } }
-    ]},
-
-  { id:'g_blocco', d:'ginocchio', sez:'Sintomi meccanici', tipo:'single',
-    q:'Blocco articolare', why:'Il blocco vero in estensione è il segnale che cambia i tempi di gestione.',
-    op:[
-      { t:'Nessuno', p:{ g_menisco:-1 } },
-      { t:'Scatti o scrosci senza vero blocco', p:{ g_menisco:1, g_artrosi:2, g_pfps:1 } },
-      { t:'Si è bloccato e non riusciva a estenderlo del tutto', p:{ g_menisco:3, g_lca:1 }, fl:'Blocco vero in estensione: sospetto di lesione meniscale a manico di secchio, imaging da anticipare.' }
-    ]},
-
-  { id:'g_att', d:'ginocchio', sez:'Attività', tipo:'multi',
-    q:'Cosa peggiora il dolore?', why:'La combinazione scale-seduta-salto separa femoro-rotulea, tendine e interlinea.',
-    op:[
-      { t:'Scendere le scale', p:{ g_pfps:3, g_artrosi:1, g_rotulea:1 } },
-      { t:'Stare seduto a lungo con ginocchio piegato', p:{ g_pfps:3 } },
-      { t:'Saltare o atterrare', p:{ g_rotulea:3, g_pfps:1 } },
-      { t:'Correre oltre una certa distanza, peggio in discesa', p:{ g_itbs:3 } },
-      { t:'Accovacciarsi o ruotare in carico', p:{ g_menisco:3, g_artrosi:1 } },
-      { t:'Camminare a lungo in piano', p:{ g_artrosi:2, g_menisco:1 } }
-    ]},
-
-  /* ============================ CAVIGLIA / PIEDE ======================= */
-  { id:'c_sede', d:'caviglia', sez:'Sede', tipo:'single',
-    q:'Dove indica il dolore?', why:'Nel piede la sede è quasi diagnostica: pochi millimetri cambiano struttura.',
-    op:[
-      { t:'Davanti e sotto il malleolo esterno', p:{ c_lat:3, c_sind:-1 } },
-      { t:'Sopra la caviglia, tra tibia e perone', p:{ c_sind:3, c_lat:-1 } },
-      { t:'Sul tendine d\u2019Achille, 2-6 cm sopra il calcagno', p:{ c_ach:3, c_rott:1, c_plant:-2 } },
-      { t:'All\u2019inserzione del tendine sul calcagno', p:{ c_ach:2, c_plant:1 } },
-      { t:'Sotto il tallone, verso il lato interno', p:{ c_plant:3, c_ach:-1 } },
-      { t:'Mediale, sotto il malleolo interno, lungo l\u2019arco', p:{ c_tp:3 } },
-      { t:'Avampiede, tra terzo e quarto dito', p:{ c_mor:3, c_mt:1 } },
-      { t:'Su un osso preciso del dorso del piede', p:{ c_mt:3, c_mor:-1 } },
-      { t:'Posteriore profondo, dietro la caviglia', p:{ c_post:3 } }
-    ]},
-
-  { id:'c_mecc', d:'caviglia', sez:'Trauma', tipo:'single',
-    q:'Meccanismo', why:'Inversione e rotazione esterna danno due infortuni con prognosi molto diverse.',
-    op:[
-      { t:'Piede andato in dentro (inversione)', p:{ c_lat:3, c_sind:-1, c_rott:-2 } },
-      { t:'Piede ruotato in fuori con caviglia piegata in su', p:{ c_sind:3, c_lat:-1, c_rott:-2 } },
-      { t:'Scatto improvviso dietro, come una pallonata al polpaccio', p:{ c_rott:3, c_ach:-1 }, fl:'Sospetta rottura del tendine d\u2019Achille: eseguire Thompson e inviare per valutazione chirurgica.' },
-      { t:'Nessun trauma, comparsa progressiva', p:{ c_ach:2, c_plant:2, c_mt:2, c_tp:2, c_mor:2, c_lat:-3, c_sind:-3, c_rott:-2 } }
-    ]},
-
-  { id:'c_primi', d:'caviglia', sez:'Comportamento', tipo:'single',
-    q:'Primi passi del mattino', why:'Il dolore che si scioglie nei primi minuti è la firma di fascia e tendine.',
-    op:[
-      { t:'Fortissimo nei primi passi, poi migliora nettamente', p:{ c_plant:3, c_ach:2 } },
-      { t:'Rigidità del tendine che passa camminando', p:{ c_ach:3, c_plant:1 } },
-      { t:'Uguale a tutto il resto della giornata', p:{ c_mt:1, c_lat:1, c_plant:-2, c_ach:-2 } }
-    ]},
-
-  { id:'c_att', d:'caviglia', sez:'Attività', tipo:'multi',
-    q:'Cosa scatena il dolore?', why:'Spinta, punta massima e compressione dell\u2019avampiede caricano strutture separate.',
-    op:[
-      { t:'Spingere sulla punta, correre in salita', p:{ c_ach:3, c_tp:1 } },
-      { t:'Portare la caviglia in punta massima (calciare, danza)', p:{ c_post:3 } },
-      { t:'Camminare a piedi nudi o su superfici dure', p:{ c_plant:3 } },
-      { t:'Scarpe strette o tacco, meglio togliendo la scarpa', p:{ c_mor:3 } },
-      { t:'Terreni sconnessi, senso di instabilità', p:{ c_lat:3, c_sind:1 } },
-      { t:'Stare in piedi a lungo, arco che cede a fine giornata', p:{ c_tp:3 } }
-    ]},
-
-  { id:'c_ottawa', d:'caviglia', sez:'Bandiere', tipo:'multi',
-    q:'Regole di Ottawa: presente uno di questi?', why:'Filtro rapido per decidere se serve una radiografia prima di qualunque test.',
-    op:[
-      { t:'Dolore alla palpazione del margine posteriore del malleolo (6 cm)', p:{ c_lat:1 }, fl:'Ottawa positiva sul malleolo: indicata radiografia prima di proseguire.' },
-      { t:'Dolore sulla base del quinto metatarso', p:{ c_mt:2 }, fl:'Ottawa positiva sulla base del quinto metatarso: indicata radiografia.' },
-      { t:'Dolore sullo scafoide', p:{ c_mt:1, c_tp:1 }, fl:'Ottawa positiva sullo scafoide: indicata radiografia.' },
-      { t:'Nessuno di questi', p:{} }
-    ]},
-
-  { id:'c_ripetuto', d:'caviglia', sez:'Storia', tipo:'single',
-    q:'Distorsioni precedenti sulla stessa caviglia?', why:'La recidiva sposta il problema dal legamento al controllo motorio.',
-    op:[
-      { t:'Nessuna', p:{} },
-      { t:'Una o due in passato', p:{ c_lat:1 } },
-      { t:'Ripetute, la caviglia "va via" spesso', p:{ c_lat:3, c_post:1 } }
-    ]}
-];
-
-/* ------------------------------- TEST --------------------------------- */
-/* pos / neg: pesi da applicare all'esito. Un negativo su un test sensibile
-   vale quanto un positivo su un test specifico: i pesi lo riflettono.     */
-
-const TEST = [
-  /* ---- ANCA ---- */
-  { id:'t_fadir', d:'anca', n:'FADIR (test di conflitto)', m:'Sensibile, poco specifico',
-    c:'Anca a 90° di flessione, adduzione e rotazione interna passiva.',
-    g:'Riproduce il dolore inguinale profondo.', pos:{ a_fai:2 }, neg:{ a_fai:-3 } },
-  { id:'t_faber', d:'anca', n:'FABER', m:'Discrimina anca e sacroiliaca',
-    c:'Flessione, abduzione e rotazione esterna, ginocchio verso il lettino.',
-    g:'Dolore inguinale o distanza aumentata rispetto al controlaterale.', pos:{ a_fai:2, a_coxa:2 }, neg:{ a_fai:-1, a_coxa:-2 } },
-  { id:'t_ri', d:'anca', n:'Rotazione interna a 90° di flessione', m:'Spec. elevata per coxartrosi',
-    c:'Misura passiva del range in rotazione interna, confronto tra i lati.',
-    g:'Meno di 15° o perdita netta rispetto all\u2019altro lato.', pos:{ a_coxa:3, a_fai:2 }, neg:{ a_coxa:-3 } },
-  { id:'t_troc', d:'anca', n:'Palpazione del gran trocantere', m:'Molto sensibile per GTPS',
-    c:'Pressione diretta sulla faccetta, paziente sul fianco.',
-    g:'Dolore elettivo riprodotto sul punto.', pos:{ a_gtps:3 }, neg:{ a_gtps:-3 } },
-  { id:'t_sls', d:'anca', n:'Appoggio monopodalico 30 secondi', m:'Funzionale',
-    c:'Stazione su un piede solo per 30 secondi, si osserva il bacino.',
-    g:'Dolore laterale o caduta del bacino controlaterale.', pos:{ a_gtps:3, a_coxa:1 }, neg:{ a_gtps:-2 } },
-  { id:'t_bks', d:'anca', n:'Bent knee stretch', m:'Per l\u2019inserzione ischiocrurale',
-    c:'Supino, anca e ginocchio flessi, estensione rapida del ginocchio.',
-    g:'Dolore all\u2019ischio.', pos:{ a_ham:3 }, neg:{ a_ham:-2 } },
-  { id:'t_squeeze', d:'anca', n:'Squeeze test adduttori a 45°', m:'Chiave nella pubalgia',
-    c:'Compressione isometrica contro il pugno dell\u2019esaminatore.',
-    g:'Dolore su pube o adduttori, forza ridotta.', pos:{ a_add:3 }, neg:{ a_add:-3 } },
-  { id:'t_slump', d:'anca', n:'Slump test', m:'Sensibile per il tessuto neurale',
-    c:'Seduto, flessione del rachide, estensione del ginocchio, dorsiflessione.',
-    g:'Riproduce il sintomo e si modifica con la posizione del collo.', pos:{ a_rad:3, a_dgs:2, a_ham:-1 }, neg:{ a_rad:-3, a_dgs:-2 } },
-  { id:'t_fulcrum', d:'anca', n:'Fulcrum test / hop test', m:'Screening frattura da stress',
-    c:'Fulcro sotto la coscia e pressione sul ginocchio; oppure salto monopodalico.',
-    g:'Dolore acuto e localizzato in profondità.', pos:{ a_stress:3 }, neg:{ a_stress:-2 } },
-
-  /* ---- GINOCCHIO ---- */
-  { id:'t_lach', d:'ginocchio', n:'Lachman', m:'Sens. ~85% · Spec. ~94%',
-    c:'Ginocchio a 20-30°, traslazione anteriore della tibia.',
-    g:'Escursione aumentata con arresto molle.', pos:{ g_lca:4 }, neg:{ g_lca:-3 } },
-  { id:'t_pivot', d:'ginocchio', n:'Pivot shift', m:'Spec. molto alta, poco sensibile da sveglio',
-    c:'Valgo e rotazione interna in estensione, poi flessione.',
-    g:'Scatto di riduzione del piatto tibiale.', pos:{ g_lca:4 }, neg:{ g_lca:-1 } },
-  { id:'t_sag', d:'ginocchio', n:'Posterior sag / cassetto posteriore', m:'Per il crociato posteriore',
-    c:'Ginocchia a 90°, si osserva di profilo il profilo tibiale.',
-    g:'Caduta posteriore della tibia o traslazione aumentata.', pos:{ g_lcp:4, g_lca:-1 }, neg:{ g_lcp:-3 } },
-  { id:'t_thess', d:'ginocchio', n:'Thessaly a 20°', m:'Buona accuratezza in carico',
-    c:'In carico monopodalico, rotazioni del corpo a ginocchio flesso 20°.',
-    g:'Dolore d\u2019interlinea o scatto.', pos:{ g_menisco:3 }, neg:{ g_menisco:-2 } },
-  { id:'t_interl', d:'ginocchio', n:'Palpazione dell\u2019interlinea', m:'Sensibile, poco specifica',
-    c:'Palpazione dell\u2019interlinea a ginocchio flesso 90°.',
-    g:'Dolore elettivo sulla rima.', pos:{ g_menisco:2, g_artrosi:1 }, neg:{ g_menisco:-3 } },
-  { id:'t_valgo', d:'ginocchio', n:'Stress in valgo a 30°', m:'Per il collaterale mediale',
-    c:'Valgo forzato a 30° di flessione, confronto con l\u2019altro lato.',
-    g:'Apertura o dolore mediale.', pos:{ g_lcm:4 }, neg:{ g_lcm:-3 } },
-  { id:'t_decline', d:'ginocchio', n:'Single leg decline squat 25°', m:'Carico selettivo sul tendine',
-    c:'Squat monopodalico su piano inclinato al 25%.',
-    g:'Dolore puntiforme all\u2019apice rotuleo, non diffuso.', pos:{ g_rotulea:3, g_pfps:-1 }, neg:{ g_rotulea:-3 } },
-  { id:'t_pfj', d:'ginocchio', n:'Compressione femoro-rotulea', m:'Orientativo',
-    c:'Compressione della rotula contro il femore e contrazione del quadricipite.',
-    g:'Dolore o crepitio doloroso.', pos:{ g_pfps:3, g_artrosi:1 }, neg:{ g_pfps:-2 } },
-  { id:'t_noble', d:'ginocchio', n:'Noble compression', m:'Per la bandelletta',
-    c:'Pressione sul condilo laterale mentre il ginocchio passa da 90° a 30°.',
-    g:'Dolore netto intorno ai 30° di flessione.', pos:{ g_itbs:3 }, neg:{ g_itbs:-3 } },
-  { id:'t_rom_gin', d:'ginocchio', n:'Range articolare e crepitio', m:'Inquadramento artrosico',
-    c:'Flesso-estensione passiva con mano sulla rotula.',
-    g:'Limitazione in estensione o crepitio grossolano.', pos:{ g_artrosi:3, g_menisco:1 }, neg:{ g_artrosi:-2 } },
-
-  /* ---- CAVIGLIA / PIEDE ---- */
-  { id:'t_drawer', d:'caviglia', n:'Cassetto anteriore di caviglia', m:'Migliore dopo 4-5 giorni',
-    c:'Trazione anteriore del calcagno a caviglia in lieve flessione plantare.',
-    g:'Traslazione aumentata o segno della fossetta.', pos:{ c_lat:4 }, neg:{ c_lat:-3 } },
-  { id:'t_tilt', d:'caviglia', n:'Talar tilt', m:'Valuta il fascio calcaneo-fibulare',
-    c:'Inversione passiva dell\u2019astragalo, confronto tra i lati.',
-    g:'Apertura aumentata rispetto al controlaterale.', pos:{ c_lat:3 }, neg:{ c_lat:-1 } },
-  { id:'t_sqz', d:'caviglia', n:'Squeeze test tibio-fibulare', m:'Spec. alta per sindesmosi',
-    c:'Compressione di tibia e perone a metà gamba.',
-    g:'Dolore riferito distalmente, sopra la caviglia.', pos:{ c_sind:4 }, neg:{ c_sind:-2 } },
-  { id:'t_er', d:'caviglia', n:'External rotation test', m:'Conferma la sindesmosi',
-    c:'Ginocchio a 90°, rotazione esterna del piede.',
-    g:'Dolore nella regione sindesmosica.', pos:{ c_sind:3 }, neg:{ c_sind:-3 } },
-  { id:'t_thom', d:'caviglia', n:'Thompson test', m:'Sens. e spec. molto elevate',
-    c:'Prono, compressione del polpaccio.',
-    g:'Assenza di flessione plantare del piede.', pos:{ c_rott:4, c_ach:-2 }, neg:{ c_rott:-4 } },
-  { id:'t_rl', d:'caviglia', n:'Royal London / palpazione del tendine', m:'Per la tendinopatia achillea',
-    c:'Palpazione del punto dolente, poi ripetuta in dorsiflessione massima.',
-    g:'Il dolore si riduce nettamente in dorsiflessione.', pos:{ c_ach:3 }, neg:{ c_ach:-2 } },
-  { id:'t_wind', d:'caviglia', n:'Windlass test', m:'Spec. alta, sens. bassa',
-    c:'In carico, estensione passiva dell\u2019alluce.',
-    g:'Dolore sul tubercolo mediale del calcagno.', pos:{ c_plant:3 }, neg:{ c_plant:-1 } },
-  { id:'t_heel', d:'caviglia', n:'Single heel raise x10', m:'Funzionale, tibiale posteriore',
-    c:'Dieci sollevamenti sulla punta da un piede solo.',
-    g:'Non riesce, o il calcagno non va in inversione.', pos:{ c_tp:3, c_ach:1 }, neg:{ c_tp:-3 } },
-  { id:'t_mulder', d:'caviglia', n:'Compressione avampiede / click di Mulder', m:'Per il neuroma',
-    c:'Compressione latero-laterale delle teste metatarsali.',
-    g:'Click doloroso o scarica tra le dita.', pos:{ c_mor:4 }, neg:{ c_mor:-3 } },
-  { id:'t_bone', d:'caviglia', n:'Palpazione diafisaria e hop test', m:'Screening stress osseo',
-    c:'Palpazione puntiforme del metatarso e salto monopodalico.',
-    g:'Dolore puntiforme sull\u2019osso, riprodotto dal salto.', pos:{ c_mt:4 }, neg:{ c_mt:-3 } },
-  { id:'t_plflex', d:'caviglia', n:'Flessione plantare passiva forzata', m:'Per il conflitto posteriore',
-    c:'Spinta rapida in flessione plantare massima.',
-    g:'Dolore posteriore profondo riprodotto.', pos:{ c_post:4 }, neg:{ c_post:-3 } }
-];
+const STEP_LABELS = ["Triage", "Dati", "Disturbo", "Anamnesi", "Dolore", "Storia", "Obiettivi"];
+const TOTAL = STEP_LABELS.length; // step di contenuto (0..6); lo step 7 è la fine
 </script>
-
 <script>
-/* ============================ BODY MAP ============================== */
-/* Ogni segmento è un lato singolo: toccando il braccio destro si seleziona
-   solo quello. Vista anteriore: sinistra dell'immagine = destra del paziente.
-   Vista posteriore: sinistra dell'immagine = sinistra del paziente.        */
-function rr(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); return 'M' + (x + r) + ' ' + y + ' h' + (w - 2 * r) + ' a' + r + ' ' + r + ' 0 0 1 ' + r + ' ' + r + ' v' + (h - 2 * r) + ' a' + r + ' ' + r + ' 0 0 1 ' + (-r) + ' ' + r + ' h' + (-(w - 2 * r)) + ' a' + r + ' ' + r + ' 0 0 1 ' + (-r) + ' ' + (-r) + ' v' + (-(h - 2 * r)) + ' a' + r + ' ' + r + ' 0 0 1 ' + r + ' ' + (-r) + ' Z'; }
-function circle(cx, cy, rad) { return 'M' + cx + ' ' + (cy - rad) + ' a' + rad + ' ' + rad + ' 0 1 0 0.1 0 Z'; }
-function R_(x, y, w, h, r) { return { t: 'r', x: x, y: y, w: w, h: h, r: r }; }
-function C_(cx, cy, rad) { return { t: 'c', cx: cx, cy: cy, rad: rad }; }
-
-const SEG = {
+/* ============ BODY MAP ============ */
+function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);return `M${x+r} ${y} h${w-2*r} a${r} ${r} 0 0 1 ${r} ${r} v${h-2*r} a${r} ${r} 0 0 1 ${-r} ${r} h${-(w-2*r)} a${r} ${r} 0 0 1 ${-r} ${-r} v${-(h-2*r)} a${r} ${r} 0 0 1 ${r} ${-r} Z`;}
+function circle(cx,cy,rad){return `M${cx} ${cy-rad} a${rad} ${rad} 0 1 0 0.1 0 Z`;}
+const R=8;
+const SEGMENTS = {
   front: [
-    { id: 'testa',        l: 'Testa / Collo',     sh: [C_(100, 30, 17), R_(93, 46, 14, 12, 4)] },
-    { id: 'spalla_f_dx',  l: 'Spalla Dx',         sh: [R_(56, 62, 28, 15, 7)] },
-    { id: 'spalla_f_sx',  l: 'Spalla Sx',         sh: [R_(116, 62, 28, 15, 7)] },
-    { id: 'torace',       l: 'Torace',            sh: [R_(74, 80, 52, 42, 8)] },
-    { id: 'addome',       l: 'Addome',            sh: [R_(76, 126, 48, 48, 8)] },
-    { id: 'braccio_f_dx', l: 'Braccio Dx',        sh: [R_(52, 80, 16, 68, 8)] },
-    { id: 'braccio_f_sx', l: 'Braccio Sx',        sh: [R_(132, 80, 16, 68, 8)] },
-    { id: 'avambr_f_dx',  l: 'Avambraccio Dx',    sh: [R_(52, 152, 15, 52, 7)] },
-    { id: 'avambr_f_sx',  l: 'Avambraccio Sx',    sh: [R_(133, 152, 15, 52, 7)] },
-    { id: 'mano_dx',      l: 'Mano Dx',           sh: [R_(50, 208, 16, 22, 6)] },
-    { id: 'mano_sx',      l: 'Mano Sx',           sh: [R_(134, 208, 16, 22, 6)] },
-    { id: 'anca_dx',      l: 'Bacino / Anca Dx',  sh: [R_(76, 178, 23, 28, 8)] },
-    { id: 'anca_sx',      l: 'Bacino / Anca Sx',  sh: [R_(101, 178, 23, 28, 8)] },
-    { id: 'coscia_f_dx',  l: 'Coscia Dx',         sh: [R_(77, 210, 21, 78, 9)] },
-    { id: 'coscia_f_sx',  l: 'Coscia Sx',         sh: [R_(102, 210, 21, 78, 9)] },
-    { id: 'ginocchio_dx', l: 'Ginocchio Dx',      sh: [R_(78, 290, 20, 22, 7)] },
-    { id: 'ginocchio_sx', l: 'Ginocchio Sx',      sh: [R_(102, 290, 20, 22, 7)] },
-    { id: 'gamba_f_dx',   l: 'Gamba Dx',          sh: [R_(79, 314, 18, 74, 8)] },
-    { id: 'gamba_f_sx',   l: 'Gamba Sx',          sh: [R_(103, 314, 18, 74, 8)] },
-    { id: 'caviglia_dx',  l: 'Caviglia / Piede Dx', sh: [R_(79, 390, 18, 30, 7)] },
-    { id: 'caviglia_sx',  l: 'Caviglia / Piede Sx', sh: [R_(103, 390, 18, 30, 7)] }
+    {id:'testa',l:'Testa/Collo',d:circle(100,30,17)+rr(93,46,14,12,4)},
+    {id:'spalla_f',l:'Spalle',d:rr(56,62,28,15,7)+rr(116,62,28,15,7)},
+    {id:'torace',l:'Torace',d:rr(74,80,52,42,R)},
+    {id:'addome',l:'Addome',d:rr(76,126,48,48,R)},
+    {id:'braccio_f',l:'Braccia',d:rr(52,80,16,68,8)+rr(132,80,16,68,8)},
+    {id:'avambr_f',l:'Avambracci',d:rr(52,152,15,52,7)+rr(133,152,15,52,7)},
+    {id:'mano_f',l:'Mani',d:rr(50,208,16,22,6)+rr(134,208,16,22,6)},
+    {id:'bacino',l:'Bacino/Anca',d:rr(76,178,48,28,R)},
+    {id:'coscia_f',l:'Cosce',d:rr(77,210,21,78,9)+rr(102,210,21,78,9)},
+    {id:'ginocchio',l:'Ginocchia',d:rr(78,290,20,22,7)+rr(102,290,20,22,7)},
+    {id:'gamba_f',l:'Gambe',d:rr(79,314,18,74,8)+rr(103,314,18,74,8)},
+    {id:'caviglia',l:'Caviglie/Piedi',d:rr(79,390,18,30,7)+rr(103,390,18,30,7)}
   ],
   back: [
-    { id: 'nuca',          l: 'Nuca / Cervicale',   sh: [C_(100, 30, 17), R_(93, 46, 14, 12, 4)] },
-    { id: 'spalla_b_sx',   l: 'Spalla post. Sx',    sh: [R_(56, 62, 28, 15, 7)] },
-    { id: 'spalla_b_dx',   l: 'Spalla post. Dx',    sh: [R_(116, 62, 28, 15, 7)] },
-    { id: 'dorsale',       l: 'Dorsale',            sh: [R_(74, 80, 52, 42, 8)] },
-    { id: 'lombare',       l: 'Lombare',            sh: [R_(76, 126, 48, 48, 8)] },
-    { id: 'braccio_b_sx',  l: 'Braccio post. Sx',   sh: [R_(52, 80, 16, 68, 8)] },
-    { id: 'braccio_b_dx',  l: 'Braccio post. Dx',   sh: [R_(132, 80, 16, 68, 8)] },
-    { id: 'avambr_b_sx',   l: 'Avambraccio post. Sx', sh: [R_(52, 152, 15, 52, 7)] },
-    { id: 'avambr_b_dx',   l: 'Avambraccio post. Dx', sh: [R_(133, 152, 15, 52, 7)] },
-    { id: 'gluteo_sx',     l: 'Gluteo Sx',          sh: [R_(76, 178, 23, 28, 8)] },
-    { id: 'gluteo_dx',     l: 'Gluteo Dx',          sh: [R_(101, 178, 23, 28, 8)] },
-    { id: 'ischio_sx',     l: 'Ischiocrurali Sx',   sh: [R_(77, 210, 21, 78, 9)] },
-    { id: 'ischio_dx',     l: 'Ischiocrurali Dx',   sh: [R_(102, 210, 21, 78, 9)] },
-    { id: 'poplite_sx',    l: 'Cavo popliteo Sx',   sh: [R_(78, 290, 20, 22, 7)] },
-    { id: 'poplite_dx',    l: 'Cavo popliteo Dx',   sh: [R_(102, 290, 20, 22, 7)] },
-    { id: 'polpaccio_sx',  l: 'Polpaccio Sx',       sh: [R_(79, 314, 18, 74, 8)] },
-    { id: 'polpaccio_dx',  l: 'Polpaccio Dx',       sh: [R_(103, 314, 18, 74, 8)] },
-    { id: 'tallone_sx',    l: 'Tallone Sx',         sh: [R_(79, 390, 18, 30, 7)] },
-    { id: 'tallone_dx',    l: 'Tallone Dx',         sh: [R_(103, 390, 18, 30, 7)] }
+    {id:'nuca',l:'Nuca/Cervicale',d:circle(100,30,17)+rr(93,46,14,12,4)},
+    {id:'spalla_b',l:'Spalle post.',d:rr(56,62,28,15,7)+rr(116,62,28,15,7)},
+    {id:'dorsale',l:'Dorsale',d:rr(74,80,52,42,R)},
+    {id:'lombare',l:'Lombare',d:rr(76,126,48,48,R)},
+    {id:'braccio_b',l:'Braccia',d:rr(52,80,16,68,8)+rr(132,80,16,68,8)},
+    {id:'avambr_b',l:'Avambracci',d:rr(52,152,15,52,7)+rr(133,152,15,52,7)},
+    {id:'gluteo',l:'Glutei',d:rr(76,178,48,28,R)},
+    {id:'ischio',l:'Ischiocrurali',d:rr(77,210,21,78,9)+rr(102,210,21,78,9)},
+    {id:'poplite',l:'Cavo popliteo',d:rr(78,290,20,22,7)+rr(102,290,20,22,7)},
+    {id:'polpaccio',l:'Polpacci',d:rr(79,314,18,74,8)+rr(103,314,18,74,8)},
+    {id:'tallone',l:'Talloni',d:rr(79,390,18,30,7)+rr(103,390,18,30,7)}
   ]
 };
-
-function pathOf(sh) {
-  return sh.map(function (s) {
-    return s.t === 'c' ? circle(s.cx, s.cy, s.rad) : rr(s.x, s.y, s.w, s.h, s.r);
-  }).join('');
-}
-
 const selected = {};
-
-function buildBody(svgId, lista) {
-  const svg = document.getElementById(svgId);
-  svg.innerHTML = lista.map(function (s) {
-    return '<path class="seg" data-id="' + s.id + '" data-label="' + s.l + '" d="' + pathOf(s.sh) + '"></path>';
-  }).join('');
-  [].slice.call(svg.querySelectorAll('.seg')).forEach(function (p) {
-    p.addEventListener('click', function () { toggleSeg(p.dataset.id, p.dataset.label); });
-  });
+function buildBody(svgId,list){
+  const svg=document.getElementById(svgId);
+  svg.innerHTML=list.map(s=>`<path class="seg" data-id="${s.id}" data-label="${s.l}" d="${s.d}"></path>`).join('');
+  svg.querySelectorAll('.seg').forEach(p=>p.addEventListener('click',()=>toggleSeg(p.dataset.id,p.dataset.label)));
 }
-
-function toggleSeg(id, label) {
-  if (selected[id]) delete selected[id];
-  else selected[id] = { label: label, sigla: '', local: '' };
-  [].slice.call(document.querySelectorAll('.seg')).forEach(function (p) {
-    p.classList.toggle('on', !!selected[p.dataset.id]);
-  });
+function toggleSeg(id,label){
+  if(selected[id]) delete selected[id];
+  else selected[id]={label,sigla:'',local:'',dx:false,sx:false};
+  document.querySelectorAll('.seg').forEach(p=>p.classList.toggle('on',!!selected[p.dataset.id]));
   renderSel();
 }
-
-function renderSel() {
-  const box = document.getElementById('sellist');
-  const ids = Object.keys(selected);
-  if (!ids.length) { box.innerHTML = '<p class="hint" style="padding:6px 10px">Nessuna zona selezionata.</p>'; return; }
-  box.innerHTML = ids.map(function (id) {
-    const s = selected[id];
-    return '<div class="selrow"><span class="nm">' + s.label + '</span>' +
-      '<input type="text" maxlength="6" value="' + s.sigla + '" placeholder="------" oninput="selected[\'' + id + '\'].sigla=this.value">' +
-      '<input type="text" maxlength="6" value="' + s.local + '" placeholder="------" oninput="selected[\'' + id + '\'].local=this.value">' +
-      '<button type="button" class="rm" onclick="toggleSeg(\'' + id + '\')">&times;</button></div>';
-  }).join('');
+function renderSel(){
+  const box=document.getElementById('sellist');const ids=Object.keys(selected);
+  if(!ids.length){box.innerHTML='<p class="hint" style="padding:6px 10px">Nessuna zona selezionata.</p>';return;}
+  box.innerHTML=ids.map(id=>{const s=selected[id];return `<div class="selrow"><span class="nm">${s.label}</span>`+
+    `<input type="text" maxlength="4" value="${s.sigla}" placeholder="--" oninput="selected['${id}'].sigla=this.value">`+
+    `<input type="text" maxlength="4" value="${s.local}" placeholder="--" oninput="selected['${id}'].local=this.value">`+
+    `<div class="sidebtns"><button type="button" class="${s.dx?'on':''}" onclick="toggleLato('${id}','dx',this)">Dx</button>`+
+    `<button type="button" class="${s.sx?'on':''}" onclick="toggleLato('${id}','sx',this)">Sx</button></div>`+
+    `<button type="button" class="rm" onclick="toggleSeg('${id}')">&times;</button></div>`;}).join('');
 }
+function toggleLato(id,lato,btn){selected[id][lato]=!selected[id][lato];btn.classList.toggle('on');}
+buildBody('svgFront',SEGMENTS.front);
+buildBody('svgBack',SEGMENTS.back);
 
-buildBody('svgFront', SEG.front);
-buildBody('svgBack', SEG.back);
-
-/* ============================== PILLOLE ============================== */
-const pillVals = {};
-[].slice.call(document.querySelectorAll('[data-pill]')).forEach(function (g) {
-  [].slice.call(g.querySelectorAll('.pill')).forEach(function (p) {
-    p.addEventListener('click', function () {
-      [].slice.call(g.querySelectorAll('.pill')).forEach(function (x) { x.classList.remove('active'); });
-      p.classList.add('active');
-      pillVals[g.dataset.pill] = p.dataset.val;
-    });
-  });
+/* ============ PILLS ============ */
+const pillVals={};
+document.querySelectorAll('[data-pill]').forEach(g=>{
+  g.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{
+    g.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');pillVals[g.dataset.pill]=p.dataset.val;
+  }));
 });
 
-/* =============================== TRIAGE ============================== */
-const rfBoxes = document.querySelectorAll('.rf');
-[].slice.call(rfBoxes).forEach(function (cb) {
-  const row = cb.closest('.consent-row');
-  cb.addEventListener('change', function () { row.classList.toggle('checked', cb.checked); updateRF(); });
+/* ============ TRIAGE ============ */
+const rfBoxes=document.querySelectorAll('.rf');
+rfBoxes.forEach(cb=>{
+  const row=cb.closest('.consent-row');
+  cb.addEventListener('change',()=>{row.classList.toggle('checked',cb.checked);updateRF();});
 });
-function rfTesto(cb) { return cb.closest('.consent-row').querySelector('.consent-text').textContent.trim(); }
-function rfPositivi() { return [].slice.call(rfBoxes).filter(function (c) { return c.checked; }).map(rfTesto); }
-function rfNegativi() { return [].slice.call(rfBoxes).filter(function (c) { return !c.checked; }).map(rfTesto); }
-function updateRF() {
-  const n = rfPositivi().length;
-  const r = document.getElementById('rfResult');
-  if (n === 0) {
-    r.innerHTML = '<div class="rf-banner ok"><div class="big">0</div><strong>Nessun red flag segnalato.</strong><p style="margin-top:6px;color:var(--ink-soft)">Puoi procedere con la valutazione fisioterapica.</p></div>';
-  } else {
-    r.innerHTML = '<div class="rf-banner warn"><div class="big">' + n + '</div><strong>' + n + ' segnale/i da approfondire.</strong><p style="margin-top:6px;color:var(--ink-soft)">Valuta il quadro nel suo insieme e considera un consulto o invio medico prima di proseguire, specie in presenza di più segnali combinati o di sintomi della cauda equina (urgenza).</p></div>';
-  }
+function updateRF(){
+  const n=[...rfBoxes].filter(c=>c.checked).length;
+  const r=document.getElementById('rfResult');
+  if(n===0){r.innerHTML='<div class="rf-banner ok"><div class="big">0</div><strong>Nessun red flag segnalato.</strong><p style="margin-top:6px;color:var(--ink-soft)">Puoi procedere con la valutazione fisioterapica.</p></div>';}
+  else{r.innerHTML=`<div class="rf-banner warn"><div class="big">${n}</div><strong>${n} segnale/i da approfondire.</strong><p style="margin-top:6px;color:var(--ink-soft)">Valuta il quadro nel suo insieme e considera un consulto o invio medico prima di proseguire, specie in presenza di più segnali combinati o di sintomi della cauda equina (urgenza).</p></div>`;}
 }
 updateRF();
-</script>
 
-<script>
-(function () {
-  'use strict';
+/* ============ NAVIGAZIONE STEP ============ */
+(function(){
+  let current=0,maxReached=0;
+  const steps=[...document.querySelectorAll('.step')];
+  const chips=document.getElementById('chips');
+  const fill=document.getElementById('progressFill');
+  const count=document.getElementById('stepCount');
+  const btnNext=document.getElementById('btnNext');
+  const btnBack=document.getElementById('btnBack');
 
-  /* =============================== STATO ============================== */
-  var stato = { distretti: [], risposte: {}, test: {} };
-  var STEP_LABELS = ['Triage', 'Dati', 'Disturbo', 'Dolore', 'Storia', 'Obiettivi', 'Distretto', 'Domande', 'Test', 'Sintesi'];
-  var TOTAL = STEP_LABELS.length;
-  var current = 0, maxReached = 0;
-
-  var steps = [].slice.call(document.querySelectorAll('.step'));
-  var chips = document.getElementById('chips');
-  var fill = document.getElementById('progressFill');
-  var count = document.getElementById('stepCount');
-  var btnNext = document.getElementById('btnNext');
-  var btnBack = document.getElementById('btnBack');
-
-  function val(id) { var e = document.getElementById(id); return e ? (e.value || '').trim() : ''; }
-
-  /* ============================== MOTORE ============================== */
-  function ipotesiAttive() {
-    var out = [];
-    stato.distretti.forEach(function (k) { out = out.concat(IPOTESI[k]); });
-    return out;
-  }
-  function domandeAttive() {
-    return DOMANDE.filter(function (q) { return q.d === 'comune' || stato.distretti.indexOf(q.d) >= 0; });
-  }
-  function testAttivi() {
-    return TEST.filter(function (t) { return stato.distretti.indexOf(t.d) >= 0; });
-  }
-  function punteggi() {
-    var p = {};
-    ipotesiAttive().forEach(function (i) { p[i.id] = 0; });
-    domandeAttive().forEach(function (q) {
-      (stato.risposte[q.id] || []).forEach(function (idx) {
-        var pesi = q.op[idx].p || {};
-        Object.keys(pesi).forEach(function (id) { if (id in p) p[id] += pesi[id]; });
-      });
-    });
-    testAttivi().forEach(function (t) {
-      var e = stato.test[t.id];
-      if (e !== 'pos' && e !== 'neg') return;
-      var pesi = (e === 'pos') ? t.pos : t.neg;
-      Object.keys(pesi).forEach(function (id) { if (id in p) p[id] += pesi[id]; });
-    });
-    return p;
-  }
-  function classifica() {
-    var p = punteggi();
-    var lista = ipotesiAttive().map(function (i) { return { ip: i, s: p[i.id] }; });
-    lista.sort(function (a, b) { return b.s - a.s; });
-    var somma = 0;
-    lista.forEach(function (x) { if (x.s > 0) somma += x.s; });
-    lista.forEach(function (x) { x.pc = (somma > 0 && x.s > 0) ? Math.round(x.s / somma * 100) : 0; });
-    return lista;
-  }
-  function evidenze(id) {
-    var pro = [], con = [];
-    domandeAttive().forEach(function (q) {
-      (stato.risposte[q.id] || []).forEach(function (idx) {
-        var w = (q.op[idx].p || {})[id];
-        if (!w) return;
-        (w > 0 ? pro : con).push({ t: q.op[idx].t, w: w });
-      });
-    });
-    testAttivi().forEach(function (t) {
-      var e = stato.test[t.id];
-      if (e !== 'pos' && e !== 'neg') return;
-      var w = ((e === 'pos') ? t.pos : t.neg)[id];
-      if (!w) return;
-      (w > 0 ? pro : con).push({ t: t.n + ' ' + (e === 'pos' ? 'positivo' : 'negativo'), w: w });
-    });
-    pro.sort(function (a, b) { return b.w - a.w; });
-    con.sort(function (a, b) { return a.w - b.w; });
-    return { pro: pro, con: con };
-  }
-  function bandiere() {
-    var out = [];
-    domandeAttive().forEach(function (q) {
-      (stato.risposte[q.id] || []).forEach(function (idx) { if (q.op[idx].fl) out.push(q.op[idx].fl); });
-    });
-    return out;
-  }
-  function domandaSuggerita() {
-    var cl = classifica();
-    if (cl.length < 2) return null;
-    var a = cl[0].ip.id, b = cl[1].ip.id, migliore = null, best = 0;
-    domandeAttive().forEach(function (q) {
-      if (stato.risposte[q.id] && stato.risposte[q.id].length) return;
-      var min = 0, max = 0;
-      q.op.forEach(function (o) {
-        var d = ((o.p || {})[a] || 0) - ((o.p || {})[b] || 0);
-        if (d > max) max = d;
-        if (d < min) min = d;
-      });
-      if (max - min > best) { best = max - min; migliore = q; }
-    });
-    return best > 0 ? migliore : null;
-  }
-
-  /* ============================= DISTRETTI ============================ */
-  function buildDistretti() {
-    var g = document.getElementById('modGrid');
-    g.innerHTML = DISTRETTI.map(function (d) {
-      return '<div class="mod-card" data-k="' + d.k + '"><h4>' + d.n + '</h4>' +
-             '<span class="cnt">' + IPOTESI[d.k].length + ' ipotesi</span>' +
-             '<p class="hint" style="margin-top:6px;">' + d.d + '</p></div>';
-    }).join('');
-    [].slice.call(g.querySelectorAll('.mod-card')).forEach(function (c) {
-      c.addEventListener('click', function () {
-        var k = c.dataset.k, i = stato.distretti.indexOf(k);
-        if (i >= 0) { stato.distretti.splice(i, 1); c.classList.remove('on'); }
-        else { stato.distretti.push(k); c.classList.add('on'); }
-      });
-    });
-  }
-
-  /* ============================== PANNELLO =========================== */
-  function renderPannello(el) {
-    var cl = classifica();
-    var vuoto = cl.every(function (x) { return x.s <= 0; });
-    var html = '<div class="panel-head"><span class="lb">Ipotesi in testa</span><span class="lb">' + cl.length + ' in gara</span></div>';
-    if (vuoto) {
-      html += '<p class="hint" style="margin-top:10px;">Nessun dato ancora sufficiente: rispondi alle prime domande.</p>';
-    } else {
-      cl.slice(0, 3).forEach(function (x) {
-        html += '<div class="hyp' + (x.s <= 0 ? ' dim' : '') + '"><div class="row"><span class="nm">' + x.ip.n +
-                '</span><span class="pc">' + x.pc + '%</span></div><div class="bar"><span style="width:' + x.pc + '%"></span></div></div>';
-      });
-    }
-    var sug = domandaSuggerita();
-    if (sug && el.id === 'panelQ') {
-      html += '<div class="nextq" data-goto="' + sug.id + '">Prossima domanda utile: <b>' + sug.q + '</b></div>';
-    }
-    el.innerHTML = html;
-    var n = el.querySelector('.nextq');
-    if (n) n.addEventListener('click', function () {
-      var t = document.getElementById('q_' + n.dataset.goto);
-      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 260, behavior: 'smooth' });
-    });
-  }
-
-  function renderBandiere(el) {
-    var b = bandiere();
-    el.innerHTML = b.length ? '<div class="flags"><h2>Da chiarire prima di procedere</h2><ul>' +
-      b.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' : '';
-  }
-
-  /* ============================== DOMANDE ============================= */
-  var CHECK = '<svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg>';
-
-  function renderDomande() {
-    var lista = domandeAttive();
-    var sug = domandaSuggerita();
-    var html = '', sezCorrente = '', distrCorrente = '';
-    lista.forEach(function (q) {
-      var nomeDistr = q.d === 'comune' ? 'Generale' : (DISTRETTI.filter(function (d) { return d.k === q.d; })[0] || {}).n;
-      if (nomeDistr !== distrCorrente) { distrCorrente = nomeDistr; sezCorrente = ''; }
-      var chiave = nomeDistr + ' \u00b7 ' + q.sez;
-      if (chiave !== sezCorrente) { sezCorrente = chiave; html += '<div class="qsec">' + chiave + '</div>'; }
-      var risp = stato.risposte[q.id] || [];
-      html += '<div class="q' + (risp.length ? ' answered' : '') + (sug && sug.id === q.id ? ' suggerita' : '') + '" id="q_' + q.id + '" data-q="' + q.id + '">';
-      if (sug && sug.id === q.id) html += '<span class="badge">Più discriminante ora</span>';
-      html += '<div class="qt">' + q.q + '</div><div class="why">' + q.why + '</div>';
-      if (q.tipo === 'multi') html += '<div class="multi-note">Più risposte possibili</div>';
-      html += '<div class="opts">';
-      q.op.forEach(function (o, i) {
-        var on = risp.indexOf(i) >= 0;
-        html += '<div class="opt' + (on ? ' on' : '') + '" data-i="' + i + '"><span class="box">' + CHECK +
-                '</span><span class="tx">' + o.t + (o.fl && on ? '<span class="fl">Bandiera</span>' : '') + '</span></div>';
-      });
-      html += '</div></div>';
-    });
-    var boxEl = document.getElementById('qList');
-    boxEl.innerHTML = html;
-    [].slice.call(boxEl.querySelectorAll('.q')).forEach(function (card) {
-      var q = lista.filter(function (x) { return x.id === card.dataset.q; })[0];
-      [].slice.call(card.querySelectorAll('.opt')).forEach(function (o) {
-        o.addEventListener('click', function () {
-          var i = +o.dataset.i, r = stato.risposte[q.id] || [];
-          if (q.tipo === 'multi') { var j = r.indexOf(i); if (j >= 0) r.splice(j, 1); else r.push(i); }
-          else { r = (r.length === 1 && r[0] === i) ? [] : [i]; }
-          stato.risposte[q.id] = r;
-          renderDomande();
-          renderPannello(document.getElementById('panelQ'));
-          renderBandiere(document.getElementById('flagsQ'));
-        });
-      });
-    });
-  }
-
-  function autoEta() {
-    var n = val('nascita');
-    if (!n) return;
-    var d = new Date(n);
-    if (isNaN(d.getTime())) return;
-    if (stato.risposte['q_eta'] && stato.risposte['q_eta'].length) return;
-    var oggi = new Date(), a = oggi.getFullYear() - d.getFullYear(), m = oggi.getMonth() - d.getMonth();
-    if (m < 0 || (m === 0 && oggi.getDate() < d.getDate())) a--;
-    stato.risposte['q_eta'] = [a < 18 ? 0 : (a <= 35 ? 1 : (a <= 50 ? 2 : 3))];
-  }
-
-  /* =============================== TEST =============================== */
-  function renderTest() {
-    var cl = classifica();
-    var top = cl.slice(0, 3).map(function (x) { return x.ip.id; });
-    var lista = testAttivi().slice();
-    lista.forEach(function (t) {
-      var rilievo = 0;
-      Object.keys(t.pos).forEach(function (id) {
-        var r = top.indexOf(id);
-        if (r >= 0) rilievo = Math.max(rilievo, 3 - r);
-      });
-      t._r = rilievo;
-    });
-    lista.sort(function (a, b) { return b._r - a._r; });
-
-    var html = '', sez = null;
-    lista.forEach(function (t) {
-      var s = t._r > 0 ? 'Consigliati sulle ipotesi in testa' : 'Altri test del distretto';
-      if (s !== sez) { sez = s; html += '<div class="qsec">' + s + '</div>'; }
-      var e = stato.test[t.id];
-      var cerca = encodeURIComponent(t.n + ' test esecuzione fisioterapia');
-      html += '<div class="test' + (t._r > 0 ? ' cons' : '') + '" data-t="' + t.id + '">' +
-              '<div class="nm">' + t.n + '</div><div class="mt">' + t.m + '</div>' +
-              '<div class="ds">' + t.c + '</div>' +
-              '<div class="tgt">Positivo se: ' + t.g + '</div>' +
-              '<div class="testlinks">' +
-              '<a href="https://www.youtube.com/results?search_query=' + cerca + '" target="_blank" rel="noopener">Video dell\u2019esecuzione</a>' +
-              '<a href="https://www.google.com/search?tbm=isch&q=' + cerca + '" target="_blank" rel="noopener">Immagini</a>' +
-              '</div>' +
-              '<div class="esiti">' +
-              '<div class="esito' + (e === 'pos' ? ' on' : '') + '" data-e="pos">Positivo</div>' +
-              '<div class="esito' + (e === 'neg' ? ' on' : '') + '" data-e="neg">Negativo</div>' +
-              '<div class="esito' + (e === 'na' ? ' on' : '') + '" data-e="na">Non eseguito</div>' +
-              '</div></div>';
-    });
-    var boxEl = document.getElementById('tList');
-    boxEl.innerHTML = html;
-    [].slice.call(boxEl.querySelectorAll('.test')).forEach(function (card) {
-      [].slice.call(card.querySelectorAll('.esito')).forEach(function (b) {
-        b.addEventListener('click', function () {
-          var id = card.dataset.t, v = b.dataset.e;
-          stato.test[id] = (stato.test[id] === v) ? null : v;
-          renderTest();
-          renderPannello(document.getElementById('panelT'));
-        });
-      });
-    });
-  }
-
-  /* ============================== SINTESI ============================= */
-  function renderSintesi() {
-    renderBandiere(document.getElementById('flagsR'));
-    var cl = classifica(), html = '';
-    cl.forEach(function (x, i) {
-      if (i > 0 && x.s <= 0) return;
-      var ev = evidenze(x.ip.id);
-      html += '<div class="res' + (i === 0 ? ' top' : '') + '">' +
-              '<div class="rk">Ipotesi ' + (i + 1) + ' \u00b7 punteggio ' + x.s + '</div>' +
-              '<div class="nm">' + x.ip.n + '</div>' +
-              '<div class="bar" style="margin:8px 0 10px;"><span style="width:' + x.pc + '%"></span></div>' +
-              '<div class="sn">' + x.ip.s + '</div><div class="ev">';
-      if (ev.pro.length) html += '<div class="t pro">A favore</div><ul class="pro">' + ev.pro.slice(0, 6).map(function (e) { return '<li>' + e.t + '</li>'; }).join('') + '</ul>';
-      if (ev.con.length) html += '<div class="t con">Contro</div><ul class="con">' + ev.con.slice(0, 5).map(function (e) { return '<li>' + e.t + '</li>'; }).join('') + '</ul>';
-      if (!ev.pro.length && !ev.con.length) html += '<p class="hint">Nessun elemento raccolto su questa ipotesi.</p>';
-      html += '</div></div>';
-    });
-    var manca = testAttivi().filter(function (t) {
-      if (stato.test[t.id] === 'pos' || stato.test[t.id] === 'neg') return false;
-      return cl.length && Object.keys(t.pos).indexOf(cl[0].ip.id) >= 0;
-    });
-    if (manca.length) {
-      html += '<div class="card"><h2>Test non eseguiti sull\u2019ipotesi principale</h2><ul style="margin:8px 0 0 18px;">' +
-              manca.map(function (t) { return '<li style="font-size:14px;">' + t.n + ' \u2014 ' + t.m + '</li>'; }).join('') + '</ul></div>';
-    }
-    document.getElementById('resList').innerHTML = html;
-    var sp = document.getElementById('spiegaPz');
-    if (!sp.value.trim() && cl.length && cl[0].s > 0) sp.value = cl[0].ip.pz;
-    buildSummary();
-  }
-
-  /* =========================== DATI RACCOLTI ========================== */
-  function segText() {
-    var ids = Object.keys(selected);
-    if (!ids.length) return '';
-    return ids.map(function (id) {
-      var s = selected[id], p = [s.label];
-      if (s.sigla) p.push('sigla ' + s.sigla);
-      if (s.local) p.push('loc. ' + s.local);
-      return p.join(' \u00b7 ');
-    }).join('\n');
-  }
-
-  function dati() {
-    return {
-      nome: val('nome'), nascita: val('nascita'), dataval: val('dataval'),
-      tel: val('tel'), email: val('email'), lavoro: val('lavoro'),
-      fonte: (pillVals['fonte'] || '') + (val('fonte_note') ? ' \u2014 ' + val('fonte_note') : ''),
-      sport: val('sport'), frequenza: pillVals['frequenza'] || '',
-      motivo: val('motivo'), durata: val('durata'), segmenti: segText(),
-      vas: document.getElementById('vas').value, tipo: pillVals['tipo_dolore'] || '',
-      migliorative: val('migliorative'), peggiorative: val('peggiorative'),
-      storia: val('storia'), farmaci: val('farmaci'), esami: val('esami'),
-      ob6sett: val('ob6sett'), ob3mesi: val('ob3mesi'), ob6mesi: val('ob6mesi'),
-      dx: val('dxFinale'), spiega: val('spiegaPz'), ragionamento: val('ragionamento'), piano: val('piano')
-    };
-  }
-
-  function buildSummary() {
-    var d = dati(), cl = classifica();
-    var righe = [
-      ['Paziente', d.nome],
-      ['Zone', d.segmenti.replace(/\n/g, '; ')],
-      ['Dolore', d.vas + '/10' + (d.tipo ? ' \u00b7 ' + d.tipo : '')],
-      ['Red flags', rfPositivi().length ? rfPositivi().length + ' segnalati' : 'nessuno'],
-      ['Ipotesi principale', cl.length && cl[0].s > 0 ? cl[0].ip.n + ' (' + cl[0].pc + '%)' : '\u2014'],
-      ['Diagnosi', d.dx || 'da compilare']
-    ].filter(function (r) { return r[1]; });
-    document.getElementById('summary').innerHTML = righe.map(function (r) {
-      return '<div class="summary-row"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
-    }).join('');
-
-    var lines = [['Nome', d.nome], ['Telefono', d.tel], ['Email', d.email], ['Lavoro', d.lavoro],
-      ['Come ci ha trovato', d.fonte], ['Sport', d.sport], ['Frequenza', d.frequenza],
-      ['Disturbo', d.motivo], ['Durata', d.durata], ['Segmenti', d.segmenti],
-      ['Dolore', d.vas + '/10'], ['Tipo', d.tipo], ['Migliorative', d.migliorative], ['Peggiorative', d.peggiorative],
-      ['Infortuni', d.storia], ['Farmaci', d.farmaci], ['Esami', d.esami],
-      ['Obiettivo 6 sett', d.ob6sett], ['Obiettivo 3 mesi', d.ob3mesi], ['Obiettivo 6 mesi', d.ob6mesi],
-      ['Red flags', rfPositivi().join('; ')], ['Diagnosi', d.dx]].filter(function (r) { return r[1]; });
-    var txt = '*Scheda anamnesi e diagnosi*' + lines.map(function (r) {
-      return '%0A%0A*' + r[0] + ':* ' + encodeURIComponent(r[1]);
-    }).join('');
-    document.getElementById('btnWa').href = 'https://wa.me/393282738164?text=' + txt;
-  }
-
-  /* ============================ NAVIGAZIONE =========================== */
-  STEP_LABELS.forEach(function (lab, i) {
-    var c = document.createElement('div');
-    c.className = 'chip';
-    c.innerHTML = '<span class="dot">' + (i + 1) + '</span>' + lab;
-    c.addEventListener('click', function () { if (i <= maxReached) goTo(i); });
+  STEP_LABELS.forEach((lab,i)=>{
+    const c=document.createElement('div');c.className='chip';
+    c.innerHTML=`<span class="dot">${i+1}</span>${lab}`;
+    c.addEventListener('click',()=>{if(i<=maxReached)goTo(i);});
     chips.appendChild(c);
   });
 
-  function preparaPasso(i) {
-    if (i === 7) {
-      autoEta();
-      renderDomande();
-      renderPannello(document.getElementById('panelQ'));
-      renderBandiere(document.getElementById('flagsQ'));
-    }
-    if (i === 8) { renderTest(); renderPannello(document.getElementById('panelT')); }
-    if (i === 9) renderSintesi();
-  }
-
-  function render() {
-    steps.forEach(function (s) { s.classList.toggle('visible', +s.dataset.step === current); });
-    [].slice.call(chips.children).forEach(function (c, i) {
-      c.classList.toggle('active', i === current);
-      c.classList.toggle('done', i < current);
+  function render(){
+    steps.forEach(s=>s.classList.toggle('visible',+s.dataset.step===current));
+    [...chips.children].forEach((c,i)=>{
+      c.classList.toggle('active',i===current);
+      c.classList.toggle('done',i<current);
     });
-    fill.style.width = (current / (TOTAL - 1) * 100) + '%';
-    count.textContent = 'Passo ' + (current + 1) + ' / ' + TOTAL;
-    btnBack.style.display = current > 0 ? 'inline-flex' : 'none';
-    btnNext.style.display = current === TOTAL - 1 ? 'none' : 'inline-flex';
-    btnNext.textContent = current === TOTAL - 2 ? 'Concludi' : 'Continua';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const isEnd=current===TOTAL; // step 7
+    fill.style.width=((Math.min(current,TOTAL))/TOTAL*100)+'%';
+    count.textContent=isEnd?'Completato':`Passo ${current+1} / ${TOTAL}`;
+    btnBack.style.display=current>0&&!isEnd?'inline-flex':'none';
+    btnNext.style.display=isEnd?'none':'inline-flex';
+    btnNext.textContent=current===TOTAL-1?'Concludi':'Continua';
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(isEnd)buildSummary();
   }
+  function goTo(i){current=i;maxReached=Math.max(maxReached,i);render();}
+  function val(id){const e=document.getElementById(id);return e?(e.value||'').trim():'';}
 
-  function goTo(i) {
-    current = i;
-    maxReached = Math.max(maxReached, i);
-    preparaPasso(i);
-    render();
-  }
-
-  btnNext.addEventListener('click', function () {
-    [].slice.call(document.querySelectorAll('.err')).forEach(function (e) { e.classList.remove('show'); });
-    if (current === 1 && !val('nome')) { document.getElementById('errNome').classList.add('show'); return; }
-    if (current === 6 && !stato.distretti.length) { alert('Scegli almeno un distretto.'); return; }
-    if (current < TOTAL - 1) goTo(current + 1);
+  btnNext.addEventListener('click',()=>{
+    document.querySelectorAll('.err').forEach(e=>e.classList.remove('show'));
+    if(current===1&&!val('nome')){document.getElementById('errNome').classList.add('show');return;}
+    if(current<TOTAL)goTo(current+1);
   });
-  btnBack.addEventListener('click', function () { if (current > 0) goTo(current - 1); });
+  btnBack.addEventListener('click',()=>{if(current>0)goTo(current-1);});
 
-  document.getElementById('rigenera').addEventListener('click', function () {
-    var cl = classifica();
-    if (!cl.length || cl[0].s <= 0) { alert('Nessuna ipotesi in testa da cui riprendere.'); return; }
-    document.getElementById('spiegaPz').value = cl[0].ip.pz;
-  });
-
-  document.getElementById('btnRestart').addEventListener('click', function () {
-    if (confirm('Azzerare la scheda e ricominciare?')) location.reload();
-  });
-
-  /* ================================ PDF =============================== */
-  var W = 210, M = 18;
-  var ACC = [244, 121, 32], INK = [26, 26, 26], SOFT = [74, 74, 74], MUT = [138, 138, 138], BAD = [179, 38, 30];
-
-  function asc(s) {
-    return String(s == null ? '' : s)
-      .replace(/\u2019/g, "'").replace(/[\u2018\u201c\u201d]/g, "'")
-      .replace(/\u2014|\u2013/g, '-')
-      .replace(/\u2265/g, '>=').replace(/\u2264/g, '<=').replace(/\u00b0/g, ' gradi');
+  /* ====== RIEPILOGO + DATI ====== */
+  function segText(){
+    const ids=Object.keys(selected);if(!ids.length)return '';
+    return ids.map(id=>{const s=selected[id];let p=[s.label];
+      if(s.sigla)p.push('sigla '+s.sigla);if(s.local)p.push('loc. '+s.local);
+      const l=[s.dx?'Dx':'',s.sx?'Sx':''].filter(Boolean).join('+');if(l)p.push(l);
+      return p.join(' · ');}).join('\n');
   }
-  function fmtData(iso) {
-    if (!iso) return new Date().toLocaleDateString('it-IT');
-    var p = iso.split('-');
-    return p[2] + '/' + p[1] + '/' + p[0];
+  function rfList(){return [...rfBoxes].filter(c=>c.checked).map(c=>c.closest('.consent-row').querySelector('.consent-text').textContent);}
+  function gather(){
+    return {
+      nome:val('nome'),nascita:val('nascita'),tel:val('tel'),email:val('email'),lavoro:val('lavoro'),
+      sport:val('sport'),frequenza:pillVals['frequenza']||'',
+      motivo:val('motivo'),segmenti:segText(),
+      durata:val('durata'),primo:val('primo_evento'),esordio:pillVals['esordio']||'',
+      vas:document.getElementById('vas').value,tipo:pillVals['tipo_dolore']||'',
+      migliorative:val('migliorative'),peggiorative:val('peggiorative'),
+      storia:val('storia'),farmaci:val('farmaci'),esami:val('esami'),
+      ob6sett:val('ob6sett'),ob3mesi:val('ob3mesi'),ob6mesi:val('ob6mesi'),
+      redflags:rfList(),
+      selMap:selected
+    };
   }
-  function nomeFile(prefisso) {
-    var n = (val('nome') || 'Paziente').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^A-Za-z0-9 ]+/g, ' ').trim().split(/\s+/)
-      .map(function (p) { return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase(); }).join('');
-    return prefisso + (n || 'Paziente') + '.pdf';
+  function buildSummary(){
+    const d=gather();const s=document.getElementById('summary');
+    const rows=[['Nome',d.nome],['Sport',d.sport+(d.frequenza?' ('+d.frequenza+')':'')],
+      ['Disturbo',d.motivo],['Zone',d.segmenti.replace(/\n/g,'; ')],
+      ['Durata',d.durata],['Dolore',d.vas+'/10'+(d.tipo?' '+d.tipo:'')],
+      ['Red flags',d.redflags.length?d.redflags.length+' segnalati':'nessuno']
+    ].filter(r=>r[1]);
+    s.innerHTML=rows.map(r=>`<div class="summary-row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+    // link whatsapp
+    const lines=[['Nome',d.nome],['Nascita',d.nascita],['Lavoro',d.lavoro],['Sport',d.sport],['Frequenza',d.frequenza],
+      ['Disturbo',d.motivo],['Segmenti',d.segmenti],['Durata',d.durata],['Primo evento',d.primo],['Esordio',d.esordio],
+      ['Dolore',d.vas+'/10'],['Tipo',d.tipo],['Migliorative',d.migliorative],['Peggiorative',d.peggiorative],
+      ['Infortuni',d.storia],['Farmaci',d.farmaci],['Esami',d.esami],
+      ['Obiettivo 6 sett',d.ob6sett],['Obiettivo 3 mesi',d.ob3mesi],['Obiettivo 6 mesi',d.ob6mesi],
+      ['Red flags',d.redflags.join('; ')]].filter(r=>r[1]);
+    const txt='*Questionario pre-visita*'+lines.map(r=>'%0A%0A*'+r[0]+':* '+encodeURIComponent(r[1])).join('');
+    document.getElementById('btnWa').href='https://wa.me/393282738164?text='+txt;
   }
-  function intestazione(doc, etichetta, data) {
-    var y = 20, fatto = false;
-    try {
-      var src = document.querySelector('.header-logo').src;
-      if (src && src.indexOf('data:image') === 0) {
-        doc.addImage(src, 'PNG', M, 11.5, 26, 9.7);   // logo reale, proporzioni 810x302
-        fatto = true;
-      }
-    } catch (e) { fatto = false; }
-    if (!fatto) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(INK[0], INK[1], INK[2]);
-      doc.text('fisio', M, y);
-      var w = doc.getTextWidth('fisio');
-      doc.setTextColor(ACC[0], ACC[1], ACC[2]); doc.text('\u00b7', M + w, y);
-      doc.setTextColor(INK[0], INK[1], INK[2]); doc.text('expert', M + w + doc.getTextWidth('\u00b7'), y);
+
+  /* ====== PDF ====== */
+  function fmtDate(iso){if(!iso)return '';const[y,m,dd]=iso.split('-');return `${dd}/${m}/${y}`;}
+
+  /* Geometrie speculari a SEGMENTS, in forma disegnabile da jsPDF.
+     Ogni shape: {t:'r',x,y,w,h,r}  oppure  {t:'c',cx,cy,rad}
+     Coordinate nello stesso sistema dell'SVG (viewBox 200x440). */
+  const BODY_PDF = {
+    front: {
+      testa:      [{t:'c',cx:100,cy:30,rad:17},{t:'r',x:93,y:46,w:14,h:12,r:4}],
+      spalla_f:   [{t:'r',x:56,y:62,w:28,h:15,r:7},{t:'r',x:116,y:62,w:28,h:15,r:7}],
+      torace:     [{t:'r',x:74,y:80,w:52,h:42,r:8}],
+      addome:     [{t:'r',x:76,y:126,w:48,h:48,r:8}],
+      braccio_f:  [{t:'r',x:52,y:80,w:16,h:68,r:8},{t:'r',x:132,y:80,w:16,h:68,r:8}],
+      avambr_f:   [{t:'r',x:52,y:152,w:15,h:52,r:7},{t:'r',x:133,y:152,w:15,h:52,r:7}],
+      mano_f:     [{t:'r',x:50,y:208,w:16,h:22,r:6},{t:'r',x:134,y:208,w:16,h:22,r:6}],
+      bacino:     [{t:'r',x:76,y:178,w:48,h:28,r:8}],
+      coscia_f:   [{t:'r',x:77,y:210,w:21,h:78,r:9},{t:'r',x:102,y:210,w:21,h:78,r:9}],
+      ginocchio:  [{t:'r',x:78,y:290,w:20,h:22,r:7},{t:'r',x:102,y:290,w:20,h:22,r:7}],
+      gamba_f:    [{t:'r',x:79,y:314,w:18,h:74,r:8},{t:'r',x:103,y:314,w:18,h:74,r:8}],
+      caviglia:   [{t:'r',x:79,y:390,w:18,h:30,r:7},{t:'r',x:103,y:390,w:18,h:30,r:7}]
+    },
+    back: {
+      nuca:       [{t:'c',cx:100,cy:30,rad:17},{t:'r',x:93,y:46,w:14,h:12,r:4}],
+      spalla_b:   [{t:'r',x:56,y:62,w:28,h:15,r:7},{t:'r',x:116,y:62,w:28,h:15,r:7}],
+      dorsale:    [{t:'r',x:74,y:80,w:52,h:42,r:8}],
+      lombare:    [{t:'r',x:76,y:126,w:48,h:48,r:8}],
+      braccio_b:  [{t:'r',x:52,y:80,w:16,h:68,r:8},{t:'r',x:132,y:80,w:16,h:68,r:8}],
+      avambr_b:   [{t:'r',x:52,y:152,w:15,h:52,r:7},{t:'r',x:133,y:152,w:15,h:52,r:7}],
+      gluteo:     [{t:'r',x:76,y:178,w:48,h:28,r:8}],
+      ischio:     [{t:'r',x:77,y:210,w:21,h:78,r:9},{t:'r',x:102,y:210,w:21,h:78,r:9}],
+      poplite:    [{t:'r',x:78,y:290,w:20,h:22,r:7},{t:'r',x:102,y:290,w:20,h:22,r:7}],
+      polpaccio:  [{t:'r',x:79,y:314,w:18,h:74,r:8},{t:'r',x:103,y:314,w:18,h:74,r:8}],
+      tallone:    [{t:'r',x:79,y:390,w:18,h:30,r:7},{t:'r',x:103,y:390,w:18,h:30,r:7}]
     }
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.text(etichetta, W - M, y, { align: 'right' }); y += 4;
-    doc.text('Data: ' + fmtData(data), W - M, y, { align: 'right' });
-    return y + 10;
-  }
+  };
 
-  function piedi(doc, nota) {
-    var tot = doc.internal.getNumberOfPages();
-    for (var i = 1; i <= tot; i++) {
-      doc.setPage(i);
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(MUT[0], MUT[1], MUT[2]);
-      doc.text('Gianmarco Molinari - Fisio Expert Roma - P.IVA 14315091000 - info@fisioexpert.it - +39 328 273 8164', M, 287);
-      doc.text(i + '/' + tot, W - M, 287, { align: 'right' });
-      if (nota) doc.text(nota, M, 291);
-    }
-  }
-
-  /* --------- mappa del dolore nel PDF (stesse geometrie dell'SVG) ------ */
-  function drawBody(doc, view, ox, oy, scale) {
-    var X = function (u) { return ox + u * scale; };
-    var Y = function (u) { return oy + u * scale; };
-    var S = function (u) { return u * scale; };
-    SEG[view].forEach(function (seg) {
-      var on = !!selected[seg.id];
-      if (on) { doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.setDrawColor(ACC[0], ACC[1], ACC[2]); }
-      else { doc.setFillColor(240, 240, 238); doc.setDrawColor(200, 200, 198); }
+  /* Disegna una vista (front|back) nel PDF.
+     ox,oy = angolo alto-sx in mm; scale = mm per unità SVG.
+     selMap = oggetto `selected`: le chiavi presenti vengono riempite in arancio. */
+  function drawBody(doc,view,ox,oy,scale,selMap,ACC){
+    const shapes = BODY_PDF[view];
+    const X = u => ox + u*scale;
+    const Y = u => oy + u*scale;
+    const S = u => u*scale;
+    for(const id in shapes){
+      const on = !!selMap[id];
+      if(on){ doc.setFillColor(ACC[0],ACC[1],ACC[2]); doc.setDrawColor(ACC[0],ACC[1],ACC[2]); }
+      else  { doc.setFillColor(240,240,238);          doc.setDrawColor(200,200,198); }
       doc.setLineWidth(0.25);
-      seg.sh.forEach(function (sh) {
-        if (sh.t === 'c') doc.circle(X(sh.cx), Y(sh.cy), S(sh.rad), 'FD');
-        else doc.roundedRect(X(sh.x), Y(sh.y), S(sh.w), S(sh.h), S(sh.r), S(sh.r), 'FD');
+      shapes[id].forEach(sh=>{
+        if(sh.t==='c') doc.circle(X(sh.cx),Y(sh.cy),S(sh.rad),'FD');
+        else doc.roundedRect(X(sh.x),Y(sh.y),S(sh.w),S(sh.h),S(sh.r),S(sh.r),'FD');
       });
-    });
+    }
   }
+  document.getElementById('btnDownload').addEventListener('click',()=>{
+    if(!window.jspdf){alert('Generatore PDF non disponibile (verifica la connessione). Puoi usare il pulsante WhatsApp per inviare il riepilogo.');return;}
+    const d=gather();const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+    const W=210,M=18;let y=20;
+    const ACC=[244,121,32],INK=[26,26,26],SOFT=[74,74,74];
+    function h1(t){doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(...INK);doc.text(t,M,y);y+=2;doc.setDrawColor(...ACC);doc.setLineWidth(.6);doc.line(M,y,W-M,y);y+=7;}
+    function sec(t){if(y>270){doc.addPage();y=20;}doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...ACC);doc.text(t.toUpperCase(),M,y);y+=5;}
+    function field(k,v){if(!v)return;if(y>275){doc.addPage();y=20;}doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...INK);doc.text(k+':',M,y);
+      doc.setFont('helvetica','normal');doc.setTextColor(...SOFT);const lines=doc.splitTextToSize(v,W-M-M-32);doc.text(lines,M+32,y);y+=Math.max(5,lines.length*4.5);}
+    // intestazione
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...INK);doc.text('fisio',M,y);
+    const w=doc.getTextWidth('fisio');doc.setTextColor(...ACC);doc.text('·',M+w,y);doc.setTextColor(...INK);doc.text('expert',M+w+doc.getTextWidth('·'),y);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...SOFT);doc.text('Questionario pre-visita',W-M,y,{align:'right'});y+=4;
+    doc.text('Data: '+new Date().toLocaleDateString('it-IT'),W-M,y,{align:'right'});y+=10;
 
-  /* ------------------------- PDF CLINICO ------------------------------ */
-  document.getElementById('btnPdf').addEventListener('click', function () {
-    if (!window.jspdf) { alert('Generatore PDF non disponibile (verifica la connessione).'); return; }
-    var d = dati();
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    var y = intestazione(doc, 'Scheda anamnesi e diagnosi', d.dataval);
+    h1(d.nome||'Paziente');
+    sec('Dati');
+    field('Nascita',fmtDate(d.nascita));field('Lavoro',d.lavoro);field('Sport',d.sport+(d.frequenza?' — '+d.frequenza:''));
+    field('Telefono',d.tel);field('Email',d.email);y+=2;
+    sec('Disturbo');field('Motivo',d.motivo);field('Segmenti',d.segmenti);y+=2;
+    sec('Anamnesi');field('Durata',d.durata);field('Primo evento',d.primo);field('Esordio',d.esordio);y+=2;
+    sec('Dolore');field('Intensità',d.vas+' / 10');field('Tipo',d.tipo);field('Migliorative',d.migliorative);field('Peggiorative',d.peggiorative);y+=2;
+    sec('Storia clinica');field('Infortuni pregressi',d.storia);field('Farmaci/patologie',d.farmaci);field('Esami',d.esami);y+=2;
+    sec('Obiettivi');field('6 settimane',d.ob6sett);field('3 mesi',d.ob3mesi);field('6 mesi',d.ob6mesi);y+=2;
+    sec('Triage red flags');
+    if(d.redflags.length){d.redflags.forEach(r=>field('•',r));}
+    else field('Esito','Nessun red flag segnalato');
 
-    function pagina(soglia) { if (y > (soglia || 265)) { doc.addPage(); y = 20; } }
-    function sez(t) {
-      pagina(255); y += 3;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
-      doc.text(asc(t).toUpperCase(), M, y); y += 2;
-      doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 6;
-    }
-    function riga(k, v) {
-      if (!v) return;
-      pagina();
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      doc.text(asc(k), M, y);
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(INK[0], INK[1], INK[2]);
-      var t = doc.splitTextToSize(asc(v), W - M - 58);
-      doc.text(t, M + 40, y);
-      y += Math.max(t.length * 4.6, 5.2);
-    }
-    function par(txt, colore, corsivo) {
-      doc.setFont('helvetica', corsivo ? 'italic' : 'normal'); doc.setFontSize(9.5);
-      var c = colore || INK; doc.setTextColor(c[0], c[1], c[2]);
-      doc.splitTextToSize(asc(txt), W - M * 2).forEach(function (l) { pagina(); doc.text(l, M, y); y += 4.6; });
-    }
-
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text(asc(d.nome || 'Paziente'), M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 7;
-
-    sez('Dati');
-    riga('Nascita', d.nascita ? fmtData(d.nascita) : '');
-    riga('Telefono', d.tel);
-    riga('Email', d.email);
-    riga('Lavoro', d.lavoro);
-    riga('Come ci ha trovato', d.fonte);
-    riga('Sport', d.sport + (d.frequenza ? ' - ' + d.frequenza : ''));
-
-    sez('Disturbo');
-    riga('Motivo', d.motivo);
-    riga('Durata', d.durata);
-    riga('Segmenti', d.segmenti.replace(/\n/g, ' | '));
-
-    sez('Dolore');
-    riga('Intensita', d.vas + ' / 10');
-    riga('Tipo', d.tipo);
-    riga('Migliorative', d.migliorative);
-    riga('Peggiorative', d.peggiorative);
-
-    sez('Storia clinica');
-    riga('Infortuni pregressi', d.storia);
-    riga('Farmaci / patologie', d.farmaci);
-    riga('Esami', d.esami);
-
-    sez('Obiettivi');
-    riga('6 settimane', d.ob6sett);
-    riga('3 mesi', d.ob3mesi);
-    riga('6 mesi', d.ob6mesi);
-
-    sez('Triage red flags');
-    var pos = rfPositivi(), neg = rfNegativi();
-    if (pos.length) {
-      par('Il paziente riferisce:', BAD);
-      pos.forEach(function (x) { par('- ' + x, BAD); });
-      y += 2;
-    } else {
-      par('Nessun red flag segnalato allo screening.', SOFT);
-      y += 2;
-    }
-    if (neg.length) {
-      par('Il paziente non manifesta: ' + neg.map(function (x) {
-        return x.charAt(0).toLowerCase() + x.slice(1);
-      }).join('; ') + '.', MUT);
-    }
-
-    var band = bandiere();
-    if (band.length) {
-      sez('Da chiarire prima di procedere');
-      band.forEach(function (x) { par('- ' + x, BAD); });
-    }
-
-    var cl = classifica();
-    if (cl.length) {
-      sez('Ipotesi in ordine di punteggio');
-      cl.forEach(function (x, i) {
-        if (i > 0 && x.s <= 0) return;
-        pagina(248);
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(INK[0], INK[1], INK[2]);
-        var titolo = doc.splitTextToSize(asc((i + 1) + '. ' + x.ip.n), W - M * 2 - 32);
-        doc.text(titolo, M, y);
-        doc.setTextColor(ACC[0], ACC[1], ACC[2]); doc.setFontSize(10);
-        doc.text(x.pc + '%  (' + x.s + ')', W - M, y, { align: 'right' });
-        y += titolo.length * 4.8 + 1;
-        var ev = evidenze(x.ip.id);
-        if (ev.pro.length) par('A favore: ' + ev.pro.slice(0, 6).map(function (e) { return e.t; }).join(' - '), SOFT);
-        if (ev.con.length) par('Contro: ' + ev.con.slice(0, 5).map(function (e) { return e.t; }).join(' - '), MUT);
-        y += 3;
-      });
-    }
-
-    var eseguiti = testAttivi().filter(function (t) { return stato.test[t.id] === 'pos' || stato.test[t.id] === 'neg'; });
-    if (eseguiti.length) {
-      sez('Test eseguiti');
-      eseguiti.forEach(function (t) { riga(stato.test[t.id] === 'pos' ? 'POSITIVO' : 'Negativo', t.n + ' (' + t.m + ')'); });
-    }
-
-    var risposte = domandeAttive().filter(function (q) { return (stato.risposte[q.id] || []).length; });
-    if (risposte.length) {
-      sez('Risposte raccolte');
-      risposte.forEach(function (q) {
-        pagina(258);
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-        doc.splitTextToSize(asc(q.q), W - M * 2).forEach(function (l) { pagina(); doc.text(l, M, y); y += 4.4; });
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(INK[0], INK[1], INK[2]);
-        var testo = stato.risposte[q.id].map(function (i) { return q.op[i].t; }).join(' + ');
-        doc.splitTextToSize(asc(testo), W - M * 2 - 6).forEach(function (l) { pagina(); doc.text(l, M + 6, y); y += 4.4; });
-        y += 2;
-      });
-    }
-
-    sez('Conclusione clinica');
-    if (d.dx) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(INK[0], INK[1], INK[2]);
-      doc.splitTextToSize(asc(d.dx), W - M * 2).forEach(function (l) { pagina(); doc.text(l, M, y); y += 5.4; });
-      y += 2;
-    } else {
-      par('Diagnosi non compilata.', MUT, true);
-    }
-    if (d.ragionamento) { par(d.ragionamento, SOFT); y += 2; }
-    if (d.piano) { sez('Piano'); par(d.piano, SOFT); }
-
-    /* pagina mappa del dolore */
-    doc.addPage(); y = 20;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text('Mappa del dolore', M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 8;
-    var scale = 0.16, figW = 200 * scale, figH = 440 * scale, gap = 22;
-    var startX = (W - (figW * 2 + gap)) / 2, topY = y + 4;
-    drawBody(doc, 'front', startX, topY, scale);
-    drawBody(doc, 'back', startX + figW + gap, topY, scale);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.text('Anteriore', startX + figW / 2, topY + figH + 5, { align: 'center' });
-    doc.text('Posteriore', startX + figW + gap + figW / 2, topY + figH + 5, { align: 'center' });
+    /* ---- Pagina mappa del dolore ---- */
+    doc.addPage(); y=20;
+    h1('Mappa del dolore');
+    const scale = 0.16;                    // 440 unità SVG -> ~70 mm di altezza
+    const figW  = 200*scale, figH = 440*scale;
+    const gap   = 22;
+    const startX = (W - (figW*2 + gap))/2; // centra le due figure
+    const topY   = y + 4;
+    drawBody(doc,'front',startX,               topY,scale,d.selMap,ACC);
+    drawBody(doc,'back', startX+figW+gap,      topY,scale,d.selMap,ACC);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...SOFT);
+    doc.text('Anteriore',startX+figW/2,           topY+figH+5,{align:'center'});
+    doc.text('Posteriore',startX+figW+gap+figW/2, topY+figH+5,{align:'center'});
     y = topY + figH + 14;
-    var ids = Object.keys(selected);
-    if (ids.length) {
-      sez('Zone selezionate');
-      ids.forEach(function (id) {
-        var s = selected[id], p = [];
-        if (s.sigla) p.push('sigla ' + s.sigla);
-        if (s.local) p.push('loc. ' + s.local);
-        riga(s.label, p.length ? p.join(' - ') : '-');
+
+    /* Legenda zone selezionate */
+    const selIds = Object.keys(d.selMap||{});
+    if(selIds.length){
+      sec('Zone selezionate');
+      selIds.forEach(id=>{
+        const s = d.selMap[id];
+        const parts = [];
+        if(s.sigla) parts.push('sigla '+s.sigla);
+        if(s.local) parts.push('loc. '+s.local);
+        const lati = [s.dx?'Dx':null, s.sx?'Sx':null].filter(Boolean).join(' + ');
+        if(lati) parts.push(lati);
+        field(s.label, parts.length ? parts.join(' · ') : '—');
       });
     } else {
-      par('Nessuna zona selezionata.', MUT, true);
+      doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(...SOFT);
+      doc.text('Nessuna zona selezionata.',M,y);
     }
 
-    piedi(doc, 'Supporto al ragionamento clinico: i punteggi derivano da pesi assegnati a priori, non sostituiscono l\'esame obiettivo.');
-    doc.save(nomeFile('Diagnosi'));
+    /* ---- Salvataggio: NomeCognome.pdf ---- */
+    const fileName = (d.nome||'Paziente')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')   // via gli accenti
+      .replace(/[^A-Za-z0-9 ]+/g,' ')                    // via i caratteri strani
+      .trim().split(/\s+/)
+      .map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase())
+      .join('') || 'Paziente';
+    doc.save(fileName+'.pdf');
   });
 
-  /* ------------------------- PDF PAZIENTE ----------------------------- */
-  document.getElementById('btnPdfPaz').addEventListener('click', function () {
-    if (!window.jspdf) { alert('Generatore PDF non disponibile (verifica la connessione).'); return; }
-    var d = dati();
-    if (!d.dx) { alert('Compila prima la diagnosi clinica: \u00e8 la parte principale di questo PDF.'); return; }
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    var y = intestazione(doc, 'Referto di valutazione', d.dataval);
-
-    function pagina(soglia) { if (y > (soglia || 262)) { doc.addPage(); y = 20; } }
-    function titoletto(t) {
-      pagina(250); y += 4;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
-      doc.text(asc(t).toUpperCase(), M, y); y += 2;
-      doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 6;
-    }
-    function testo(txt, size, colore, stile, passo) {
-      doc.setFont('helvetica', stile || 'normal'); doc.setFontSize(size || 10);
-      var c = colore || INK; doc.setTextColor(c[0], c[1], c[2]);
-      doc.splitTextToSize(asc(txt), W - M * 2).forEach(function (l) { pagina(); doc.text(l, M, y); y += (passo || 5); });
-    }
-    function voce(k, v) {
-      if (!v) return;
-      pagina();
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      doc.text(asc(k), M, y);
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(INK[0], INK[1], INK[2]);
-      var t = doc.splitTextToSize(asc(v), W - M - 58);
-      doc.text(t, M + 40, y);
-      y += Math.max(t.length * 5, 5.6);
-    }
-
-    /* nome */
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text(asc(d.nome || 'Paziente'), M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 12;
-
-    /* diagnosi */
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
-    doc.text('DIAGNOSI CLINICA', M, y); y += 8;
-    testo(d.dx, 14, INK, 'bold', 7);
-
-    /* spiegazione */
-    if (d.spiega) {
-      titoletto('In parole semplici');
-      testo(d.spiega, 10.5, SOFT, 'normal', 5.4);
-    }
-
-    /* dolore di oggi */
-    var haDolore = d.vas || d.tipo || d.migliorative || d.peggiorative || d.segmenti;
-    if (haDolore) {
-      titoletto('Il dolore di oggi');
-      voce('Intensita riferita', d.vas + ' / 10');
-      voce('Andamento', d.tipo);
-      voce('Zona', d.segmenti.replace(/\n/g, ' | '));
-      voce('Lo migliora', d.migliorative);
-      voce('Lo peggiora', d.peggiorative);
-    }
-
-    /* obiettivi */
-    if (d.ob6sett || d.ob3mesi || d.ob6mesi) {
-      titoletto('Gli obiettivi che abbiamo fissato');
-      voce('6 settimane', d.ob6sett);
-      voce('3 mesi', d.ob3mesi);
-      voce('6 mesi', d.ob6mesi);
-    }
-
-    /* piano, se compilato */
-    if (d.piano) {
-      titoletto('Il piano');
-      testo(d.piano, 10.5, SOFT, 'normal', 5.4);
-    }
-
-    /* screening di sicurezza */
-    titoletto('Screening di sicurezza');
-    var neg = rfNegativi(), pos = rfPositivi();
-    if (neg.length) {
-      testo('Alla valutazione del ' + fmtData(d.dataval) + ' il paziente non ha riferito: ' +
-        neg.map(function (x) { return x.charAt(0).toLowerCase() + x.slice(1); }).join('; ') + '.', 9, MUT, 'normal', 4.4);
-    }
-    if (pos.length) {
-      y += 2;
-      testo('Sono emersi i seguenti aspetti, gia discussi insieme e da approfondire in ambito medico: ' +
-        pos.map(function (x) { return x.charAt(0).toLowerCase() + x.slice(1); }).join('; ') + '.', 9, BAD, 'normal', 4.4);
-    }
-    y += 2;
-    testo('Questo documento riporta una valutazione fisioterapica e non sostituisce una diagnosi medica. Se i sintomi cambiano o compaiono nuovi segnali, contatta lo studio.', 8.5, MUT, 'italic', 4.2);
-
-    /* firma */
-    y += 14;
-    pagina(255);
-    doc.setDrawColor(200, 200, 198); doc.setLineWidth(0.3); doc.line(M, y, M + 70, y); y += 5;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text('Gianmarco Molinari', M, y); y += 4.5;
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.text('Fisioterapista sportivo', M, y);
-
-    piedi(doc, '');
-    doc.save(nomeFile('Referto'));
-  });
-
-  /* ================================ AVVIO ============================= */
-  buildDistretti();
-  document.getElementById('dataval').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('btnRestart').addEventListener('click',()=>location.reload());
   render();
 })();
 </script>
+<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
+<style>
+  .cc-banner {
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: calc(100% - 40px); max-width: 380px;
+    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
+    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
+  }
+  .cc-banner[hidden] { display: none; }
+  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
+  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
+  .cc-testo a { color: #d4660e; text-decoration: underline; }
+  .cc-chiudi {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
+    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
+  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .cc-btn {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
+    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
+  }
+  .cc-rifiuta { background: #1a1a1a; }
+  .cc-rifiuta:hover { background: #3a3a3a; }
+  .cc-accetta { background: #f47920; }
+  .cc-accetta:hover { background: #d4660e; }
+  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .cc-banner {
+      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
+      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
+      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .cc-titolo { font-size: 19px; }
+    .cc-testo { font-size: 13.5px; }
+  }
+</style>
+<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
+  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
+  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
+  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
+  <div class="cc-pulsanti">
+    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
+    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var banner = document.getElementById('ccBanner');
+    if (!banner || !window.fxCookie) return;
+    function mostra() { banner.hidden = false; }
+    function nascondi() { banner.hidden = true; }
+    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
+    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
+      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
+    });
+    if (fxCookie.scelta() === null) mostra();
+  })();
+</script>
+
 </body>
 </html>

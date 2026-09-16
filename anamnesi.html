@@ -604,6 +604,7 @@
         <h2>Conclusione clinica</h2>
         <p class="hint" style="margin-bottom:14px;">Quello che finisce in cartella e nel referto del paziente è questo, non il punteggio.</p>
         <div class="field full"><label>Diagnosi / ipotesi di lavoro</label><textarea id="dxFinale" placeholder="es. Tendinopatia rotulea in fase reattiva, arto dx"></textarea></div>
+        <div class="field full" style="margin-top:14px;"><label>Spiegazione per il paziente</label><textarea id="spiegaPz" placeholder="Si compila da sola con l'ipotesi in testa: correggila come vuoi"></textarea><div class="hint" style="margin-top:6px;">Va nel PDF del paziente, in parole semplici. <span id="rigenera" style="color:var(--accent);cursor:pointer;font-weight:600;">Riprendi dall'ipotesi in testa</span></div></div>
         <div class="field full" style="margin-top:14px;"><label>Ragionamento e diagnosi differenziale</label><textarea id="ragionamento" placeholder="Cosa ti ha convinto, cosa hai escluso e perché"></textarea></div>
         <div class="field full" style="margin-top:14px;"><label>Piano: trattamento, accertamenti, invii</label><textarea id="piano" placeholder="Cosa si fa da oggi, cosa si rivaluta e quando"></textarea></div>
       </div>
@@ -646,35 +647,60 @@ const DISTRETTI = [
 
 const IPOTESI = {
   anca: [
-    { id:'a_fai',    n:'Conflitto femoro-acetabolare / lesione del labbro', s:'Dolore inguinale profondo nel giovane sportivo, peggiora in flessione e rotazione interna.' },
-    { id:'a_gtps',   n:'Dolore laterale d\u2019anca (tendinopatia glutea)',   s:'Dolore sul gran trocantere, tipico dormendo sul fianco e in appoggio monopodalico.' },
-    { id:'a_coxa',   n:'Coxartrosi',                                          s:'Dolore inguinale con perdita di rotazione interna, rigidità mattutina breve, over 50.' },
-    { id:'a_ham',    n:'Tendinopatia prossimale degli ischiocrurali',         s:'Dolore all\u2019ischio, peggiora da seduti a lungo e in allungo durante la corsa veloce.' },
-    { id:'a_add',    n:'Dolore inguinale legato all\u2019adduttore (pubalgia)', s:'Dolore su pube e adduttori nello sport di cambio direzione e calcio.' },
-    { id:'a_dgs',    n:'Sindrome glutea profonda / piriforme',                s:'Dolore gluteo profondo con irradiazione posteriore, peggiora da seduti.' },
-    { id:'a_rad',    n:'Dolore riferito lombare / radicolopatia',             s:'Origine rachidea: il dolore d\u2019anca è un sintomo, non la sede del problema.' },
-    { id:'a_stress', n:'Frattura da stress del collo del femore',             s:'Dolore inguinale in carico dopo aumento rapido del volume di corsa. Richiede imaging urgente.' }
+    { id:'a_fai',    n:'Conflitto femoro-acetabolare / lesione del labbro', s:'Dolore inguinale profondo nel giovane sportivo, peggiora in flessione e rotazione interna.',
+      pz:'La testa del femore e il bordo della cavit\u00e0 dell\u2019anca si toccano prima del dovuto quando la gamba va in flessione profonda. L\u2019anello di fibrocartilagine che fa da guarnizione si irrita e d\u00e0 dolore all\u2019inguine. Si lavora su mobilit\u00e0, forza e sul modo in cui carichi l\u2019anca nei gesti che provocano il conflitto.' },
+    { id:'a_gtps',   n:'Dolore laterale d\u2019anca (tendinopatia glutea)',   s:'Dolore sul gran trocantere, tipico dormendo sul fianco e in appoggio monopodalico.',
+      pz:'I tendini dei glutei si inseriscono sulla sporgenza ossea che senti sul lato dell\u2019anca. Quando vengono compressi \u2014 dormendo su quel fianco, incrociando le gambe, stando in piedi su una gamba sola \u2014 si irritano e fanno male. Si guarisce togliendo la compressione e rinforzando i glutei in modo progressivo.' },
+    { id:'a_coxa',   n:'Coxartrosi',                                          s:'Dolore inguinale con perdita di rotazione interna, rigidit\u00e0 mattutina breve, over 50.',
+      pz:'La cartilagine che riveste l\u2019anca si \u00e8 assottigliata e l\u2019articolazione lavora con pi\u00f9 attrito: dolore all\u2019inguine e rigidit\u00e0, soprattutto dopo il riposo. Non \u00e8 una condanna al dolore: l\u2019esercizio mirato \u00e8 il trattamento con le prove pi\u00f9 solide e riduce sintomi e disabilit\u00e0 nella maggior parte dei casi.' },
+    { id:'a_ham',    n:'Tendinopatia prossimale degli ischiocrurali',         s:'Dolore all\u2019ischio, peggiora da seduti a lungo e in allungo durante la corsa veloce.',
+      pz:'Il tendine dei muscoli posteriori della coscia si attacca all\u2019osso su cui ci si siede. Sotto carichi ripetuti in allungamento \u2014 corsa veloce, affondi profondi \u2014 la sua struttura si altera e diventa dolente, e la seduta prolungata lo comprime. Il recupero \u00e8 graduale e si basa sul carico progressivo del tendine.' },
+    { id:'a_add',    n:'Dolore inguinale legato all\u2019adduttore (pubalgia)', s:'Dolore su pube e adduttori nello sport di cambio direzione e calcio.',
+      pz:'I muscoli che chiudono le gambe si inseriscono sul pube e lavorano tantissimo nei calci e nei cambi di direzione. Quando il carico supera la capacit\u00e0 di recupero, quella zona si infiamma e fa male allo scatto e al tiro. Si recupera rinforzando adduttori e core e rivedendo i carichi di allenamento.' },
+    { id:'a_dgs',    n:'Sindrome glutea profonda / piriforme',                s:'Dolore gluteo profondo con irradiazione posteriore, peggiora da seduti.',
+      pz:'Il nervo sciatico passa in profondit\u00e0 sotto i muscoli del gluteo. Se in quel punto viene compresso o irritato, compare un dolore profondo che pu\u00f2 scendere dietro la coscia e peggiora stando seduti. Il trattamento punta a liberare lo scorrimento del nervo e a rinforzare l\u2019anca.' },
+    { id:'a_rad',    n:'Dolore riferito lombare / radicolopatia',             s:'Origine rachidea: il dolore d\u2019anca \u00e8 un sintomo, non la sede del problema.',
+      pz:'Il dolore che senti all\u2019anca o alla gamba non nasce l\u00ec: arriva da una radice nervosa irritata nella parte bassa della schiena. \u00c8 il motivo per cui trattare solo il punto dolente non funziona. Si lavora sulla schiena, sulla sensibilit\u00e0 del nervo e sul recupero graduale del movimento.' },
+    { id:'a_stress', n:'Frattura da stress del collo del femore',             s:'Dolore inguinale in carico dopo aumento rapido del volume di corsa. Richiede imaging urgente.',
+      pz:'L\u2019osso si rimodella di continuo: se il carico cresce pi\u00f9 in fretta di quanto riesca a ripararsi, si formano microlesioni. Nel collo del femore vanno prese sul serio, perch\u00e9 continuare a correre pu\u00f2 farle progredire. Servono accertamenti e un periodo di scarico prima di ricostruire il carico.' }
   ],
   ginocchio: [
-    { id:'g_lca',     n:'Lesione del legamento crociato anteriore',  s:'Trauma torsionale con pop, versamento rapido e senso di cedimento.' },
-    { id:'g_menisco', n:'Lesione meniscale',                         s:'Dolore d\u2019interlinea, gonfiore lento, blocco o scatto in accovacciamento.' },
-    { id:'g_pfps',    n:'Dolore femoro-rotuleo',                     s:'Dolore anteriore diffuso, scale in discesa e seduta prolungata.' },
-    { id:'g_rotulea', n:'Tendinopatia rotulea',                      s:'Dolore puntiforme all\u2019apice della rotula legato al carico di salto.' },
-    { id:'g_lcm',     n:'Lesione del collaterale mediale',           s:'Trauma in valgo, dolore mediale sopra l\u2019interlinea, lassità a 30°.' },
-    { id:'g_itbs',    n:'Sindrome della bandelletta ileotibiale',    s:'Dolore laterale che compare a una distanza prevedibile di corsa, peggio in discesa.' },
-    { id:'g_artrosi', n:'Gonartrosi',                                s:'Over 50, rigidità mattutina breve, crepitio, dolore meccanico progressivo.' },
-    { id:'g_lcp',     n:'Lesione del crociato posteriore',           s:'Trauma da cruscotto o caduta sul ginocchio flesso, dolore posteriore, sag tibiale.' }
+    { id:'g_lca',     n:'Lesione del legamento crociato anteriore',  s:'Trauma torsionale con pop, versamento rapido e senso di cedimento.',
+      pz:'Il crociato anteriore \u00e8 il legamento che impedisce alla tibia di scivolare in avanti e controlla le rotazioni. Quando si lesiona, il ginocchio perde stabilit\u00e0 nei cambi di direzione e spesso si gonfia subito. Il percorso prevede il recupero di movimento, forza e controllo, con o senza intervento a seconda del caso.' },
+    { id:'g_menisco', n:'Lesione meniscale',                         s:'Dolore d\u2019interlinea, gonfiore lento, blocco o scatto in accovacciamento.',
+      pz:'Il menisco \u00e8 un cuscinetto di fibrocartilagine che distribuisce il carico tra femore e tibia. Una lesione d\u00e0 dolore sul lato dell\u2019articolazione, gonfiore lento e a volte scatti o blocchi. Molte lesioni rispondono bene alla riabilitazione senza bisogno di intervento.' },
+    { id:'g_pfps',    n:'Dolore femoro-rotuleo',                     s:'Dolore anteriore diffuso, scale in discesa e seduta prolungata.',
+      pz:'La rotula scorre dentro una gola del femore. Quando il carico su quella superficie diventa eccessivo per come si muove il ginocchio, compare dolore davanti, tipico in discesa dalle scale e dopo essere stati seduti a lungo. \u00c8 una condizione che risponde bene al rinforzo e alla gestione dei carichi.' },
+    { id:'g_rotulea', n:'Tendinopatia rotulea',                      s:'Dolore puntiforme all\u2019apice della rotula legato al carico di salto.',
+      pz:'Il tendine che collega la rotula alla tibia assorbe le forze del salto e dell\u2019atterraggio. Se il carico cresce troppo in fretta, la sua struttura si altera e compare un dolore preciso sotto la rotula, che scalda all\u2019inizio dell\u2019attivit\u00e0 e torna dopo. Guarisce con un carico progressivo, non con il riposo assoluto.' },
+    { id:'g_lcm',     n:'Lesione del collaterale mediale',           s:'Trauma in valgo, dolore mediale sopra l\u2019interlinea, lassit\u00e0 a 30\u00b0.',
+      pz:'Il collaterale mediale \u00e8 il legamento sul lato interno del ginocchio e resiste alle spinte che lo fanno cedere verso l\u2019interno. Si lesiona in un trauma diretto o in torsione. \u00c8 uno dei legamenti che guarisce meglio da solo: servono protezione iniziale e poi recupero progressivo di forza e stabilit\u00e0.' },
+    { id:'g_itbs',    n:'Sindrome della bandelletta ileotibiale',    s:'Dolore laterale che compare a una distanza prevedibile di corsa, peggio in discesa.',
+      pz:'La bandelletta \u00e8 una fascia robusta che corre lungo il lato esterno della coscia fino al ginocchio. Con la corsa ripetuta i tessuti sotto di essa si irritano e compare dolore laterale, sempre dopo la stessa distanza e peggio in discesa. Si risolve rinforzando l\u2019anca e correggendo il carico di corsa.' },
+    { id:'g_artrosi', n:'Gonartrosi',                                s:'Over 50, rigidit\u00e0 mattutina breve, crepitio, dolore meccanico progressivo.',
+      pz:'La cartilagine del ginocchio si \u00e8 assottigliata e l\u2019articolazione lavora con pi\u00f9 attrito: dolore che compare camminando, rigidit\u00e0 breve dopo il riposo, a volte scrosci. Il movimento non consuma il ginocchio, lo nutre: il rinforzo e l\u2019attivit\u00e0 regolare sono la parte pi\u00f9 efficace del trattamento.' },
+    { id:'g_lcp',     n:'Lesione del crociato posteriore',           s:'Trauma da cruscotto o caduta sul ginocchio flesso, dolore posteriore, sag tibiale.',
+      pz:'Il crociato posteriore impedisce alla tibia di scivolare indietro e si lesiona tipicamente con un colpo sul ginocchio piegato. D\u00e0 dolore dietro e una sensazione di instabilit\u00e0 nelle discese. Nella maggior parte dei casi si tratta senza intervento, con un lavoro mirato sul quadricipite.' }
   ],
   caviglia: [
-    { id:'c_lat',     n:'Distorsione laterale (peroneo-astragalico anteriore)', s:'Trauma in inversione, gonfiore e dolore anteriormente al malleolo laterale.' },
-    { id:'c_sind',    n:'Lesione della sindesmosi (high ankle sprain)',         s:'Trauma in rotazione esterna e dorsiflessione, dolore sopra la caviglia, carico doloroso a lungo.' },
-    { id:'c_ach',     n:'Tendinopatia achillea',                               s:'Dolore e rigidità sul tendine, peggio ai primi passi, migliora scaldandosi.' },
-    { id:'c_rott',    n:'Rottura del tendine d\u2019Achille',                    s:'Schiocco improvviso, perdita della spinta, Thompson positivo. Va inviato subito.' },
-    { id:'c_plant',   n:'Fasciopatia plantare',                                s:'Dolore al tallone plantare ai primi passi del mattino, punto elettivo mediale.' },
-    { id:'c_post',    n:'Conflitto posteriore di caviglia',                    s:'Dolore posteriore profondo in flessione plantare massima, tipico di danza e calcio.' },
-    { id:'c_mt',      n:'Frattura da stress metatarsale',                      s:'Dolore puntiforme sull\u2019osso dopo aumento di carico, gonfiore dorsale, peggiora in carico.' },
-    { id:'c_tp',      n:'Disfunzione del tibiale posteriore',                  s:'Dolore mediale, arco che cede, difficoltà a sollevarsi sulla punta da un piede solo.' },
-    { id:'c_mor',     n:'Neuroma di Morton',                                   s:'Bruciore e formicolio tra terzo e quarto dito, peggio con scarpe strette.' }
+    { id:'c_lat',     n:'Distorsione laterale (peroneo-astragalico anteriore)', s:'Trauma in inversione, gonfiore e dolore anteriormente al malleolo laterale.',
+      pz:'I legamenti sul lato esterno della caviglia si sono stirati o lesionati quando il piede \u00e8 andato in dentro. Oltre al legamento si perde per qualche settimana il senso di posizione della caviglia: \u00e8 la ragione principale delle ricadute. Il lavoro di equilibrio e forza serve esattamente a questo.' },
+    { id:'c_sind',    n:'Lesione della sindesmosi (high ankle sprain)',         s:'Trauma in rotazione esterna e dorsiflessione, dolore sopra la caviglia, carico doloroso a lungo.',
+      pz:'Tibia e perone sono tenuti insieme sopra la caviglia da legamenti robusti. Quando il piede ruota all\u2019esterno, quella connessione si lesiona: il dolore \u00e8 sopra la caviglia, non sotto il malleolo. Guarisce pi\u00f9 lentamente di una distorsione comune e i tempi vanno rispettati.' },
+    { id:'c_ach',     n:'Tendinopatia achillea',                               s:'Dolore e rigidit\u00e0 sul tendine, peggio ai primi passi, migliora scaldandosi.',
+      pz:'Il tendine d\u2019Achille trasmette la spinta del polpaccio al tallone e regge carichi molto elevati. Quando il lavoro supera la capacit\u00e0 di recupero, la struttura del tendine si altera: rigidit\u00e0 al mattino, dolore che scalda e torna dopo. Il tendine risponde al carico graduale, non al riposo.' },
+    { id:'c_rott',    n:'Rottura del tendine d\u2019Achille',                    s:'Schiocco improvviso, perdita della spinta, Thompson positivo. Va inviato subito.',
+      pz:'Il tendine d\u2019Achille si \u00e8 interrotto: tipicamente si avverte uno schiocco secco e non si riesce pi\u00f9 a spingere sulla punta. Va vista subito da uno specialista per decidere tra trattamento chirurgico e conservativo. In entrambi i casi il recupero \u00e8 lungo ma ben codificato.' },
+    { id:'c_plant',   n:'Fasciopatia plantare',                                s:'Dolore al tallone plantare ai primi passi del mattino, punto elettivo mediale.',
+      pz:'La fascia plantare \u00e8 la struttura che sostiene l\u2019arco del piede. Sotto carico eccessivo si irrita nel punto in cui si attacca al tallone: il segno tipico sono i primi passi del mattino, dolorosissimi e poi in miglioramento. Rinforzo, carico graduale e gestione delle calzature sono la base del trattamento.' },
+    { id:'c_post',    n:'Conflitto posteriore di caviglia',                    s:'Dolore posteriore profondo in flessione plantare massima, tipico di danza e calcio.',
+      pz:'Portando il piede in punta massima, le strutture dietro la caviglia vengono schiacciate tra tibia e calcagno. Nei gesti che ripetono quella posizione \u2014 danza, calcio \u2014 compare dolore profondo posteriore. Si lavora su carico, controllo e talvolta sulla riduzione dei gesti in punta estrema.' },
+    { id:'c_mt',      n:'Frattura da stress metatarsale',                      s:'Dolore puntiforme sull\u2019osso dopo aumento di carico, gonfiore dorsale, peggiora in carico.',
+      pz:'L\u2019osso del piede ha accumulato pi\u00f9 carico di quanto riuscisse a riparare e si sono formate microlesioni. Il dolore \u00e8 preciso su un punto osseo e peggiora camminando o correndo. Serve un periodo di scarico e poi una ricostruzione graduale del carico, altrimenti ricompare.' },
+    { id:'c_tp',      n:'Disfunzione del tibiale posteriore',                  s:'Dolore mediale, arco che cede, difficolt\u00e0 a sollevarsi sulla punta da un piede solo.',
+      pz:'Il tibiale posteriore \u00e8 il muscolo che sostiene l\u2019arco del piede da dentro. Quando il suo tendine si sfianca, l\u2019arco tende a cedere e compaiono dolore mediale e fatica a sollevarsi sulla punta da un piede solo. Il rinforzo mirato e il supporto del piede ne rallentano l\u2019evoluzione.' },
+    { id:'c_mor',     n:'Neuroma di Morton',                                   s:'Bruciore e formicolio tra terzo e quarto dito, peggio con scarpe strette.',
+      pz:'Un nervo che passa tra le ossa dell\u2019avampiede si ispessisce e viene compresso, in genere tra terzo e quarto dito. D\u00e0 bruciore, formicolio e la sensazione di avere un sassolino nella scarpa, peggio con calzature strette. Spesso si gestisce cambiando calzatura e scaricando la zona.' }
   ]
 };
 
@@ -1440,6 +1466,8 @@ updateRF();
               manca.map(function (t) { return '<li style="font-size:14px;">' + t.n + ' \u2014 ' + t.m + '</li>'; }).join('') + '</ul></div>';
     }
     document.getElementById('resList').innerHTML = html;
+    var sp = document.getElementById('spiegaPz');
+    if (!sp.value.trim() && cl.length && cl[0].s > 0) sp.value = cl[0].ip.pz;
     buildSummary();
   }
 
@@ -1466,7 +1494,7 @@ updateRF();
       migliorative: val('migliorative'), peggiorative: val('peggiorative'),
       storia: val('storia'), farmaci: val('farmaci'), esami: val('esami'),
       ob6sett: val('ob6sett'), ob3mesi: val('ob3mesi'), ob6mesi: val('ob6mesi'),
-      dx: val('dxFinale'), ragionamento: val('ragionamento'), piano: val('piano')
+      dx: val('dxFinale'), spiega: val('spiegaPz'), ragionamento: val('ragionamento'), piano: val('piano')
     };
   }
 
@@ -1546,6 +1574,12 @@ updateRF();
   });
   btnBack.addEventListener('click', function () { if (current > 0) goTo(current - 1); });
 
+  document.getElementById('rigenera').addEventListener('click', function () {
+    var cl = classifica();
+    if (!cl.length || cl[0].s <= 0) { alert('Nessuna ipotesi in testa da cui riprendere.'); return; }
+    document.getElementById('spiegaPz').value = cl[0].ip.pz;
+  });
+
   document.getElementById('btnRestart').addEventListener('click', function () {
     if (confirm('Azzerare la scheda e ricominciare?')) location.reload();
   });
@@ -1572,17 +1606,27 @@ updateRF();
     return prefisso + (n || 'Paziente') + '.pdf';
   }
   function intestazione(doc, etichetta, data) {
-    var y = 20;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text('fisio', M, y);
-    var w = doc.getTextWidth('fisio');
-    doc.setTextColor(ACC[0], ACC[1], ACC[2]); doc.text('\u00b7', M + w, y);
-    doc.setTextColor(INK[0], INK[1], INK[2]); doc.text('expert', M + w + doc.getTextWidth('\u00b7'), y);
+    var y = 20, fatto = false;
+    try {
+      var src = document.querySelector('.header-logo').src;
+      if (src && src.indexOf('data:image') === 0) {
+        doc.addImage(src, 'PNG', M, 11.5, 26, 9.7);   // logo reale, proporzioni 810x302
+        fatto = true;
+      }
+    } catch (e) { fatto = false; }
+    if (!fatto) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.setTextColor(INK[0], INK[1], INK[2]);
+      doc.text('fisio', M, y);
+      var w = doc.getTextWidth('fisio');
+      doc.setTextColor(ACC[0], ACC[1], ACC[2]); doc.text('\u00b7', M + w, y);
+      doc.setTextColor(INK[0], INK[1], INK[2]); doc.text('expert', M + w + doc.getTextWidth('\u00b7'), y);
+    }
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
     doc.text(etichetta, W - M, y, { align: 'right' }); y += 4;
     doc.text('Data: ' + fmtData(data), W - M, y, { align: 'right' });
     return y + 10;
   }
+
   function piedi(doc, nota) {
     var tot = doc.internal.getNumberOfPages();
     for (var i = 1; i <= tot; i++) {
@@ -1780,30 +1824,96 @@ updateRF();
   document.getElementById('btnPdfPaz').addEventListener('click', function () {
     if (!window.jspdf) { alert('Generatore PDF non disponibile (verifica la connessione).'); return; }
     var d = dati();
-    if (!d.dx) { alert('Compila prima la diagnosi clinica: è l\'unica cosa che finisce in questo PDF.'); return; }
+    if (!d.dx) { alert('Compila prima la diagnosi clinica: \u00e8 la parte principale di questo PDF.'); return; }
     var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
     var y = intestazione(doc, 'Referto di valutazione', d.dataval);
 
+    function pagina(soglia) { if (y > (soglia || 262)) { doc.addPage(); y = 20; } }
+    function titoletto(t) {
+      pagina(250); y += 4;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
+      doc.text(asc(t).toUpperCase(), M, y); y += 2;
+      doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 6;
+    }
+    function testo(txt, size, colore, stile, passo) {
+      doc.setFont('helvetica', stile || 'normal'); doc.setFontSize(size || 10);
+      var c = colore || INK; doc.setTextColor(c[0], c[1], c[2]);
+      doc.splitTextToSize(asc(txt), W - M * 2).forEach(function (l) { pagina(); doc.text(l, M, y); y += (passo || 5); });
+    }
+    function voce(k, v) {
+      if (!v) return;
+      pagina();
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
+      doc.text(asc(k), M, y);
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(INK[0], INK[1], INK[2]);
+      var t = doc.splitTextToSize(asc(v), W - M - 58);
+      doc.text(t, M + 40, y);
+      y += Math.max(t.length * 5, 5.6);
+    }
+
+    /* nome */
     doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
     doc.text(asc(d.nome || 'Paziente'), M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 14;
+    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 12;
 
+    /* diagnosi */
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
     doc.text('DIAGNOSI CLINICA', M, y); y += 8;
+    testo(d.dx, 14, INK, 'bold', 7);
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.splitTextToSize(asc(d.dx), W - M * 2).forEach(function (l) {
-      if (y > 250) { doc.addPage(); y = 20; }
-      doc.text(l, M, y); y += 7;
-    });
+    /* spiegazione */
+    if (d.spiega) {
+      titoletto('In parole semplici');
+      testo(d.spiega, 10.5, SOFT, 'normal', 5.4);
+    }
 
-    y += 10;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.text('Valutazione eseguita in data ' + fmtData(d.dataval) + '.', M, y); y += 20;
+    /* dolore di oggi */
+    var haDolore = d.vas || d.tipo || d.migliorative || d.peggiorative || d.segmenti;
+    if (haDolore) {
+      titoletto('Il dolore di oggi');
+      voce('Intensita riferita', d.vas + ' / 10');
+      voce('Andamento', d.tipo);
+      voce('Zona', d.segmenti.replace(/\n/g, ' | '));
+      voce('Lo migliora', d.migliorative);
+      voce('Lo peggiora', d.peggiorative);
+    }
+
+    /* obiettivi */
+    if (d.ob6sett || d.ob3mesi || d.ob6mesi) {
+      titoletto('Gli obiettivi che abbiamo fissato');
+      voce('6 settimane', d.ob6sett);
+      voce('3 mesi', d.ob3mesi);
+      voce('6 mesi', d.ob6mesi);
+    }
+
+    /* piano, se compilato */
+    if (d.piano) {
+      titoletto('Il piano');
+      testo(d.piano, 10.5, SOFT, 'normal', 5.4);
+    }
+
+    /* screening di sicurezza */
+    titoletto('Screening di sicurezza');
+    var neg = rfNegativi(), pos = rfPositivi();
+    if (neg.length) {
+      testo('Alla valutazione del ' + fmtData(d.dataval) + ' il paziente non ha riferito: ' +
+        neg.map(function (x) { return x.charAt(0).toLowerCase() + x.slice(1); }).join('; ') + '.', 9, MUT, 'normal', 4.4);
+    }
+    if (pos.length) {
+      y += 2;
+      testo('Sono emersi i seguenti aspetti, gia discussi insieme e da approfondire in ambito medico: ' +
+        pos.map(function (x) { return x.charAt(0).toLowerCase() + x.slice(1); }).join('; ') + '.', 9, BAD, 'normal', 4.4);
+    }
+    y += 2;
+    testo('Questo documento riporta una valutazione fisioterapica e non sostituisce una diagnosi medica. Se i sintomi cambiano o compaiono nuovi segnali, contatta lo studio.', 8.5, MUT, 'italic', 4.2);
+
+    /* firma */
+    y += 14;
+    pagina(255);
     doc.setDrawColor(200, 200, 198); doc.setLineWidth(0.3); doc.line(M, y, M + 70, y); y += 5;
-    doc.setFontSize(9); doc.setTextColor(INK[0], INK[1], INK[2]);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(INK[0], INK[1], INK[2]);
     doc.text('Gianmarco Molinari', M, y); y += 4.5;
-    doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
     doc.text('Fisioterapista sportivo', M, y);
 
     piedi(doc, '');

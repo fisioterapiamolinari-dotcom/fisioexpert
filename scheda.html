@@ -3,89 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
-     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'denied'
-  });
-
-  window.fxCookie = (function () {
-    var ID_ADS = 'AW-18400590631';
-    var CHIAVE = 'fx_consenso_cookie';
-    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
-    var caricato = false;
-
-    function leggi() {
-      try {
-        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
-        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
-      } catch (e) {}
-      return null;
-    }
-
-    function salva(scelta) {
-      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
-    }
-
-    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
-    function caricaGoogle() {
-      if (caricato) return;
-      caricato = true;
-      gtag('consent', 'update', {
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied'
-      });
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
-      document.head.appendChild(s);
-      gtag('js', new Date());
-      // send_page_view:false — non ci serve il page_view automatico di Google Ads
-      // (misuriamo solo l'evento di conversione a mano); così l'URL della pagina,
-      // query string comprese, non viene mai inviato di default.
-      gtag('config', ID_ADS, { send_page_view: false });
-    }
-
-    function cancellaCookieGoogle() {
-      var host = location.hostname.replace(/^www\./, '');
-      document.cookie.split(';').forEach(function (c) {
-        var nome = c.split('=')[0].trim();
-        if (/^(_gcl_|_gac_)/.test(nome)) {
-          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
-            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
-          });
-        }
-      });
-    }
-
-    if (leggi() === 'si') caricaGoogle();
-
-    return {
-      scelta: leggi,
-      accetta: function () { salva('si'); caricaGoogle(); },
-      rifiuta: function () {
-        salva('no');
-        if (caricato) {
-          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
-        }
-        cancellaCookieGoogle();
-      },
-      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
-      conversione: function (etichetta) {
-        if (!caricato || !etichetta) return;
-        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
-      }
-    };
-  })();
-</script>
 <meta name="robots" content="noindex, nofollow">
 <title>Componi scheda esercizi | Fisio Expert</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -106,8 +23,9 @@ body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-h
 
 header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; }
 header .wrap { display:flex; align-items:center; justify-content:space-between; }
+.logo { display:inline-flex; align-items:center; text-decoration:none; }
 .header-logo { height:36px; width:auto; display:block; }
-.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; color:var(--ink); }
 .logo-fallback b { color:var(--accent); font-weight:inherit; }
 .tag { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
 
@@ -125,6 +43,28 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus { border-color:var(--accent); }
 textarea { resize:vertical; min-height:80px; }
 .riga2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:620px) { .riga2 { grid-template-columns:1fr; } }
+
+/* Avvisi */
+.avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin-bottom:16px; }
+.avviso-info { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); }
+.avviso-errore { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); color:var(--rosso); }
+.riga-aiuto { display:flex; justify-content:space-between; align-items:center; gap:10px;
+              font-size:13px; color:var(--ink-muted); margin-top:8px; flex-wrap:wrap; }
+.link-azione { background:none; border:none; padding:0; font-family:var(--sans); font-size:13px;
+               color:var(--accent); cursor:pointer; text-decoration:underline; width:auto; }
+
+/* Paziente scelto */
+.scelto { display:flex; align-items:center; gap:12px; background:var(--warm);
+          border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+.scelto-nome { flex:1; font-weight:500; font-size:16px; }
+.scelto-problema { display:block; font-size:13px; color:var(--ink-muted); font-weight:400; }
+
+/* Chip agenda di oggi */
+.chip-oggi { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.chip { font-family:var(--mono); font-weight:700; font-size:12px; padding:8px 13px; border-radius:100px;
+        border:1.5px solid var(--accent); background:var(--accent-light); color:var(--accent-dark); cursor:pointer; }
+.chip .ora { color:var(--ink-muted); font-weight:700; margin-right:5px; }
 
 /* Fasi */
 .barra-fasi { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
@@ -138,10 +78,11 @@ textarea { resize:vertical; min-height:80px; }
 .es-testa { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
 .es-titolo { flex:1; font-weight:500; font-size:15px; }
 .mini { background:none; border:1px solid var(--border); border-radius:8px; width:30px; height:30px;
-        cursor:pointer; color:var(--ink-muted); font-size:14px; flex-shrink:0; }
+        cursor:pointer; color:var(--ink-muted); font-size:14px; flex-shrink:0; padding:0; }
 .mini:hover { border-color:var(--accent); color:var(--accent); }
 .mini.elimina:hover { border-color:var(--rosso); color:var(--rosso); }
 .campi { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+@media (max-width:620px) { .campi { grid-template-columns:repeat(2,1fr); } }
 .campi label { font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px;
                text-transform:uppercase; color:var(--ink-muted); display:block; margin-bottom:3px; }
 .campi input { padding:8px 10px; font-size:14px; }
@@ -149,7 +90,7 @@ textarea { resize:vertical; min-height:80px; }
 .vuoto { color:var(--ink-muted); font-size:14px; padding:20px; text-align:center;
          border:1px dashed var(--border); border-radius:12px; }
 
-/* Selettore libreria */
+/* Elenchi a scorrimento (pazienti e libreria) */
 .filtri { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
 .filtri select, .filtri input { width:auto; flex:1; min-width:140px; }
 .libreria { max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:12px; }
@@ -182,7 +123,7 @@ textarea { resize:vertical; min-height:80px; }
 
 <header>
   <div class="wrap">
-    <a href="https://fisioexpert.it" style="display:inline-flex;align-items:center;text-decoration:none">
+    <a href="https://fisioexpert.it" class="logo">
       <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
            onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
       <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
@@ -196,16 +137,51 @@ textarea { resize:vertical; min-height:80px; }
   <p class="sotto">Scegli il paziente, componi le fasi, salva. Ti esce il link da mandare su WhatsApp.</p>
 
   <div id="risultato"></div>
+  <div id="avvisoBozza"></div>
+
+  <!-- ACCESSO (PIN) -->
+  <div class="card" id="cardPin" style="display:none">
+    <label class="etichetta">Accesso</label>
+    <p style="font-size:14px;color:var(--ink-soft);margin-bottom:12px">
+      Serve il PIN per leggere l'elenco pazienti. Lo chiedo una volta sola su questo dispositivo.
+    </p>
+    <div class="riga2">
+      <input type="password" id="campoPin" placeholder="PIN" autocomplete="off"
+             onkeydown="if(event.key==='Enter') entra()">
+      <button class="btn btn-primario" style="flex:0" onclick="entra()">Entra</button>
+    </div>
+    <div id="errorePin"></div>
+  </div>
 
   <!-- PAZIENTE -->
-  <div class="card">
+  <div class="card" id="cardPaziente" style="display:none">
     <label class="etichetta">Paziente</label>
-    <div class="riga2">
-      <select id="selPaziente" onchange="cambiaPaziente()"></select>
-      <input type="tel" id="telefono" placeholder="Telefono (senza +39)">
+
+    <div id="chipOggi" class="chip-oggi"></div>
+
+    <div id="pazienteScelto" style="display:none">
+      <div class="scelto">
+        <span class="scelto-nome" id="nomeScelto"></span>
+        <button class="link-azione" onclick="cambiaPaziente()">cambia</button>
+      </div>
     </div>
-    <div id="nomeLibero" style="display:none;margin-top:12px">
-      <input type="text" id="nomeAltro" placeholder="Nome e cognome">
+
+    <div id="ricercaPaziente">
+      <input type="text" id="qPaziente" placeholder="Cerca per nome o cognome…" autocomplete="off"
+             oninput="filtraPazienti()">
+      <div class="libreria" id="risultatiPazienti" style="display:none;margin-top:10px"></div>
+      <div class="riga-aiuto">
+        <span id="contaPazienti"></span>
+        <button class="link-azione" onclick="ricaricaPazienti()">Ricarica dal CRM</button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-top:6px">
+        Se un paziente non compare, aggiungilo prima al CRM su Super Agenda, poi tocca "Ricarica dal CRM".
+      </p>
+    </div>
+
+    <div style="margin-top:14px">
+      <label class="etichetta">Telefono (senza +39)</label>
+      <input type="tel" id="telefono" oninput="salvaBozza()">
     </div>
   </div>
 
@@ -243,7 +219,7 @@ textarea { resize:vertical; min-height:80px; }
   <!-- INDICAZIONI -->
   <div class="card">
     <label class="etichetta">Indicazioni generali (facoltative)</label>
-    <textarea id="indicazioni" placeholder="Es. ghiaccio 15 minuti dopo ogni seduta. Se il dolore supera 6/10, fermati e scrivimi."></textarea>
+    <textarea id="indicazioni" oninput="salvaBozza()" placeholder="Es. ghiaccio 15 minuti dopo ogni seduta. Se il dolore supera 6/10, fermati e scrivimi."></textarea>
   </div>
 </div>
 
@@ -254,7 +230,6 @@ textarea { resize:vertical; min-height:80px; }
   </div>
 </div>
 
-<script src="listapazienti.js"></script>
 <script src="listaesercizi.js"></script>
 <script>
 /* ============================================================
@@ -263,53 +238,278 @@ textarea { resize:vertical; min-height:80px; }
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEjX6FDCMghnBoIIxOQG7YsX_vZklK6U_OuwN3ip3G7eq7m255kpn-6dAS4LIls1QyWQ/exec';
 const BASE_SITO = 'https://fisioexpert.it';
 
+const CHIAVE_PIN     = 'fisio_pin_schede';
+const CHIAVE_ELENCO  = 'fisio_elenco_pazienti';
+const CHIAVE_BOZZA   = 'fisio_bozza_scheda';
+
 /* ---------- Stato ---------- */
 let fasi = [ nuovaFase('Fase 1') ];
 let faseCorrente = 0;
-let idScheda = '';   // valorizzato dopo il primo salvataggio
+let idScheda = '';        // valorizzato dopo il primo salvataggio
+let pazienti = [];        // elenco dal CRM
+let pazientiOggi = [];    // chi ha un appuntamento oggi
+let pazienteSel = null;   // { nome, telefono, problema }
+let timerBozza = null;
 
 function nuovaFase(nome) {
   return { nome: nome, sbloccata: false, sogliaSessioni: 0, esercizi: [] };
 }
 
-/* ---------- Avvio ---------- */
-function avvio() {
-  const sel = document.getElementById('selPaziente');
-  sel.innerHTML = '<option value="">— scegli —</option>';
-  LISTA_PAZIENTI.forEach(function (p, i) {
-    sel.innerHTML += '<option value="' + i + '">' + esc(p.nome) + '</option>';
-  });
-  sel.innerHTML += '<option value="altro">Altro (scrivo il nome)</option>';
+/* ============================================================
+   MEMORIA LOCALE (PIN, elenco, bozza)
+   ============================================================ */
+function leggiLocale(chiave) {
+  try { const v = localStorage.getItem(chiave); return v ? JSON.parse(v) : null; }
+  catch (e) { return null; }
+}
+function scriviLocale(chiave, valore) {
+  try { localStorage.setItem(chiave, JSON.stringify(valore)); } catch (e) {}
+}
+function cancellaLocale(chiave) {
+  try { localStorage.removeItem(chiave); } catch (e) {}
+}
 
+function salvaBozza() {
+  clearTimeout(timerBozza);
+  timerBozza = setTimeout(function () {
+    scriviLocale(CHIAVE_BOZZA, {
+      paziente: pazienteSel,
+      telefono: document.getElementById('telefono').value,
+      indicazioni: document.getElementById('indicazioni').value,
+      fasi: fasi,
+      faseCorrente: faseCorrente,
+      idScheda: idScheda,
+      quando: new Date().toISOString()
+    });
+  }, 400);
+}
+
+function riprendiBozza() {
+  const b = leggiLocale(CHIAVE_BOZZA);
+  if (!b || !b.fasi || !b.fasi.length) return false;
+
+  const vuota = b.fasi.every(function (f) { return !f.esercizi.length; }) && !b.paziente;
+  if (vuota) return false;
+
+  fasi = b.fasi;
+  faseCorrente = Math.min(Number(b.faseCorrente || 0), fasi.length - 1);
+  idScheda = b.idScheda || '';
+  pazienteSel = b.paziente || null;
+  document.getElementById('telefono').value = b.telefono || '';
+  document.getElementById('indicazioni').value = b.indicazioni || '';
+
+  const quando = b.quando ? new Date(b.quando) : null;
+  const orario = quando
+    ? quando.toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
+    : '';
+  document.getElementById('avvisoBozza').innerHTML =
+    '<div class="avviso avviso-info">Ho ripreso la scheda che stavi componendo' +
+    (orario ? ' (' + orario + ')' : '') + '. Se non ti serve, premi Azzera.</div>';
+  return true;
+}
+
+/* ============================================================
+   AVVIO
+   ============================================================ */
+function avvio() {
+  // Libreria esercizi (arriva da listaesercizi.js)
   const fa = document.getElementById('filtroArea');
   fa.innerHTML = '<option value="">Tutte le aree</option>';
-  AREE.forEach(function (a) { fa.innerHTML += '<option>' + esc(a) + '</option>'; });
+  if (typeof AREE !== 'undefined') {
+    AREE.forEach(function (a) { fa.innerHTML += '<option>' + esc(a) + '</option>'; });
+  }
 
+  riprendiBozza();
   disegnaFasi();
   disegnaEsercizi();
   disegnaLibreria();
+  mostraPazienteScelto();
+
+  // Elenco pazienti: prima la copia locale (immediata), poi l'aggiornamento dal CRM
+  const salvato = leggiLocale(CHIAVE_ELENCO);
+  if (salvato && salvato.pazienti) {
+    pazienti = salvato.pazienti;
+    pazientiOggi = salvato.oggi || [];
+    apriPagina();
+    disegnaChipOggi();
+    aggiornaConteggio(true);
+  }
+
+  const pin = leggiLocale(CHIAVE_PIN);
+  if (pin) caricaPazienti(pin, false);
+  else if (!salvato) chiediPin();
+  else apriPagina();
 }
 
-function cambiaPaziente() {
-  const v = document.getElementById('selPaziente').value;
-  const libero = document.getElementById('nomeLibero');
-  if (v === 'altro') {
-    libero.style.display = 'block';
-    document.getElementById('telefono').value = '';
-  } else {
-    libero.style.display = 'none';
-    if (v !== '') document.getElementById('telefono').value = LISTA_PAZIENTI[v].telefono || '';
+function chiediPin(messaggio) {
+  document.getElementById('cardPin').style.display = 'block';
+  document.getElementById('cardPaziente').style.display = 'none';
+  document.getElementById('errorePin').innerHTML = messaggio
+    ? '<div class="avviso avviso-errore" style="margin:12px 0 0">' + esc(messaggio) + '</div>' : '';
+}
+
+function apriPagina() {
+  document.getElementById('cardPin').style.display = 'none';
+  document.getElementById('cardPaziente').style.display = 'block';
+}
+
+function entra() {
+  const pin = document.getElementById('campoPin').value.trim();
+  if (!pin) return;
+  caricaPazienti(pin, false);
+}
+
+function ricaricaPazienti() {
+  const pin = leggiLocale(CHIAVE_PIN);
+  if (!pin) { chiediPin(); return; }
+  caricaPazienti(pin, true);
+}
+
+async function caricaPazienti(pin, forza) {
+  const conta = document.getElementById('contaPazienti');
+  if (conta) conta.textContent = 'Carico i pazienti…';
+
+  try {
+    const url = APPS_SCRIPT_URL + '?action=pazienti&k=' + encodeURIComponent(pin) +
+                (forza ? '&fresh=1' : '');
+    const r = await fetch(url);
+    const d = await r.json();
+
+    if (!d.ok) {
+      if (d.pinErrato) {
+        cancellaLocale(CHIAVE_PIN);
+        chiediPin('PIN non valido. Riprova.');
+        aggiornaConteggio(true);
+        return;
+      }
+      throw new Error(d.errore || 'Errore sconosciuto');
+    }
+
+    scriviLocale(CHIAVE_PIN, pin);
+    pazienti = d.pazienti || [];
+    pazientiOggi = d.oggi || [];
+    scriviLocale(CHIAVE_ELENCO, { pazienti: pazienti, oggi: pazientiOggi, quando: new Date().toISOString() });
+
+    apriPagina();
+    disegnaChipOggi();
+    aggiornaConteggio(false);
+    filtraPazienti();
+  } catch (e) {
+    aggiornaConteggio(true);
+    if (!pazienti.length) chiediPin('Non riesco a leggere l\'elenco: ' + e.message);
   }
 }
 
-function nomePaziente() {
-  const v = document.getElementById('selPaziente').value;
-  if (v === 'altro') return document.getElementById('nomeAltro').value.trim();
-  if (v === '') return '';
-  return LISTA_PAZIENTI[v].nome;
+function aggiornaConteggio(daCopiaLocale) {
+  const conta = document.getElementById('contaPazienti');
+  if (!conta) return;
+  if (!pazienti.length) { conta.textContent = 'Nessun paziente caricato.'; return; }
+  conta.textContent = pazienti.length + ' pazienti' + (daCopiaLocale ? ' (copia locale)' : '');
 }
 
-/* ---------- Fasi ---------- */
+/* ============================================================
+   RICERCA PAZIENTE
+   ============================================================ */
+function normalizza(testo) {
+  return String(testo == null ? '' : testo)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function filtraPazienti() {
+  const q = normalizza(document.getElementById('qPaziente').value);
+  const c = document.getElementById('risultatiPazienti');
+
+  if (q.length < 2) { c.style.display = 'none'; c.innerHTML = ''; return; }
+
+  const parole = q.split(' ');
+  const trovati = pazienti.filter(function (p) {
+    const n = normalizza(p.nome);
+    return parole.every(function (w) { return n.indexOf(w) !== -1; });
+  }).slice(0, 12);
+
+  if (!trovati.length) {
+    c.innerHTML = '<div class="vuoto" style="border:none">Nessun paziente con questo nome nel CRM.</div>';
+    c.style.display = 'block';
+    return;
+  }
+
+  let html = '';
+  trovati.forEach(function (p) {
+    const indice = pazienti.indexOf(p);
+    html += '<div class="lib-voce" onclick="scegliPaziente(' + indice + ')">'
+          + '<span class="lib-nome">' + esc(p.nome) + '</span>'
+          + '<span class="lib-area">' + esc(p.telefono || 'no tel') + '</span>'
+          + '</div>';
+  });
+  c.innerHTML = html;
+  c.style.display = 'block';
+}
+
+function scegliPaziente(indice) {
+  const p = pazienti[indice];
+  if (!p) return;
+  pazienteSel = p;
+  document.getElementById('telefono').value = p.telefono || '';
+  document.getElementById('qPaziente').value = '';
+  document.getElementById('risultatiPazienti').style.display = 'none';
+  mostraPazienteScelto();
+  salvaBozza();
+}
+
+function scegliPerNome(nome) {
+  for (let i = 0; i < pazienti.length; i++) {
+    if (pazienti[i].nome === nome) { scegliPaziente(i); return; }
+  }
+}
+
+function cambiaPaziente() {
+  pazienteSel = null;
+  document.getElementById('telefono').value = '';
+  mostraPazienteScelto();
+  salvaBozza();
+  document.getElementById('qPaziente').focus();
+}
+
+function mostraPazienteScelto() {
+  const box = document.getElementById('pazienteScelto');
+  const ricerca = document.getElementById('ricercaPaziente');
+
+  if (!pazienteSel) {
+    box.style.display = 'none';
+    ricerca.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('nomeScelto').innerHTML =
+    esc(pazienteSel.nome) +
+    (pazienteSel.problema ? '<span class="scelto-problema">' + esc(pazienteSel.problema) + '</span>' : '');
+  box.style.display = 'block';
+  ricerca.style.display = 'none';
+}
+
+function disegnaChipOggi() {
+  const c = document.getElementById('chipOggi');
+  if (!pazientiOggi.length) { c.innerHTML = ''; return; }
+
+  let html = '';
+  pazientiOggi.forEach(function (p) {
+    html += '<button class="chip" onclick="scegliPerNome(&quot;' + esc(p.nome) + '&quot;)">'
+          + '<span class="ora">' + esc(p.ora) + '</span>' + esc(p.nome) + '</button>';
+  });
+  c.innerHTML = html;
+}
+
+function nomePaziente() {
+  return pazienteSel ? pazienteSel.nome : '';
+}
+
+/* ============================================================
+   FASI
+   ============================================================ */
 function disegnaFasi() {
   const c = document.getElementById('barraFasi');
   c.innerHTML = '';
@@ -317,7 +517,7 @@ function disegnaFasi() {
     const b = document.createElement('button');
     b.className = 'pill' + (i === faseCorrente ? ' attiva' : '');
     b.textContent = f.nome + ' (' + f.esercizi.length + ')';
-    b.onclick = function () { faseCorrente = i; disegnaFasi(); disegnaEsercizi(); };
+    b.onclick = function () { faseCorrente = i; disegnaFasi(); disegnaEsercizi(); salvaBozza(); };
     c.appendChild(b);
   });
 
@@ -328,7 +528,7 @@ function disegnaFasi() {
     piu.onclick = function () {
       fasi.push(nuovaFase('Fase ' + (fasi.length + 1)));
       faseCorrente = fasi.length - 1;
-      disegnaFasi(); disegnaEsercizi();
+      disegnaFasi(); disegnaEsercizi(); salvaBozza();
     };
     c.appendChild(piu);
   }
@@ -342,7 +542,7 @@ function disegnaFasi() {
       if (!confirm('Elimino ' + fasi[faseCorrente].nome + '?')) return;
       fasi.splice(faseCorrente, 1);
       faseCorrente = Math.max(0, faseCorrente - 1);
-      disegnaFasi(); disegnaEsercizi();
+      disegnaFasi(); disegnaEsercizi(); salvaBozza();
     };
     c.appendChild(meno);
   }
@@ -351,10 +551,12 @@ function disegnaFasi() {
   document.getElementById('sogliaFase').value = fasi[faseCorrente].sogliaSessioni || '';
 }
 
-function rinominaFase(v) { fasi[faseCorrente].nome = v; disegnaFasi(); }
-function cambiaSoglia(v) { fasi[faseCorrente].sogliaSessioni = Number(v) || 0; }
+function rinominaFase(v) { fasi[faseCorrente].nome = v; disegnaFasi(); salvaBozza(); }
+function cambiaSoglia(v) { fasi[faseCorrente].sogliaSessioni = Number(v) || 0; salvaBozza(); }
 
-/* ---------- Esercizi della fase ---------- */
+/* ============================================================
+   ESERCIZI DELLA FASE
+   ============================================================ */
 function disegnaEsercizi() {
   const lista = fasi[faseCorrente].esercizi;
   const c = document.getElementById('eserciziFase');
@@ -395,11 +597,14 @@ function campo(i, chiave, etichetta, valore) {
        + ' oninput="modifica(' + i + ',&quot;' + chiave + '&quot;,this.value)"></div>';
 }
 
-function modifica(i, chiave, valore) { fasi[faseCorrente].esercizi[i][chiave] = valore; }
+function modifica(i, chiave, valore) {
+  fasi[faseCorrente].esercizi[i][chiave] = valore;
+  salvaBozza();
+}
 
 function togli(i) {
   fasi[faseCorrente].esercizi.splice(i, 1);
-  disegnaEsercizi(); disegnaFasi();
+  disegnaEsercizi(); disegnaFasi(); salvaBozza();
 }
 
 function muovi(i, delta) {
@@ -407,15 +612,23 @@ function muovi(i, delta) {
   const j = i + delta;
   if (j < 0 || j >= lista.length) return;
   const tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp;
-  disegnaEsercizi();
+  disegnaEsercizi(); salvaBozza();
 }
 
-/* ---------- Libreria ---------- */
+/* ============================================================
+   LIBRERIA ESERCIZI
+   ============================================================ */
 function disegnaLibreria() {
+  const c = document.getElementById('libreria');
+
+  if (typeof LIBRERIA_ESERCIZI === 'undefined') {
+    c.innerHTML = '<div class="vuoto" style="border:none">Libreria non caricata: manca listaesercizi.js.</div>';
+    return;
+  }
+
   const area = document.getElementById('filtroArea').value;
   const q = document.getElementById('cerca').value.toLowerCase().trim();
 
-  const c = document.getElementById('libreria');
   let html = '';
   let trovati = 0;
 
@@ -439,13 +652,15 @@ function aggiungi(indice) {
     riposo: e.riposo || '60s', rpe: e.rpe || '',
     note: e.note || '', desc: e.desc || ''
   });
-  disegnaEsercizi(); disegnaFasi();
+  disegnaEsercizi(); disegnaFasi(); salvaBozza();
 }
 
-/* ---------- Salvataggio ---------- */
+/* ============================================================
+   SALVATAGGIO
+   ============================================================ */
 async function salva() {
   const paziente = nomePaziente();
-  if (!paziente) { alert('Scegli o scrivi il nome del paziente.'); return; }
+  if (!paziente) { alert('Scegli il paziente dall\'elenco del CRM.'); return; }
   if (!fasi[0].esercizi.length) { alert('La prima fase è vuota: aggiungi almeno un esercizio.'); return; }
 
   const btn = document.getElementById('btnSalva');
@@ -474,6 +689,7 @@ async function salva() {
     if (!d.ok) throw new Error(d.errore || 'Errore sconosciuto');
 
     idScheda = d.id;
+    salvaBozza();
     mostraLink(d.id, paziente);
   } catch (e) {
     alert('Non sono riuscito a salvare: ' + e.message);
@@ -502,7 +718,8 @@ function mostraLink(id, paziente) {
     +   '<a class="btn btn-secondario" style="text-decoration:none" href="' + link + '" target="_blank">Apri anteprima</a>'
     + '</div>'
     + '<p style="font-size:13px;color:var(--ink-muted);margin-top:12px">'
-    +   'Se modifichi e risalvi, il link resta lo stesso: il paziente vedrà la versione aggiornata.'
+    +   'Finché non premi Azzera resti su questa scheda: se modifichi e risalvi, il link non cambia '
+    +   'e il paziente vede la versione aggiornata.'
     + '</p>'
     + '</div>';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -517,13 +734,19 @@ function svuota() {
   fasi = [ nuovaFase('Fase 1') ];
   faseCorrente = 0;
   idScheda = '';
-  document.getElementById('selPaziente').value = '';
+  pazienteSel = null;
+  cancellaLocale(CHIAVE_BOZZA);
+
   document.getElementById('telefono').value = '';
-  document.getElementById('nomeAltro').value = '';
-  document.getElementById('nomeLibero').style.display = 'none';
+  document.getElementById('qPaziente').value = '';
   document.getElementById('indicazioni').value = '';
   document.getElementById('risultato').innerHTML = '';
-  disegnaFasi(); disegnaEsercizi();
+  document.getElementById('avvisoBozza').innerHTML = '';
+  document.getElementById('risultatiPazienti').style.display = 'none';
+
+  mostraPazienteScelto();
+  disegnaFasi();
+  disegnaEsercizi();
 }
 
 function esc(s) {
@@ -532,72 +755,6 @@ function esc(s) {
 }
 
 avvio();
-</script>
-
-<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
-<style>
-  .cc-banner {
-    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
-    width: calc(100% - 40px); max-width: 380px;
-    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
-    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
-    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
-  }
-  .cc-banner[hidden] { display: none; }
-  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
-  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
-  .cc-testo a { color: #d4660e; text-decoration: underline; }
-  .cc-chiudi {
-    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
-    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
-    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
-  }
-  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
-  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-  .cc-btn {
-    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
-    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
-  }
-  .cc-rifiuta { background: #1a1a1a; }
-  .cc-rifiuta:hover { background: #3a3a3a; }
-  .cc-accetta { background: #f47920; }
-  .cc-accetta:hover { background: #d4660e; }
-  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
-  @media (max-width: 600px) {
-    .cc-banner {
-      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
-      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
-      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
-    }
-    .cc-titolo { font-size: 19px; }
-    .cc-testo { font-size: 13.5px; }
-  }
-</style>
-<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
-  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
-  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
-  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
-  <div class="cc-pulsanti">
-    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
-    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
-  </div>
-</div>
-<script>
-  (function () {
-    var banner = document.getElementById('ccBanner');
-    if (!banner || !window.fxCookie) return;
-    function mostra() { banner.hidden = false; }
-    function nascondi() { banner.hidden = true; }
-    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
-    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
-    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
-    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
-    document.addEventListener('click', function (e) {
-      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
-      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
-    });
-    if (fxCookie.scelta() === null) mostra();
-  })();
 </script>
 
 </body>

@@ -271,9 +271,13 @@ footer a:hover { color: var(--accent); }
 
     <div class="sec-lbl">Rachide</div>
     <div class="panel-grid">
-      <span class="tile soon"><div class="ico">🧍</div><h3>Lombalgia aspecifica</h3><span class="soon-lbl">presto</span></span>
-      <span class="tile soon"><div class="ico">⚡</div><h3>Radicolopatia lombare</h3><span class="soon-lbl">presto</span></span>
+      <a class="tile" href="#lba" title="Triage, classificazione, esercizio terapeutico."><div class="ico">🧍</div><h3>Lombalgia aspecifica</h3></a>
+      <a class="tile" href="#edl" title="Storia naturale, red flags, mobilizzazione neurale."><div class="ico">💿</div><h3>Ernia del disco lombare</h3></a>
+      <a class="tile" href="#sci" title="Diagnosi differenziale radicolare vs piriforme."><div class="ico">⚡</div><h3>Sciatalgia / nervo sciatico</h3></a>
+      <span class="tile soon"><div class="ico">🔘</div><h3>Sindrome del piriforme</h3><span class="soon-lbl">presto</span></span>
+      <span class="tile soon"><div class="ico">🕳️</div><h3>Stenosi del canale lombare</h3><span class="soon-lbl">presto</span></span>
       <span class="tile soon"><div class="ico">🦢</div><h3>Cervicalgia meccanica</h3><span class="soon-lbl">presto</span></span>
+      <span class="tile soon"><div class="ico">📡</div><h3>Radicolopatia cervicale</h3><span class="soon-lbl">presto</span></span>
       <span class="tile soon"><div class="ico">🧩</div><h3>Spondilolisi/listesi</h3><span class="soon-lbl">presto</span></span>
     </div>
 
@@ -282,7 +286,7 @@ footer a:hover { color: var(--accent); }
 </div>
 
 <!-- ==================== PROTOCOLLO: FASCIOPATIA PLANTARE ==================== -->
-<div id="art" class="post hidden">
+<div id="art-fp" class="post hidden">
 
 <section class="hero compact">
   <div class="wrap">
@@ -692,7 +696,795 @@ footer a:hover { color: var(--accent); }
           <li>Riel H, Vicenzino B, Olesen JL, Bach Jensen M, Ehlers LH, Rathleff MS. <em>Self-dosed and pre-determined progressive heavy-slow resistance training have similar effects in people with plantar fasciopathy: a randomised trial.</em> J Physiother. 2019;65(3):144–151.</li>
         </ol>
         <div class="btn-row" style="margin-top:20px">
-          <a href="#" class="btn ghost" id="btnTorna">← Tutti i protocolli</a>
+          <a href="#" class="btn ghost btn-torna">← Tutti i protocolli</a>
+          <a href="#" class="btn" onclick="window.print();return false;">Stampa protocollo completo</a>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+  </div>
+</main>
+</div>
+
+<!-- ==================== PROTOCOLLO: LOMBALGIA ASPECIFICA ==================== -->
+<div id="art-lba" class="post hidden">
+
+<section class="hero compact">
+  <div class="wrap">
+    <span class="tag">Rachide</span>
+    <h1>Lombalgia aspecifica</h1>
+    <p>Triage per escludere le forme serie, classificazione in sottogruppi ed esercizio terapeutico: il percorso per il 90% delle lombalgie che arrivano in studio.</p>
+  </div>
+</section>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab" data-tab="lba-sintesi">Sintesi</button>
+    <button class="tab" data-tab="lba-inquadramento">Inquadramento</button>
+    <button class="tab" data-tab="lba-triage">Red flags &amp; triage</button>
+    <button class="tab" data-tab="lba-classificazione">Sottogruppi</button>
+    <button class="tab" data-tab="lba-acuta">Fase acuta</button>
+    <button class="tab" data-tab="lba-esercizio">Esercizio terapeutico</button>
+    <button class="tab" data-tab="lba-ritorno">Ritorno alla funzione</button>
+    <button class="tab" data-tab="lba-psicosociale">Fattori psicosociali</button>
+    <button class="tab" data-tab="lba-errori">Errori frequenti</button>
+    <button class="tab" data-tab="lba-fonti">Fonti</button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <!-- SINTESI -->
+    <section class="panel" id="lba-sintesi">
+      <div class="panel-head">
+        <span class="badge accent">Protocollo</span>
+        <span class="badge gray">Aggiornato · settembre 2026</span>
+        <span class="badge gray">10 schede</span>
+      </div>
+
+      <div class="card highlight">
+        <h2>Ripasso in 60 secondi</h2>
+        <ul>
+          <li><strong>Prima cosa sempre: escludi le red flags.</strong> Meno dell'1-2% delle lombalgie nasconde una patologia seria, ma sono quelle che non puoi perdere.</li>
+          <li><strong>Nell'85-90% dei casi non trovi una causa strutturale precisa</strong> — ed è normale. "Aspecifica" non vuol dire "niente da fare", vuol dire che il trattamento si basa su funzione e sottogruppi, non su un'etichetta patoanatomica.</li>
+          <li><strong>Il riposo a letto è controindicato.</strong> Resta attivo è l'unico consiglio con evidenza solida quanto quella di qualunque farmaco.</li>
+          <li><strong>L'esercizio funziona</strong>, e non conta tanto quale tipo: conta farlo con costanza. Scegli quello che il paziente farà davvero.</li>
+          <li><strong>Prognosi favorevole ma recidivante</strong>: la maggior parte migliora in 4-6 settimane, ma fino al 70% ha una recidiva entro un anno. La prevenzione va programmata, non lasciata al caso.</li>
+          <li><strong>I fattori psicosociali contano quanto quelli biomeccanici.</strong> Paura del movimento e catastrofizzazione predicono la cronicizzazione meglio di molti reperti clinici.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Il percorso in una tabella</h2>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Fase</th><th>Obiettivo</th><th>Tempi indicativi</th><th>Criterio per progredire</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Triage</strong></td><td>Escludere red flags, classificare in sottogruppo</td><td>Prima seduta</td><td>Nessun segnale d'allarme; sottogruppo identificato</td></tr>
+            <tr><td><strong>Fase acuta</strong></td><td>Ridurre irritabilità, mantenere attività</td><td>Sett. 0-2</td><td>Riduzione del dolore a riposo, tolleranza posizionale migliorata</td></tr>
+            <tr><td><strong>Esercizio terapeutico</strong></td><td>Forza, controllo motorio, mobilità mirata al sottogruppo</td><td>Sett. 2-6</td><td>Miglioramento di Oswestry/NRS, carichi funzionali tollerati</td></tr>
+            <tr><td><strong>Ritorno alla funzione/sport</strong></td><td>Riportare i gesti reali di lavoro o sport</td><td>Sett. 6+</td><td>Gesto specifico eseguito senza compensi né reazione a 24h</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- INQUADRAMENTO -->
+    <section class="panel" id="lba-inquadramento">
+      <div class="card">
+        <h2><span class="num">1</span> Cosa vuol dire "aspecifica"</h2>
+        <p>Lombalgia aspecifica significa che il dolore non è attribuibile con certezza a una struttura anatomica precisa (disco, faccetta, sacroiliaca) né a una patologia sistemica. Non è un'etichetta di rinuncia diagnostica: riflette il fatto che, nella maggior parte dei casi, più strutture contribuiscono insieme e che il reperto di imaging correla debolmente con il sintomo — alterazioni discali e degenerative si trovano comunemente anche in soggetti asintomatici.</p>
+        <p>È la causa più frequente di disabilità a livello globale. La buona notizia è che il trattamento non richiede di trovare "la" struttura colpevole: richiede di classificare il quadro in un sottogruppo che risponde a un intervento specifico, gestire i fattori di rischio di cronicizzazione, e tenere il paziente in movimento.</p>
+
+        <h3>Decorso tipico</h3>
+        <ul>
+          <li><strong>Acuta</strong>: meno di 6 settimane. La maggioranza migliora rapidamente nelle prime 2-4 settimane.</li>
+          <li><strong>Subacuta</strong>: 6-12 settimane.</li>
+          <li><strong>Cronica</strong>: oltre 12 settimane. Qui pesano di più i fattori psicosociali rispetto a quelli strutturali.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="lbl">Il dato che cambia la conversazione con il paziente</span>
+          <p>La lombalgia aspecifica è <strong>altamente recidivante</strong>: fino al 70% dei pazienti ha un nuovo episodio entro 12 mesi dal primo. Non è un fallimento del trattamento — è la natura della condizione. Vale la pena dirlo subito e impostare da subito un piano di mantenimento, non solo la risoluzione dell'episodio in corso.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- TRIAGE -->
+    <section class="panel" id="lba-triage">
+      <div class="card">
+        <h2><span class="num">2</span> Red flags e triage</h2>
+        <p>Primo passo di ogni prima visita, prima di qualunque test ortopedico. Cerca attivamente questi segnali nell'anamnesi.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Sospetto</th><th>Segnali da cercare</th><th>Azione</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sindrome della cauda equina</strong></td><td>Anestesia a sella, ritenzione o incontinenza urinaria/fecale di nuova insorgenza, disfunzione sessuale, deficit neurologico bilaterale progressivo</td><td>Emergenza: invio immediato in pronto soccorso lo stesso giorno</td></tr>
+            <tr><td><strong>Frattura vertebrale</strong></td><td>Trauma significativo (o minore in osteoporosi/anziano), uso prolungato di corticosteroidi, età avanzata</td><td>Invio per imaging</td></tr>
+            <tr><td><strong>Neoplasia</strong></td><td>Storia di cancro, calo ponderale inspiegato, dolore notturno che non si riduce a riposo, età &gt;50 all'esordio</td><td>Invio per approfondimento</td></tr>
+            <tr><td><strong>Infezione spinale</strong></td><td>Febbre, uso di droghe endovenose, immunosoppressione, intervento spinale recente, dolore ingravescente non meccanico</td><td>Invio urgente</td></tr>
+            <tr><td><strong>Spondiloartrite assiale</strong></td><td>Esordio &lt;40 anni, rigidità mattutina &gt;30', migliora con il movimento non col riposo, storia familiare, altre entesiti</td><td>Invio reumatologico</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>In assenza di red flags, <strong>l'imaging di routine non è indicato</strong> e nella maggior parte delle linee guida è sconsigliato nelle prime 4-6 settimane: non cambia la gestione e alimenta la paura del movimento quando mostra reperti degenerativi comuni anche in chi non ha dolore.</p>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- CLASSIFICAZIONE -->
+    <section class="panel" id="lba-classificazione">
+      <div class="card">
+        <h2><span class="num">3</span> Classificare in sottogruppi</h2>
+        <p>Escluse le red flags, l'esame clinico serve a incasellare il paziente in un sottogruppo di trattamento (treatment-based classification), perché "esercizio generico" funziona meno bene di un intervento mirato.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Sottogruppo</th><th>Presentazione tipica</th><th>Intervento indicato</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Manipolazione/mobilizzazione</strong></td><td>Sintomi &lt;16 giorni, nessuna sintomatologia sotto il ginocchio, ipomobilità lombare, paura del movimento bassa</td><td>Manipolazione o mobilizzazione articolare + esercizio attivo precoce</td></tr>
+            <tr><td><strong>Stabilizzazione/controllo motorio</strong></td><td>Età più giovane, instabilità percepita, movimento aberrante durante flessione, ipermobilità</td><td>Esercizi di controllo motorio del core progressivi</td></tr>
+            <tr><td><strong>Preferenza direzionale</strong> (McKenzie)</td><td>Sintomi che <em>centralizzano</em> — si spostano verso la linea mediana — con un movimento ripetuto specifico (spesso estensione)</td><td>Esercizi ripetuti nella direzione che centralizza il sintomo</td></tr>
+            <tr><td><strong>Trazione</strong></td><td>Sintomatologia radicolare con segni di compressione nervosa, non risponde a preferenza direzionale</td><td>Trazione meccanica o manuale come complemento</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout ok">
+          <span class="lbl">Centralizzazione: il segno da cercare</span>
+          <p>Se un movimento ripetuto (tipicamente estensioni in prono) sposta il dolore dalla gamba verso la zona lombare centrale, è un segno prognostico favorevole: quel movimento diventa la base dell'home exercise program. Se invece il sintomo <em>periferalizza</em> (si allontana dalla colonna, scende verso la gamba), quel movimento va evitato.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FASE ACUTA -->
+    <section class="panel" id="lba-acuta">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Fase acuta</div>
+          <span class="fase-when">Settimane 0-2</span>
+        </div>
+        <p>L'obiettivo non è azzerare il dolore, è mantenere il movimento e disinnescare la paura. Il riposo a letto oltre 1-2 giorni peggiora l'esito.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Intervento</th><th>Dosaggio</th><th>Frequenza</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Educazione e rassicurazione</strong></td><td>5-10 minuti dedicati</td><td>Prima seduta, poi ripetuta</td><td>Spiega che il dolore non equivale a danno tissutale in corso; usa un linguaggio che non spaventa (evita "vertebra fuori posto", "disco consumato")</td></tr>
+            <tr><td><strong>Cammino</strong></td><td>Brevi tratti ripetuti più volte al giorno, a tolleranza</td><td>Quotidiano</td><td>Meglio 5 minuti × 4 volte che 0</td></tr>
+            <tr><td><strong>Movimento nella direzione preferenziale</strong> (se identificata)</td><td>10 ripetizioni</td><td>Ogni 2-3 ore nei giorni più acuti</td></tr>
+            <tr><td><strong>Posizioni di scarico</strong> (es. decubito laterale con cuscino tra le ginocchia, o semi-fowler)</td><td>A tolleranza</td><td>Per il riposo notturno</td><td>Evita solo le posizioni che periferalizzano</td></tr>
+            <tr><td><strong>Terapia manuale</strong> (mobilizzazione/manipolazione se indicata dal sottogruppo)</td><td>In studio</td><td>1-2 volte/sett nelle prime 2 settimane</td><td>Effetto complementare all'esercizio, non sostitutivo</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="lbl">Cosa dire su dolore e attività</span>
+          <p>Un aumento transitorio del dolore durante l'attività, che rientra entro 1-2 ore, è accettabile e non significa danno. Il campanello d'allarme è la periferalizzazione dei sintomi verso la gamba o la comparsa di deficit neurologici nuovi: in quel caso rivaluta subito.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- ESERCIZIO TERAPEUTICO -->
+    <section class="panel" id="lba-esercizio">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Esercizio terapeutico</div>
+          <span class="fase-when">Settimane 2-6</span>
+        </div>
+        <p>Le linee guida JOSPT 2021 raccomandano l'esercizio come intervento cardine sia per la lombalgia acuta che cronica. Non esiste "il" miglior esercizio: la scelta segue il sottogruppo, ma la progressione di carico segue regole comuni.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Esercizio</th><th>Dosaggio</th><th>Frequenza</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bird-dog</strong></td><td>3 × 8-10 per lato, 3-5" di tenuta</td><td>4-5 volte/sett</td><td>Controllo motorio, stabilità antirotatoria</td></tr>
+            <tr><td><strong>Dead bug</strong></td><td>3 × 8-10 per lato</td><td>4-5 volte/sett</td><td>Controllo del core in scarico, respirazione coordinata</td></tr>
+            <tr><td><strong>Ponte gluteo</strong></td><td>3 × 12-15</td><td>4-5 volte/sett</td><td>Forza della catena posteriore, scarico lombare</td></tr>
+            <tr><td><strong>Side plank</strong> (progressione da ginocchia a completo)</td><td>3 × 20-40" per lato</td><td>3-4 volte/sett</td><td>Stabilità laterale del tronco</td></tr>
+            <tr><td><strong>Hip hinge / stacco rumeno</strong></td><td>3 × 10, carico progressivo</td><td>2-3 volte/sett</td><td>Pattern di flessione dell'anca invece che della colonna: il gesto più trasferibile alla vita quotidiana</td></tr>
+            <tr><td><strong>Squat body-weight → con carico</strong></td><td>3 × 10-15</td><td>2-3 volte/sett</td><td>Tolleranza al carico assiale in catena chiusa</td></tr>
+            <tr><td><strong>Cammino/cardio a basso impatto</strong> (camminata veloce, bici, ellittica)</td><td>20-30 minuti</td><td>3-5 volte/sett</td><td>Capacità generale, spesso sottovalutata nella lombalgia cronica</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p><strong>Progressione:</strong> aumenta carico o complessità solo quando l'esercizio corrente è eseguito senza compenso e senza reazione dolorosa a 24 ore. Nella lombalgia cronica il dosaggio conta più della scelta dell'esercizio specifico: 2-3 sedute a settimana per almeno 4-6 settimane prima di giudicare l'efficacia.</p>
+        <div class="callout ok">
+          <span class="lbl">Un principio, non un protocollo rigido</span>
+          <p>La letteratura mostra risultati simili tra approcci di stabilizzazione, McKenzie, rinforzo generale e persino pilates o yoga strutturato, quando dosati bene. Scegli in base a preferenza, aderenza attesa e sottogruppo clinico, non per fedeltà a una scuola di pensiero.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- RITORNO ALLA FUNZIONE -->
+    <section class="panel" id="lba-ritorno">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Ritorno alla funzione e allo sport</div>
+          <span class="fase-when">Settimane 6 in poi</span>
+        </div>
+        <p>Reintroduci i gesti reali del paziente — sollevamento, torsione, sport specifico — con progressione di carico esplicita, non "quando ti senti pronto" senza criteri.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Ambito</th><th>Progressione</th><th>Criterio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sollevamento carichi</strong></td><td>Hip hinge con carico crescente → sollevamento da terra → sollevamento asimmetrico</td><td>Tecnica pulita sotto carico funzionale, non solo a vuoto</td></tr>
+            <tr><td><strong>Rotazione/lancio</strong> (sport con gesto rotatorio)</td><td>Rotazione del tronco a corpo libero → con resistenza → gesto sport-specifico a velocità crescente</td><td>Nessuna reazione a 24h a intensità progressive</td></tr>
+            <tr><td><strong>Corsa</strong></td><td>Walk-run progressivo come per altri infortuni da carico</td><td>30' continui senza reazione</td></tr>
+            <tr><td><strong>Ritorno al lavoro fisico</strong></td><td>Simulazione dei compiti specifici in studio prima del rientro</td><td>Accordo con il paziente su un piano di rientro graduale se il lavoro è pesante</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="lbl">Prevenzione delle recidive</span>
+          <p>Dato il tasso di recidiva, pianifica la dimissione con un programma di mantenimento (2 sedute/settimana di esercizio, anche minimo) e non solo con "torna se hai male". La prevenzione attiva è l'intervento con le prove migliori per ridurre le recidive.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FATTORI PSICOSOCIALI -->
+    <section class="panel" id="lba-psicosociale">
+      <div class="card">
+        <h2><span class="num">4</span> Fattori psicosociali (yellow flags)</h2>
+        <p>Predicono la cronicizzazione meglio di molti reperti clinici. Vale la pena chiederli esplicitamente, non aspettare che emergano da soli.</p>
+        <ul>
+          <li><strong>Paura-evitamento</strong>: convinzione che il movimento sia pericoloso o dannoso.</li>
+          <li><strong>Catastrofizzazione</strong>: aspettative molto negative sul decorso.</li>
+          <li><strong>Bassa autoefficacia</strong> e stile di coping passivo (attesa che qualcun altro risolva).</li>
+          <li><strong>Insoddisfazione lavorativa</strong> o conflitti sul posto di lavoro.</li>
+          <li><strong>Tono dell'umore basso</strong>, stress percepito elevato.</li>
+        </ul>
+        <p>Uno strumento pratico e rapido è lo <strong>STarT Back Screening Tool</strong> (9 item): stratifica il paziente in rischio basso, medio o alto di scarso esito, e guida quanta enfasi dare all'intervento psicosociale accanto a quello fisico. Rischio alto non significa "niente esercizio": significa aggiungere strategie di gestione della paura e dell'attività accanto al programma fisico.</p>
+        <div class="callout ok">
+          <span class="lbl">Come lo dici conta</span>
+          <p>Evita un linguaggio che medicalizza in modo allarmante ("degenerazione", "usura", "vertebra bloccata"). Usa un framing che normalizza: «la colonna è una struttura robusta, fatta per essere caricata; il dolore in questa fase non è proporzionale al danno tissutale».</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- ERRORI -->
+    <section class="panel" id="lba-errori">
+      <div class="card">
+        <h2><span class="num">5</span> Errori frequenti</h2>
+        <ul>
+          <li><strong>Consigliare riposo a letto oltre 1-2 giorni.</strong> Peggiora l'esito rispetto a restare attivi.</li>
+          <li><strong>Richiedere o assecondare l'imaging di routine</strong> senza red flags: alimenta la paura senza cambiare la gestione.</li>
+          <li><strong>Usare un linguaggio catastrofizzante.</strong> "Disco consumato" e "vertebra fuori posto" costruiscono convinzioni disadattive difficili da disfare.</li>
+          <li><strong>Trattare tutte le lombalgie allo stesso modo.</strong> Saltare la classificazione in sottogruppi riduce l'efficacia dell'esercizio.</li>
+          <li><strong>Ignorare i fattori psicosociali</strong> finché non diventano evidenti: a quel punto il quadro è già cronico.</li>
+          <li><strong>Dimettere senza piano di mantenimento</strong>, ignorando l'alto tasso di recidiva.</li>
+          <li><strong>Passivizzare il trattamento</strong> (solo terapia manuale o elettroterapia) senza costruire un programma attivo che il paziente gestisce da solo.</li>
+        </ul>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FONTI -->
+    <section class="panel" id="lba-fonti">
+      <div class="card">
+        <h2>Fonti</h2>
+        <ol class="refs">
+          <li>George SZ, Fritz JM, Silfies SP, et al. <em>Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021.</em> Clinical Practice Guidelines, Academy of Orthopaedic Physical Therapy, APTA. J Orthop Sports Phys Ther. 2021;51(11):CPG1–CPG60. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10508241" target="_blank" rel="noopener">PMC10508241</a></li>
+          <li>Delitto A, George SZ, Van Dillen L, et al. <em>Low Back Pain: Clinical Practice Guidelines Linked to the ICF.</em> J Orthop Sports Phys Ther. 2012;42(4):A1–A57.</li>
+          <li>Hill JC, Dunn KM, Lewis M, et al. <em>A primary care back pain screening tool: identifying patient subgroups for initial treatment (STarT Back Tool).</em> Arthritis Rheum. 2008;59(5):632–641.</li>
+          <li>Fritz JM, Cleland JA, Childs JD. <em>Subgrouping patients with low back pain: evolution of a classification approach to physical therapy.</em> J Orthop Sports Phys Ther. 2007;37(6):290–302.</li>
+          <li>Traeger AC, Buchbinder R, Elshaug AG, Croft PR, Maher CG. <em>Care for low back pain: can health systems deliver?</em> Bull World Health Organ. 2019;97(6):423–433.</li>
+          <li>Vibe Fersum K, O'Sullivan P, Skouen JS, Smith A, Kvåle A. <em>Efficacy of classification-based cognitive functional therapy in patients with non-specific chronic low back pain: a randomized controlled trial.</em> Eur J Pain. 2013;17(6):916–928.</li>
+        </ol>
+        <div class="btn-row" style="margin-top:20px">
+          <a href="#" class="btn ghost btn-torna">← Tutti i protocolli</a>
+          <a href="#" class="btn" onclick="window.print();return false;">Stampa protocollo completo</a>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+  </div>
+</main>
+</div>
+
+<!-- ==================== PROTOCOLLO: ERNIA DEL DISCO LOMBARE ==================== -->
+<div id="art-edl" class="post hidden">
+
+<section class="hero compact">
+  <div class="wrap">
+    <span class="tag">Rachide</span>
+    <h1>Ernia del disco lombare</h1>
+    <p>Storia naturale favorevole, red flags da non perdere, e un percorso conservativo basato su mobilizzazione neurale e carico progressivo.</p>
+  </div>
+</section>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab" data-tab="edl-sintesi">Sintesi</button>
+    <button class="tab" data-tab="edl-inquadramento">Inquadramento</button>
+    <button class="tab" data-tab="edl-diagnosi">Diagnosi &amp; red flags</button>
+    <button class="tab" data-tab="edl-acuta">Fase acuta</button>
+    <button class="tab" data-tab="edl-neurale">Mobilizzazione neurale</button>
+    <button class="tab" data-tab="edl-carico">Rinforzo e carico</button>
+    <button class="tab" data-tab="edl-ritorno">Ritorno all'attività</button>
+    <button class="tab" data-tab="edl-invio">Quando inviare</button>
+    <button class="tab" data-tab="edl-fonti">Fonti</button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <!-- SINTESI -->
+    <section class="panel" id="edl-sintesi">
+      <div class="panel-head">
+        <span class="badge accent">Protocollo</span>
+        <span class="badge gray">Aggiornato · settembre 2026</span>
+        <span class="badge gray">9 schede</span>
+      </div>
+
+      <div class="card highlight">
+        <h2>Ripasso in 60 secondi</h2>
+        <ul>
+          <li><strong>La storia naturale è più favorevole di quanto pensi il paziente.</strong> La maggior parte delle ernie regredisce spontaneamente nel giro di mesi, e le ernie più grandi (estruse, sequestrate) regrediscono <em>di più</em>, non di meno.</li>
+          <li><strong>La priorità numero uno resta lo screening della cauda equina.</strong> Bassa incidenza, ma è l'unica vera emergenza chirurgica in questo quadro.</li>
+          <li><strong>Il dolore alla gamba non significa "danno permanente".</strong> Riflette irritazione/compressione radicolare, spesso reversibile con il tempo e il trattamento giusto.</li>
+          <li><strong>La direzione preferenziale guida l'esercizio</strong>: cerca il movimento che centralizza il sintomo (spesso l'estensione) e costruiscici sopra il programma iniziale.</li>
+          <li><strong>La mobilizzazione neurale non "stira" il nervo</strong>: lo fa scorrere nel suo tunnel per ridurne la sensibilizzazione meccanica.</li>
+          <li><strong>La chirurgia è un'opzione, non il default</strong>: indicata per deficit progressivi o dolore radicolare invalidante che non risponde a un percorso conservativo ben condotto di 6-8 settimane.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Il percorso in una tabella</h2>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Fase</th><th>Obiettivo</th><th>Tempi indicativi</th><th>Criterio per progredire</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Diagnosi &amp; red flags</strong></td><td>Escludere cauda equina, mappare il livello coinvolto</td><td>Prima seduta</td><td>Nessuna red flag; pattern neurologico chiaro</td></tr>
+            <tr><td><strong>Fase acuta</strong></td><td>Ridurre l'irritabilità radicolare, trovare la direzione preferenziale</td><td>Sett. 0-2</td><td>Centralizzazione del sintomo, dolore notturno gestibile</td></tr>
+            <tr><td><strong>Mobilizzazione neurale</strong></td><td>Ridurre la sensibilizzazione meccanica del nervo</td><td>Sett. 1-6</td><td>SLR/slump migliorano senza aggravare i sintomi</td></tr>
+            <tr><td><strong>Rinforzo e carico</strong></td><td>Ricondizionare tronco e arto inferiore</td><td>Sett. 3-8</td><td>Forza miotomerica normalizzata, tolleranza al carico assiale</td></tr>
+            <tr><td><strong>Ritorno all'attività</strong></td><td>Riportare gesti quotidiani/sportivi</td><td>Sett. 6+</td><td>Gesto specifico senza sintomi radicolari residui</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- INQUADRAMENTO -->
+    <section class="panel" id="edl-inquadramento">
+      <div class="card">
+        <h2><span class="num">1</span> Cosa succede al disco</h2>
+        <p>Il nucleo polposo migra attraverso una lesione dell'anulus fibroso. Le classificazioni standard (Fardon) distinguono <strong>protrusione</strong> (base più larga dell'estensione), <strong>estrusione</strong> (base più stretta, materiale che fuoriesce) e <strong>sequestro</strong> (frammento libero, non più connesso al disco d'origine). I livelli più coinvolti sono L4-L5 e L5-S1.</p>
+
+        <h3>La storia naturale ribalta l'intuizione</h3>
+        <p>Il senso comune suggerirebbe che le ernie più grandi guariscano peggio. È il contrario. Una meta-analisi su oltre 30 studi ha misurato tassi di regressione spontanea del <strong>13% per il bulging, 41% per la protrusione, 70% per l'estrusione e 93-96% per il sequestro</strong>. Il meccanismo è immunomediato: più materiale discale entra in contatto con il sistema vascolare epidurale, più risposta infiammatoria e fagocitosi macrofagica si attivano, riassorbendo il frammento. In generale, circa i due terzi delle ernie regrediscono spontaneamente entro 6-12 mesi, e la maggior parte dei pazienti recupera funzionalmente anche prima che l'imaging mostri la regressione completa.</p>
+
+        <div class="callout ok">
+          <span class="lbl">Da dire al paziente davanti all'immagine di risonanza</span>
+          <p>«Il fatto che l'ernia sia grande non è una cattiva notizia quanto sembra: le ernie più voluminose tendono a riassorbirsi di più, non di meno. Il tuo corpo ha un meccanismo attivo per smaltire questo materiale, e nella maggior parte dei casi il dolore migliora prima che l'immagine cambi.»</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- DIAGNOSI -->
+    <section class="panel" id="edl-diagnosi">
+      <div class="card">
+        <h2><span class="num">2</span> Diagnosi e red flags</h2>
+
+        <div class="callout warn">
+          <span class="lbl">Cauda equina — screening a ogni visita</span>
+          <p>Anestesia a sella o perianale, ritenzione o incontinenza urinaria/fecale di nuova insorgenza, disfunzione sessuale, deficit motorio bilaterale progressivo agli arti inferiori. Anche un solo segnale positivo richiede invio urgente in pronto soccorso lo stesso giorno per imaging e valutazione chirurgica: è un'emergenza tempo-dipendente.</p>
+        </div>
+
+        <h3>Mappare il livello: dermatomero, miotomero, riflesso</h3>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Radice</th><th>Dermatomero</th><th>Miotomero (test di forza)</th><th>Riflesso</th></tr></thead>
+          <tbody>
+            <tr><td><strong>L4</strong></td><td>Gamba mediale, fino alla caviglia</td><td>Quadricipite (estensione ginocchio), tibiale anteriore</td><td>Rotuleo</td></tr>
+            <tr><td><strong>L5</strong></td><td>Gamba laterale, dorso del piede, alluce</td><td>Estensore lungo dell'alluce (EHL), medio gluteo</td><td>Nessuno affidabile (a volte tibiale posteriore)</td></tr>
+            <tr><td><strong>S1</strong></td><td>Bordo laterale del piede, pianta</td><td>Peronei, gastrocnemio-soleo (flessione plantare)</td><td>Achilleo</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h3>Test neurodinamici</h3>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Test</th><th>Come</th><th>Valore diagnostico</th></tr></thead>
+          <tbody>
+            <tr><td><strong>SLR (Lasègue)</strong></td><td>Sollevamento passivo della gamba estesa in supino fino a riproduzione del dolore radicolare (tipicamente 30-70°)</td><td>Alta sensibilità (~0.90), bassa specificità: buon test di screening, non conferma da solo</td></tr>
+            <tr><td><strong>SLR crociato</strong></td><td>Il sollevamento della gamba sana riproduce il sintomo su quella sintomatica</td><td>Bassa sensibilità, alta specificità (~0.90): se positivo, è molto indicativo di compressione discale</td></tr>
+            <tr><td><strong>Slump test</strong></td><td>Seduto, flessione toracolombare + flessione cervicale + estensione di ginocchio + dorsiflessione</td><td>Sensibile alla tensione neurale complessiva, utile per differenziare da accorciamento degli ischiocrurali</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Imaging (RM) indicato solo con red flags, deficit neurologico significativo o progressivo, o mancata risposta a 6-8 settimane di trattamento conservativo ben condotto — non di routine nelle prime settimane.</p>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FASE ACUTA -->
+    <section class="panel" id="edl-acuta">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Fase acuta</div>
+          <span class="fase-when">Settimane 0-2</span>
+        </div>
+        <p>Obiettivo: trovare la posizione e il movimento che centralizzano il sintomo, e costruire lì il programma iniziale.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Intervento</th><th>Dosaggio</th><th>Frequenza</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ricerca della direzione preferenziale</strong> (spesso estensione: press-up in prono)</td><td>10 ripetizioni, valutando centralizzazione dopo ogni serie</td><td>Ogni 2-3 ore nei giorni acuti</td><td>Se estensione periferalizza, prova flessione o shift laterale: la direzione preferenziale è individuale</td></tr>
+            <tr><td><strong>Cammino breve e frequente</strong></td><td>5-10 minuti</td><td>4-6 volte al giorno</td><td>Mantiene la mobilità senza sovraccaricare</td></tr>
+            <tr><td><strong>Evitare la flessione lombare prolungata</strong> (seduto a lungo, chinarsi in flessione pura)</td><td>—</td><td>Nelle prime 1-2 settimane</td><td>La flessione carica maggiormente la porzione posteriore del disco; non va evitata per sempre, solo nella fase più irritabile</td></tr>
+            <tr><td><strong>Gestione del dolore notturno</strong> (cuscino tra le ginocchia in decubito laterale, o semi-fowler supino)</td><td>A tolleranza</td><td>Ogni notte finché serve</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- MOBILIZZAZIONE NEURALE -->
+    <section class="panel" id="edl-neurale">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Mobilizzazione neurale</div>
+          <span class="fase-when">Settimane 1-6</span>
+        </div>
+        <p>Il nervo va fatto scorrere nel suo tunnel, non stirato. Due famiglie di tecniche, da usare in sequenza.</p>
+        <h3>Sliders (scorrimento) — si iniziano per primi</h3>
+        <p>Un capo del sistema nervoso si allunga mentre l'altro si accorcia nello stesso momento, così la tensione complessiva sul nervo resta bassa mentre il nervo scorre nel canale. Sono la scelta giusta in fase irritabile.</p>
+        <p><strong>Esempio per lo sciatico</strong>: seduto, estendi il ginocchio mentre estendi il collo (guardi in alto); poi fletti il ginocchio riportando il piede indietro mentre fletti il collo (guardi in basso). Movimento fluido, senza fermarti a fine corsa.</p>
+        <ul>
+          <li><strong>Dosaggio:</strong> 2-3 × 10-15 ripetizioni fluide, senza dolore riprodotto.</li>
+          <li><strong>Frequenza:</strong> 2-3 volte al giorno nella fase acuta.</li>
+        </ul>
+
+        <h3>Tensioners (messa in tensione) — quando l'irritabilità scende</h3>
+        <p>Entrambi i capi del sistema nervoso si allontanano insieme, aumentando la tensione complessiva. Più impegnativi, si introducono quando lo slider non riproduce più sintomi.</p>
+        <p><strong>Esempio</strong>: stessa posizione seduta, questa volta estendi ginocchio <em>e</em> fletti il collo insieme (aumentando la tensione su tutto il decorso), per poi rilasciare entrambi insieme.</p>
+        <ul>
+          <li><strong>Dosaggio:</strong> 2 × 8-10 ripetizioni, con leggera riproduzione del sintomo accettabile se si risolve rapidamente al rilascio.</li>
+          <li><strong>Frequenza:</strong> a giorni alterni, non tutti i giorni.</li>
+        </ul>
+
+        <div class="callout warn">
+          <span class="lbl">Regola di sicurezza</span>
+          <p>Se un esercizio neurodinamico aumenta il deficit neurologico (forza, sensibilità) invece del solo dolore, fermati e rivaluta. La sensibilizzazione meccanica migliora con la mobilizzazione graduale; un peggioramento neurologico oggettivo no.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- RINFORZO E CARICO -->
+    <section class="panel" id="edl-carico">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Rinforzo e carico progressivo</div>
+          <span class="fase-when">Settimane 3-8</span>
+        </div>
+        <p>Una volta ridotta l'irritabilità radicolare, il lavoro si sposta su forza del tronco e dell'arto coinvolto — spesso indebolito dal deficit miotomerico.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Esercizio</th><th>Dosaggio</th><th>Frequenza</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bird-dog, dead bug, ponte gluteo</strong></td><td>3 × 10-12</td><td>4-5 volte/sett</td><td>Controllo motorio di base, come in lombalgia aspecifica</td></tr>
+            <tr><td><strong>Rinforzo specifico del miotomero deficitario</strong> (es. tibiale anteriore per L4, EHL per L5, gastrocnemio per S1)</td><td>3 × 12-15, carico progressivo</td><td>3-4 volte/sett</td><td>Recupero della forza segmentale, spesso trascurato</td></tr>
+            <tr><td><strong>Hip hinge / stacco progressivo</strong></td><td>3 × 8-10</td><td>2-3 volte/sett</td><td>Pattern di sollevamento sicuro, trasferibile alla quotidianità</td></tr>
+            <tr><td><strong>Cammino progressivo</strong></td><td>+10% a settimana</td><td>Quotidiano</td><td>Capacità aerobica e desensibilizzazione al carico</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="muted">Continua in parallelo gli esercizi neurodinamici a bassa intensità come mantenimento.</p>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- RITORNO ALL'ATTIVITÀ -->
+    <section class="panel" id="edl-ritorno">
+      <div class="card fase">
+        <div class="fase-head">
+          <div class="fase-tit">Ritorno all'attività e allo sport</div>
+          <span class="fase-when">Settimane 6 in poi</span>
+        </div>
+        <p>Segue la stessa logica della lombalgia aspecifica — reintroduzione graduale dei gesti reali — con un'attenzione in più al monitoraggio neurologico.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Criterio</th><th>Soglia per procedere</th></tr></thead>
+          <tbody>
+            <tr><td>Sintomo radicolare</td><td>Assente o minimo (≤2/10) a riposo e nelle attività quotidiane</td></tr>
+            <tr><td>Forza miotomerica</td><td>Simmetrica rispetto al lato sano, o in netto recupero</td></tr>
+            <tr><td>Test neurodinamici</td><td>SLR/slump eseguibili senza riproduzione del sintomo a range funzionale</td></tr>
+            <tr><td>Carico assiale (squat, stacco, corsa)</td><td>Tollerato senza reazione a 24h</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- QUANDO INVIARE -->
+    <section class="panel" id="edl-invio">
+      <div class="card">
+        <h2><span class="num">3</span> Quando serve l'invio</h2>
+        <ul>
+          <li><strong>Sospetta cauda equina</strong>: emergenza, invio immediato.</li>
+          <li><strong>Deficit motorio progressivo o significativo</strong> (es. piede cadente marcato): invio per valutazione specialistica tempestiva.</li>
+          <li><strong>Dolore radicolare invalidante</strong> che non risponde a 6-8 settimane di trattamento conservativo ben condotto: discussione con il medico su opzioni infiltrative o chirurgiche (microdiscectomia).</li>
+          <li><strong>Chirurgia</strong>: accelera il recupero del dolore nel breve termine rispetto al trattamento conservativo, ma a 1-2 anni gli esiti tendono a convergere. È una scelta condivisa, non un passo automatico.</li>
+        </ul>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FONTI -->
+    <section class="panel" id="edl-fonti">
+      <div class="card">
+        <h2>Fonti</h2>
+        <ol class="refs">
+          <li>Zhong M, Liu JT, Jiang H, et al. <em>Incidence of Spontaneous Resorption of Lumbar Disc Herniation: A Meta-Analysis.</em> Pain Physician. 2017;20(1):E45–E52.</li>
+          <li>Chiu CC, Chuang TY, Chang KH, et al. <em>The probability of spontaneous regression of lumbar herniated disc: a systematic review.</em> Clin Rehabil. 2015;29(2):184–195.</li>
+          <li>Autio RA, Karppinen J, Niinimäki J, et al. <em>Determinants of spontaneous resorption of intervertebral disc herniations.</em> Spine. 2006;31(11):1247–1252.</li>
+          <li>George SZ, Fritz JM, Silfies SP, et al. <em>Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021.</em> J Orthop Sports Phys Ther. 2021;51(11):CPG1–CPG60.</li>
+          <li>Coppieters MW, Butler DS. <em>Do "sliders" slide and "tensioners" tension? An analysis of neurodynamic techniques and considerations regarding their application.</em> Man Ther. 2008;13(3):213–221.</li>
+          <li>Vroomen PC, de Krom MC, Knottnerus JA. <em>Diagnostic value of history and physical examination in patients suspected of sciatica due to disc herniation: a systematic review.</em> J Neurol. 1999;246(10):899–906.</li>
+        </ol>
+        <div class="btn-row" style="margin-top:20px">
+          <a href="#" class="btn ghost btn-torna">← Tutti i protocolli</a>
+          <a href="#" class="btn" onclick="window.print();return false;">Stampa protocollo completo</a>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+  </div>
+</main>
+</div>
+
+<!-- ==================== PROTOCOLLO: SCIATALGIA ==================== -->
+<div id="art-sci" class="post hidden">
+
+<section class="hero compact">
+  <div class="wrap">
+    <span class="tag">Rachide</span>
+    <h1>Sciatalgia</h1>
+    <p>"Sciatalgia" è un sintomo, non una diagnosi: la scheda che ti aiuta a distinguere l'origine radicolare da quella extraspinale prima di scegliere il trattamento.</p>
+  </div>
+</section>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab" data-tab="sci-sintesi">Sintesi</button>
+    <button class="tab" data-tab="sci-inquadramento">Inquadramento</button>
+    <button class="tab" data-tab="sci-differenziale">Diagnosi differenziale</button>
+    <button class="tab" data-tab="sci-piriforme">Sindrome del piriforme</button>
+    <button class="tab" data-tab="sci-neurodinamica">Mobilizzazione neurale</button>
+    <button class="tab" data-tab="sci-progressione">Progressione del carico</button>
+    <button class="tab" data-tab="sci-errori">Errori frequenti</button>
+    <button class="tab" data-tab="sci-fonti">Fonti</button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <!-- SINTESI -->
+    <section class="panel" id="sci-sintesi">
+      <div class="panel-head">
+        <span class="badge accent">Protocollo</span>
+        <span class="badge gray">Aggiornato · settembre 2026</span>
+        <span class="badge gray">8 schede</span>
+      </div>
+
+      <div class="card highlight">
+        <h2>Ripasso in 60 secondi</h2>
+        <ul>
+          <li><strong>"Sciatalgia" descrive un territorio di dolore, non una causa.</strong> Il primo compito è capire se l'origine è radicolare (ernia, stenosi) o extraspinale (piriforme e altre cause nel gluteo profondo).</li>
+          <li><strong>Il dolore radicolare vero segue un dermatomero</strong> e si accompagna spesso a deficit neurologico obiettivabile (forza, riflessi, sensibilità).</li>
+          <li><strong>La sindrome del piriforme è una diagnosi di esclusione</strong>: niente segni radicolari, dolorabilità puntuale al gluteo, test di provocazione positivi (FAIR, Pace, Freiberg).</li>
+          <li><strong>Le due condizioni richiedono trattamenti diversi</strong>: la radicolare risponde a mobilizzazione neurale e carico graduale della colonna; il piriforme risponde a rilascio dei tessuti molli, mobilità dell'anca e rinforzo dei glutei.</li>
+          <li><strong>Il dolore che scende sotto il ginocchio</strong> è più predittivo di compressione radicolare del semplice dolore gluteo irradiato alla coscia.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>L'algoritmo in sintesi</h2>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Domanda chiave</th><th>Se sì → sospetta</th><th>Se no → sospetta</th></tr></thead>
+          <tbody>
+            <tr><td>Dolore che segue un dermatomero preciso, sotto il ginocchio?</td><td>Origine radicolare (ernia, stenosi)</td><td>Considera origine extraspinale</td></tr>
+            <tr><td>Deficit di forza o riflesso obiettivabile?</td><td>Origine radicolare</td><td>Meno probabile compressione di radice</td></tr>
+            <tr><td>Dolorabilità puntuale al gluteo profondo, peggiora da seduto?</td><td>Sospetta sindrome del piriforme / dolore gluteo profondo</td><td>Riconsidera la colonna</td></tr>
+            <tr><td>SLR positivo con dolore che riproduce il sintomo tipico?</td><td>Compatibile con compressione discale</td><td>Non esclude comunque un'origine radicolare</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- INQUADRAMENTO -->
+    <section class="panel" id="sci-inquadramento">
+      <div class="card">
+        <h2><span class="num">1</span> Perché "sciatalgia" non basta come diagnosi</h2>
+        <p>Il termine descrive dolore lungo il decorso del nervo sciatico o dei suoi rami, ma le cause sono eterogenee: compressione radicolare a livello lombare (ernia, stenosi), intrappolamento extraspinale del nervo (più spesso a livello del gluteo, storicamente attribuito al piriforme), o dolore riferito da strutture articolari senza vera compressione nervosa. Trattare tutte le "sciatalgie" come un'ernia del disco porta a percorsi inefficaci in chi ha in realtà un problema periferico, e viceversa.</p>
+
+        <h3>Le tre grandi famiglie</h3>
+        <ul>
+          <li><strong>Dolore radicolare</strong>: compressione o irritazione della radice nervosa nel canale spinale o nel forame. Segue un dermatomero, spesso con deficit motorio/riflesso associato. Vedi il protocollo <a href="#edl-sintesi">Ernia del disco lombare</a>.</li>
+          <li><strong>Intrappolamento extraspinale</strong> (sindrome del piriforme e sindrome del gluteo profondo in generale): compressione del nervo sciatico nel suo decorso attraverso o vicino al piriforme, lontano dalla colonna.</li>
+          <li><strong>Dolore riferito</strong>: da faccette articolari, sacroiliaca o muscolatura, senza vera compressione nervosa. Non segue un dermatomero preciso e non si accompagna a deficit neurologico.</li>
+        </ul>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- DIAGNOSI DIFFERENZIALE -->
+    <section class="panel" id="sci-differenziale">
+      <div class="card">
+        <h2><span class="num">2</span> Diagnosi differenziale</h2>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Caratteristica</th><th>Radicolare (colonna)</th><th>Piriforme / gluteo profondo</th><th>Riferito (non neurale)</th></tr></thead>
+          <tbody>
+            <tr><td>Distribuzione</td><td>Dermatomerica, spesso sotto il ginocchio</td><td>Gluteo, a volte irradiato in coscia posteriore, raramente sotto il ginocchio</td><td>Variabile, non dermatomerica</td></tr>
+            <tr><td>Deficit neurologico</td><td>Possibile (forza, riflessi, sensibilità)</td><td>Assente, salvo compressione severa e prolungata</td><td>Assente</td></tr>
+            <tr><td>Peggiora con</td><td>Flessione lombare, tosse, starnuto, Valsalva</td><td>Stare seduti a lungo, salire scale, extrarotazione dell'anca resistita</td><td>Posizioni sostenute, movimenti specifici della colonna</td></tr>
+            <tr><td>Palpazione</td><td>Non dolorabilità muscolare specifica</td><td>Dolorabilità puntuale tra grande trocantere e tuberosità ischiatica</td><td>Dolorabilità articolare/miofasciale locale</td></tr>
+            <tr><td>Test chiave</td><td>SLR, slump, test miotomerici</td><td>FAIR test, Pace test, Freiberg sign</td><td>Test di provocazione articolare (faccette, sacroiliaca)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="lbl">Occhio alla coesistenza</span>
+          <p>Le due condizioni non si escludono a vicenda: una radicolopatia lombare cronica può generare tensione compensatoria del piriforme, e viceversa un piriforme irritato può mimare una radicolopatia. Se il trattamento mirato a una causa non produce risposta in 2-3 settimane, riconsidera l'altra.</p>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- SINDROME DEL PIRIFORME -->
+    <section class="panel" id="sci-piriforme">
+      <div class="card">
+        <h2><span class="num">3</span> Quando è il piriforme</h2>
+        <p>Responsabile stimato del 6-8% dei casi di dolore lombo-gluteo con sciatalgia. È una diagnosi clinica, di esclusione: prima escludi la componente radicolare.</p>
+
+        <h3>Test di provocazione</h3>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Test</th><th>Come</th><th>Accuratezza</th></tr></thead>
+          <tbody>
+            <tr><td><strong>FAIR test</strong> (Flexion-Adduction-Internal Rotation)</td><td>Paziente su fianco sano, anca e ginocchio flessi a 90°, applichi adduzione e rotazione interna dell'anca</td><td>Sensibilità 0.88, specificità 0.83 — il test più affidabile disponibile</td></tr>
+            <tr><td><strong>Pace test</strong></td><td>Seduto, abduzione dell'anca contro resistenza</td><td>Positivo nel 30-74% dei casi confermati; riproduce dolore gluteo</td></tr>
+            <tr><td><strong>Freiberg sign</strong></td><td>Rotazione interna passiva dell'anca in estensione</td><td>Positivo in circa il 56% dei casi confermati</td></tr>
+            <tr><td><strong>Palpazione dell'incisura ischiatica</strong></td><td>Dolorabilità puntuale tra grande trocantere e tuberosità ischiatica</td><td>Supporta la diagnosi se riproduce il sintomo irradiato</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h3>Trattamento</h3>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Intervento</th><th>Dosaggio</th><th>Frequenza</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Stretching del piriforme</strong> (supino, anca flessa e addotta verso la spalla opposta)</td><td>3 × 30-45"</td><td>2-3 volte al giorno</td></tr>
+            <tr><td><strong>Rilascio dei tessuti molli</strong> (pallina o foam roller sul gluteo)</td><td>1-2 minuti</td><td>Prima dello stretching</td></tr>
+            <tr><td><strong>Rinforzo del medio e grande gluteo</strong> (clamshell, abduzione in decubito laterale, ponte monopodalico)</td><td>3 × 12-15</td><td>3-4 volte/sett</td></tr>
+            <tr><td><strong>Mobilità dell'anca in rotazione</strong> (interna ed esterna, attiva e passiva)</td><td>2 × 10 per direzione</td><td>Quotidiano</td></tr>
+            <tr><td><strong>Correzione posturale da seduto</strong> (evitare portafoglio in tasca posteriore, sedute prolungate senza pause)</td><td>—</td><td>Sempre</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Se non risponde in 3-4 settimane di trattamento ben condotto, riconsidera la diagnosi (dolore riferito da sacroiliaca, sindrome del gluteo profondo da altre strutture, o componente radicolare non ancora individuata).</p>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- MOBILIZZAZIONE NEURALE -->
+    <section class="panel" id="sci-neurodinamica">
+      <div class="card">
+        <h2><span class="num">4</span> Mobilizzazione neurodinamica</h2>
+        <p>Quando la componente è (anche) neurale — radicolare o da intrappolamento — la mobilizzazione del sistema nervoso periferico è complementare al trattamento della causa. Stessa logica del protocollo sull'ernia del disco: sliders prima, tensioners dopo, mai forzando in presenza di deficit neurologico progressivo.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Tecnica</th><th>Quando</th><th>Dosaggio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Slider per lo sciatico</strong> (estensione ginocchio + estensione cervicale alternate a flessione ginocchio + flessione cervicale)</td><td>Fase irritabile, qualunque origine sospetta</td><td>2-3 × 10-15, 2-3 volte/die</td></tr>
+            <tr><td><strong>Tensioner per lo sciatico</strong></td><td>Quando lo slider non riproduce più sintomi</td><td>2 × 8-10, a giorni alterni</td></tr>
+            <tr><td><strong>Neural flossing in carico</strong> (affondo con estensione di ginocchio dell'arto posteriore)</td><td>Fase di ritorno alla funzione</td><td>2 × 10, 2-3 volte/sett</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- PROGRESSIONE DEL CARICO -->
+    <section class="panel" id="sci-progressione">
+      <div class="card">
+        <h2><span class="num">5</span> Progressione del carico e ritorno all'attività</h2>
+        <p>Una volta identificata e trattata la causa primaria, la progressione converge verso lo stesso obiettivo: ricondizionare la catena cinetica coinvolta prima di riportare il paziente al gesto completo.</p>
+        <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Step</th><th>Contenuto</th><th>Criterio per procedere</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1 · Controllo del sintomo</strong></td><td>Mobilizzazione neurale + trattamento della causa specifica</td><td>Sintomo in remissione a riposo</td></tr>
+            <tr><td><strong>2 · Rinforzo mirato</strong></td><td>Core (se radicolare) o glutei/anca (se piriforme)</td><td>Forza simmetrica, nessuna reazione a 24h</td></tr>
+            <tr><td><strong>3 · Carico funzionale</strong></td><td>Squat, hip hinge, affondi con carico progressivo</td><td>Tecnica pulita sotto carico, nessun sintomo neurale riprodotto</td></tr>
+            <tr><td><strong>4 · Gesto sportivo/lavorativo</strong></td><td>Corsa, cambi di direzione, sollevamento specifico</td><td>Nessuna reazione a 24-48h a intensità di gara/lavoro</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- ERRORI -->
+    <section class="panel" id="sci-errori">
+      <div class="card">
+        <h2><span class="num">6</span> Errori frequenti</h2>
+        <ul>
+          <li><strong>Etichettare come "piriforme" ogni dolore gluteo con irradiazione</strong> senza aver escluso una componente radicolare.</li>
+          <li><strong>Etichettare come "ernia" ogni sciatalgia</strong> senza cercare segni di intrappolamento extraspinale, specialmente se l'imaging è negativo o non correla con il quadro clinico.</li>
+          <li><strong>Trattare solo con stretching passivo</strong> nel sospetto piriforme, senza il rinforzo dei glutei che previene la recidiva.</li>
+          <li><strong>Forzare la mobilizzazione neurale</strong> in presenza di un deficit neurologico che sta peggiorando: è un segnale di rivalutazione, non di intensificazione dell'esercizio.</li>
+          <li><strong>Non rivalutare la diagnosi</strong> quando il trattamento mirato a un'ipotesi non funziona entro 2-3 settimane.</li>
+        </ul>
+      </div>
+
+      <div class="panel-nav"></div>
+    </section>
+
+    <!-- FONTI -->
+    <section class="panel" id="sci-fonti">
+      <div class="card">
+        <h2>Fonti</h2>
+        <ol class="refs">
+          <li>Fishman LM, Dombi GW, Michaelsen C, et al. <em>Piriformis syndrome: diagnosis, treatment, and outcome — a 10-year study.</em> Arch Phys Med Rehabil. 2002;83(3):295–301.</li>
+          <li>Hicks BL, Lam JC, Varacallo M. <em>Piriformis Syndrome.</em> StatPearls, National Library of Medicine, 2024.</li>
+          <li>Boyajian-O'Neill LA, McClain RL, Coleman MK, Thomas PP. <em>Diagnosis and management of piriformis syndrome: an osteopathic approach.</em> J Am Osteopath Assoc. 2008;108(11):657–664.</li>
+          <li>Vroomen PC, de Krom MC, Knottnerus JA. <em>Diagnostic value of history and physical examination in patients suspected of sciatica due to disc herniation: a systematic review.</em> J Neurol. 1999;246(10):899–906.</li>
+          <li>Coppieters MW, Butler DS. <em>Do "sliders" slide and "tensioners" tension? An analysis of neurodynamic techniques and considerations regarding their application.</em> Man Ther. 2008;13(3):213–221.</li>
+          <li>Martin HD, Reddy M, Gómez-Hoyos J. <em>Deep gluteal syndrome.</em> J Hip Preserv Surg. 2015;2(2):99–107.</li>
+        </ol>
+        <div class="btn-row" style="margin-top:20px">
+          <a href="#" class="btn ghost btn-torna">← Tutti i protocolli</a>
           <a href="#" class="btn" onclick="window.print();return false;">Stampa protocollo completo</a>
         </div>
       </div>
@@ -716,32 +1508,46 @@ window.addEventListener('resize', misuraHeader);
 window.addEventListener('load', misuraHeader);
 misuraHeader();
 
-/* ---- Schede del protocollo ---- */
-var TAB_DEFAULT = 'fp-sintesi';
-var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-var elenco = tabs.map(function(t){ return { id: t.getAttribute('data-tab'), titolo: t.textContent.trim() }; });
+/* ---- Registro dei protocolli: prefisso -> id del contenitore articolo ---- */
+var ARTICOLI = { fp: 'art-fp', lba: 'art-lba', edl: 'art-edl', sci: 'art-sci' };
 
-function indiceDi(id){
+function prefissoDi(id){ return id.split('-')[0]; }
+
+/* Elenco schede per ciascun protocollo, costruito dai tab presenti nel DOM */
+var elencoPerPrefisso = {};
+Object.keys(ARTICOLI).forEach(function(p){
+  var cont = document.getElementById(ARTICOLI[p]);
+  var ts = cont ? Array.prototype.slice.call(cont.querySelectorAll('.tab')) : [];
+  elencoPerPrefisso[p] = ts.map(function(t){ return { id: t.getAttribute('data-tab'), titolo: t.textContent.trim(), el: t }; });
+});
+
+function indiceDi(elenco, id){
   for (var i = 0; i < elenco.length; i++) if (elenco[i].id === id) return i;
   return -1;
 }
 
 function apriScheda(id, aggiornaHash){
-  if (!document.getElementById(id) || indiceDi(id) === -1) id = TAB_DEFAULT;
-  var panels = document.querySelectorAll('.panel');
+  var p = prefissoDi(id);
+  var elenco = elencoPerPrefisso[p];
+  if (!elenco) return;
+  if (indiceDi(elenco, id) === -1) id = p + '-sintesi';
+  var cont = document.getElementById(ARTICOLI[p]);
+  if (!cont) return;
+  var panels = cont.querySelectorAll('.panel');
   for (var i = 0; i < panels.length; i++) panels[i].classList.toggle('active', panels[i].id === id);
-  tabs.forEach(function(t){
-    var on = t.getAttribute('data-tab') === id;
-    t.classList.toggle('active', on);
-    if (on) t.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  elenco.forEach(function(e){
+    var on = e.id === id;
+    e.el.classList.toggle('active', on);
+    if (on) e.el.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
   });
-  costruisciNav(id);
+  costruisciNav(id, elenco);
   if (aggiornaHash && location.hash !== '#' + id) location.hash = id;
-  document.title = elenco[indiceDi(id)].titolo + ' · Fasciopatia plantare · Fisio Expert';
+  var voce = elenco[indiceDi(elenco, id)];
+  document.title = (voce ? voce.titolo : '') + ' · Protocollo · Fisio Expert';
 }
 
-function costruisciNav(id){
-  var i = indiceDi(id);
+function costruisciNav(id, elenco){
+  var i = indiceDi(elenco, id);
   var scheda = document.getElementById(id);
   var nav = scheda ? scheda.querySelector('.panel-nav') : null;
   if (!nav) return;
@@ -761,23 +1567,36 @@ function costruisciNav(id){
   }
 }
 
-tabs.forEach(function(t){
-  t.addEventListener('click', function(){ apriScheda(t.getAttribute('data-tab'), true); });
-});
+/* Un solo listener su tutti i tab, di qualunque protocollo */
+var tuttiITab = document.querySelectorAll('.tab');
+for (var t = 0; t < tuttiITab.length; t++) {
+  tuttiITab[t].addEventListener('click', function(){ apriScheda(this.getAttribute('data-tab'), true); });
+}
 
-/* ---- Routing tra hub e protocollo ---- */
+/* ---- Routing tra hub e protocolli ---- */
 var hub = document.getElementById('hub');
-var art = document.getElementById('art');
 var btnIndietro = document.getElementById('btnIndietro');
+
+function prefissoDaHash(h){
+  h = (h || '').replace('#', '');
+  for (var p in ARTICOLI) {
+    if (h === p || h.indexOf(p + '-') === 0) return p;
+  }
+  return null;
+}
 
 function router(){
   var h = location.hash || '';
-  var isArt = h.indexOf('#fp') === 0;
-  hub.classList.toggle('hidden', isArt);
-  art.classList.toggle('hidden', !isArt);
-  btnIndietro.classList.toggle('hidden', !isArt);
-  if (isArt) {
-    apriScheda(h.length > 3 ? h.slice(1) : TAB_DEFAULT, false);
+  var p = prefissoDaHash(h);
+  hub.classList.toggle('hidden', !!p);
+  btnIndietro.classList.toggle('hidden', !p);
+  Object.keys(ARTICOLI).forEach(function(pp){
+    var el = document.getElementById(ARTICOLI[pp]);
+    if (el) el.classList.toggle('hidden', pp !== p);
+  });
+  if (p) {
+    var hid = h.replace('#', '');
+    apriScheda(hid.length > p.length ? hid : p + '-sintesi', false);
   } else {
     document.title = 'Protocolli · Fisio Expert Roma';
   }
@@ -792,15 +1611,30 @@ function tornaAlHub(e){
   router();
 }
 btnIndietro.addEventListener('click', tornaAlHub);
-document.getElementById('btnTorna').addEventListener('click', tornaAlHub);
+var bottoniTorna = document.querySelectorAll('.btn-torna');
+for (var bt = 0; bt < bottoniTorna.length; bt++) bottoniTorna[bt].addEventListener('click', tornaAlHub);
+
+/* ---- Link interni tra protocolli (es. da Sciatalgia a Ernia del disco) ---- */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  var href = a.getAttribute('href');
+  if (href.length > 1 && prefissoDaHash(href)) {
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      location.hash = href.slice(1);
+      router();
+    });
+  }
+});
 
 /* ---- Frecce ← → da tastiera ---- */
 document.addEventListener('keydown', function(e){
-  if (art.classList.contains('hidden')) return;
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   var attiva = document.querySelector('.panel.active');
   if (!attiva) return;
-  var i = indiceDi(attiva.id);
+  var p = prefissoDi(attiva.id);
+  var elenco = elencoPerPrefisso[p];
+  if (!elenco) return;
+  var i = indiceDi(elenco, attiva.id);
   if (e.key === 'ArrowRight' && i > -1 && i < elenco.length - 1) apriScheda(elenco[i+1].id, true);
   if (e.key === 'ArrowLeft' && i > 0) apriScheda(elenco[i-1].id, true);
 });

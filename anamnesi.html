@@ -322,15 +322,13 @@
     <section class="step visible" data-step="0">
       <div class="eyebrow">Anagrafica</div>
       <h1 class="title">I tuoi dati</h1>
-      <p class="lead">Qualche informazione di base per inquadrarti.</p>
+      <p class="lead">Qualche informazione di base per inquadrarti. Consensi e privacy si firmano a parte: <a href="consensi.html" style="color:var(--accent);font-weight:600;">apri il modulo da far firmare</a>.</p>
+      <div id="bannerConsensi"></div>
       <div class="card">
         <div class="grid">
           <div class="field"><label>Nome <span class="req">*</span></label><input type="text" id="nome"></div>
           <div class="field"><label>Cognome <span class="req">*</span></label><input type="text" id="cognome"></div>
-          <div class="field"><label>Nato/a a</label><input type="text" id="luogonascita"></div>
           <div class="field"><label>Data di nascita</label><input type="date" id="nascita"></div>
-          <div class="field full"><label>Residenza (via, città, CAP)</label><input type="text" id="residenza"></div>
-          <div class="field"><label>Codice fiscale</label><input type="text" id="cf" style="text-transform:uppercase"></div>
           <div class="field"><label>Data della visita</label><input type="date" id="dataval"></div>
           <div class="field"><label>Telefono / WhatsApp <span class="req">*</span></label><input type="tel" id="tel" placeholder="+39 ..."></div>
           <div class="field"><label>Email</label><input type="email" id="email"></div>
@@ -615,119 +613,11 @@
       </div>
     </section>
 
-    <!-- STEP 10: CONSENSI -->
+    <!-- STEP 10: DOCUMENTI -->
     <section class="step" data-step="10">
-      <div class="eyebrow">Modulo 1 di 3</div>
-      <h1 class="title">Consenso informato</h1>
-      <p class="lead">Al trattamento fisioterapico e rieducativo presso lo studio del Dott. Gianmarco Molinari.</p>
-      <div class="card legal" id="legale_ci">
-        <h2>Informazioni sul trattamento</h2>
-        <p>Il fisioterapista mi ha illustrato la valutazione clinica e il programma di trattamento proposto, che può comprendere <strong>terapia manuale, esercizio terapeutico e rieducativo, terapie fisiche strumentali</strong> e indicazioni comportamentali da seguire a domicilio.</p>
-        <h3>Finalità e benefici attesi</h3>
-        <p>Il trattamento è finalizzato alla riduzione del dolore, al recupero della funzione e del movimento, e al miglioramento della qualità di vita. I benefici attesi mi sono stati spiegati in modo comprensibile.</p>
-        <h3>Possibili rischi ed effetti</h3>
-        <p>Mi è stato spiegato che alcune tecniche possono comportare reazioni temporanee come indolenzimento, affaticamento muscolare o un transitorio aumento dei sintomi nelle ore successive alla seduta. Sono stato/a informato/a delle eventuali controindicazioni.</p>
-        <h3>Alternative e collaborazione</h3>
-        <p>Mi sono state illustrate le possibili alternative terapeutiche. Comprendo che l'esito dipende anche dalla mia <strong>collaborazione attiva</strong> e dal rispetto delle indicazioni fornite, e che nessun risultato può essere garantito in termini assoluti.</p>
-        <h3>Libertà di revoca</h3>
-        <p>Sono consapevole di poter <strong>revocare il consenso e interrompere il trattamento in qualsiasi momento</strong>, senza che ciò pregiudichi il rapporto di cura.</p>
-      </div>
-      <div class="card">
-        <label class="consent-row" id="row_ci">
-          <input type="checkbox" id="c_informato">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text">Ho letto e compreso le informazioni. <b>Acconsento</b> a sottopormi al trattamento fisioterapico proposto dal Dott. Gianmarco Molinari.</span>
-        </label>
-        <div class="err" id="errCi">Spunta il consenso per proseguire.</div>
-      </div>
-
-      <div class="eyebrow" style="margin-top:34px;">Modulo 2 di 3</div>
-      <h1 class="title">Informativa privacy</h1>
-      <p class="lead">Trattamento dei dati personali ai sensi del Reg. UE 2016/679 (GDPR).</p>
-      <div class="card legal" id="legale_privacy">
-        <h2>Informativa ex art. 13 GDPR</h2>
-        <p><strong>Titolare del trattamento:</strong> Dott. Gianmarco Molinari · P.IVA 14315091000. Contatti: info@fisioexpert.it · WhatsApp +39 328 273 8164.</p>
-        <h3>Finalità</h3>
-        <p>I dati personali e quelli relativi alla salute (categoria particolare, art. 9 GDPR) sono trattati esclusivamente per le attività di valutazione, prevenzione, cura e riabilitazione fisioterapica e per i connessi adempimenti amministrativi e fiscali.</p>
-        <h3>Modalità e conservazione</h3>
-        <p>Il trattamento avviene con strumenti cartacei ed elettronici, con misure idonee a garantire sicurezza e riservatezza. I dati sono conservati per il tempo strettamente necessario alle finalità di cura e agli obblighi di legge, e comunque non oltre i termini previsti dalla normativa vigente.</p>
-        <h3>Comunicazione</h3>
-        <p>I dati non sono diffusi. Possono essere comunicati a terzi solo se necessario o previsto dalla legge (es. altri professionisti sanitari coinvolti nella cura, consulente fiscale). Informazioni a familiari sono fornite solo su mia espressa indicazione.</p>
-        <h3>Diritti dell'interessato</h3>
-        <p>Posso esercitare in qualsiasi momento i diritti di accesso, rettifica, cancellazione, limitazione, opposizione e portabilità, oltre a revocare il consenso e proporre reclamo al Garante per la protezione dei dati personali.</p>
-      </div>
-      <div class="card">
-        <label class="consent-row" id="row_p1">
-          <input type="checkbox" id="c_privacy_cura">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text"><b>Acconsento</b> al trattamento dei miei dati personali e sanitari per le finalità di cura e riabilitazione. <i>(necessario per ricevere le prestazioni)</i></span>
-        </label>
-        <label class="consent-row" id="row_p2">
-          <input type="checkbox" id="c_privacy_email">
-          <span class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></span>
-          <span class="consent-text"><b>Acconsento</b> all'invio via email di referti, schede di esercizi e certificati che mi riguardano. <i>(facoltativo)</i></span>
-        </label>
-        <div class="err" id="errPrivacy">È necessario il consenso al trattamento per finalità di cura.</div>
-      </div>
-    </section>
-
-    <!-- STEP 11: MARKETING E IMMAGINI -->
-    <section class="step" data-step="11">
-      <div class="eyebrow">Modulo 3 di 3</div>
-      <h1 class="title">Marketing e immagini</h1>
-      <p class="lead">Consensi facoltativi e indipendenti. Le prestazioni non cambiano in alcun modo se neghi.</p>
-      <div class="card">
-        <h2>Comunicazioni promozionali</h2>
-        <p>Invio, anche via email/SMS/WhatsApp, di comunicazioni informative e promozionali su servizi e iniziative dello studio.</p>
-        <div class="choice" data-consent="mk">
-          <button type="button" data-val="yes">Do il consenso</button>
-          <button type="button" data-val="no">Nego il consenso</button>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Foto e video del percorso</h2>
-        <p>Acquisizione di foto/video a scopo clinico-documentale del percorso riabilitativo (confronto pre/post, schede esercizi personalizzate).</p>
-        <div class="choice" data-consent="foto_clinico">
-          <button type="button" data-val="yes">Do il consenso</button>
-          <button type="button" data-val="no">Nego il consenso</button>
-        </div>
-        <h3 style="margin-top:22px">Uso divulgativo / social</h3>
-        <p>Eventuale uso di foto/video su sito e canali social dello studio a scopo divulgativo. Sempre revocabile.</p>
-        <div class="choice" data-consent="foto_social">
-          <button type="button" data-val="yes">Do il consenso</button>
-          <button type="button" data-val="no">Nego il consenso</button>
-        </div>
-      </div>
-      <div class="err" id="errScelte">Indica una scelta per ciascuna voce (puoi negare tutto).</div>
-    </section>
-
-    <!-- STEP 12: FIRMA -->
-    <section class="step" data-step="12">
-      <div class="eyebrow">Ultimo passaggio del paziente</div>
-      <h1 class="title">La firma</h1>
-      <p class="lead">Una firma sola, valida per tutti i moduli compilati. Dito o matita Apple.</p>
-      <div class="card">
-        <div class="sig-shell">
-          <div class="sig-canvas-box">
-            <canvas id="sig"></canvas>
-            <div class="sig-placeholder" id="sigPlaceholder">Firma qui</div>
-            <div class="sig-baseline"><span>&#10005;</span></div>
-          </div>
-          <div class="sig-bar">
-            <span id="sigDate"></span>
-            <button class="btn-clear" id="btnClear">Cancella</button>
-          </div>
-        </div>
-        <div class="err" id="errFirma">Serve la firma per generare i moduli.</div>
-        <p class="hint" style="margin-top:14px">Firmando il paziente dichiara di aver letto e compreso i moduli precedenti e di confermare i consensi indicati.</p>
-      </div>
-    </section>
-
-    <!-- STEP 13: DOCUMENTI -->
-    <section class="step" data-step="13">
       <div class="eyebrow">Fine</div>
       <h1 class="title">I documenti</h1>
-      <p class="lead">Quattro PDF distinti: quello che resta in cartella, quello che porta via il paziente, i moduli firmati e la sola privacy.</p>
+      <p class="lead">Due PDF distinti: quello che resta in cartella e quello che porta via il paziente. I moduli firmati si scaricano da <a href="consensi.html" style="color:var(--accent);font-weight:600;">consensi.html</a>.</p>
       <div class="card">
         <div class="summary" id="summary"></div>
       </div>
@@ -736,8 +626,6 @@
         <h2>Scheda completata</h2>
         <button class="btn btn-primary" id="btnPdf" style="margin-top:18px;width:100%;">PDF clinico completo</button>
         <button class="btn btn-ghost" id="btnPdfPaz" style="margin-top:12px;width:100%;">PDF per il paziente</button>
-        <button class="btn btn-ghost" id="btnPdfModuli" style="margin-top:12px;width:100%;">PDF moduli firmati</button>
-        <button class="btn btn-ghost" id="btnPdfPrivacy" style="margin-top:12px;width:100%;">PDF solo privacy</button>
         <a class="btn btn-ghost" id="btnWa" style="margin-top:12px;width:100%;" target="_blank" rel="noopener">Invia riepilogo su WhatsApp</a>
         <button class="btn btn-ghost" id="btnRestart" style="margin-top:12px;width:100%;">Nuova scheda</button>
         <p class="disclaimer" style="margin-top:18px;text-align:left;">Strumento di supporto al ragionamento clinico. I punteggi derivano da pesi assegnati a priori, non da una probabilità reale: non sostituiscono l'esame obiettivo né l'imaging quando indicato.</p>
@@ -1991,8 +1879,18 @@ updateRF();
   /* =============================== STATO ============================== */
   var stato = { distretti: [], risposte: {}, test: {} };
   var STEP_LABELS = ['Dati', 'Disturbo', 'Triage', 'Dolore', 'Storia', 'Obiettivi', 'Distretto',
-                     'Domande', 'Test', 'Sintesi', 'Consensi', 'Immagini', 'Firma', 'Documenti'];
-  var consensi = { mk: null, foto_clinico: null, foto_social: null };
+                     'Domande', 'Test', 'Sintesi', 'Documenti'];
+
+  /* Consensi firmati su consensi.html: arrivano qui solo come esito (si/no), mai la firma. */
+  var CHIAVE_CONSENSI = 'fisioexpert_consensi';
+  var ETICHETTE_CONSENSI = [
+    ['informato', 'Consenso informato al trattamento'],
+    ['privacy_cura', 'Dati personali e sanitari per finalita di cura'],
+    ['privacy_email', 'Invio di referti e schede via email'],
+    ['mk', 'Comunicazioni promozionali'],
+    ['foto_clinico', 'Foto e video a scopo clinico'],
+    ['foto_social', 'Foto e video a scopo divulgativo']
+  ];
   var TOTAL = STEP_LABELS.length;
   var current = 0, maxReached = 0;
 
@@ -2315,7 +2213,6 @@ updateRF();
   function dati() {
     return {
       nome: nomeCompleto(), nascita: val('nascita'), dataval: val('dataval'),
-      luogonascita: val('luogonascita'), residenza: val('residenza'), cf: val('cf').toUpperCase(),
       tel: val('tel'), email: val('email'), lavoro: val('lavoro'),
       fonte: (pillVals['fonte'] || '') + (val('fonte_note') ? ' \u2014 ' + val('fonte_note') : ''),
       sport: val('sport'), frequenza: pillVals['frequenza'] || '',
@@ -2328,6 +2225,28 @@ updateRF();
     };
   }
 
+  function normNome(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function leggiRecord() {
+    try {
+      var raw = window.localStorage.getItem(CHIAVE_CONSENSI);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  /* Il record vale solo se nome e cognome coincidono con il paziente in scheda. */
+  function consensiPaziente() {
+    var r = leggiRecord();
+    if (!r || !r.consensi) return null;
+    return normNome((r.nome || '') + ' ' + (r.cognome || '')) === normNome(nomeCompleto()) ? r : null;
+  }
+  function oraRecord(r) {
+    var d = new Date(r.ts);
+    if (isNaN(d.getTime())) return '';
+    var hm = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    return d.toDateString() === new Date().toDateString() ? 'alle ' + hm : 'il ' + d.toLocaleDateString('it-IT') + ' alle ' + hm;
+  }
+
   function buildSummary() {
     var d = dati(), cl = classifica();
     var righe = [
@@ -2337,8 +2256,12 @@ updateRF();
       ['Red flags', rfPositivi().length ? rfPositivi().length + ' segnalati' : 'nessuno'],
       ['Ipotesi principale', cl.length && cl[0].s > 0 ? cl[0].ip.n + ' (' + cl[0].pc + '%)' : '\u2014'],
       ['Diagnosi', d.dx || 'da compilare'],
-      ['Consensi', listaConsensi().filter(function (r) { return r[1] === 'SI'; }).length + ' su 6 accordati'],
-      ['Firma', firmaPresente() ? 'acquisita' : 'mancante']
+      ['Consensi', (function () {
+        var cs = consensiPaziente();
+        if (!cs) return 'non registrati su questo dispositivo (consensi.html)';
+        var n = ETICHETTE_CONSENSI.filter(function (e) { return cs.consensi[e[0]]; }).length;
+        return n + ' su 6 accordati, modulo firmato ' + oraRecord(cs);
+      })()]
     ].filter(function (r) { return r[1]; });
     document.getElementById('summary').innerHTML = righe.map(function (r) {
       return '<div class="summary-row"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
@@ -2357,68 +2280,6 @@ updateRF();
     document.getElementById('btnWa').href = 'https://wa.me/393282738164?text=' + txt;
   }
 
-  /* ======================= CONSENSI E FIRMA =========================== */
-  ['c_informato', 'c_privacy_cura', 'c_privacy_email'].forEach(function (id) {
-    var cb = document.getElementById(id);
-    cb.addEventListener('change', function () { cb.closest('.consent-row').classList.toggle('checked', cb.checked); });
-  });
-
-  [].slice.call(document.querySelectorAll('.choice')).forEach(function (g) {
-    [].slice.call(g.querySelectorAll('button')).forEach(function (b) {
-      b.addEventListener('click', function () {
-        consensi[g.dataset.consent] = b.dataset.val;
-        [].slice.call(g.querySelectorAll('button')).forEach(function (x) { x.classList.remove('sel-yes', 'sel-no'); });
-        b.classList.add(b.dataset.val === 'yes' ? 'sel-yes' : 'sel-no');
-      });
-    });
-  });
-
-  var canvasFirma = document.getElementById('sig');
-  var ctxF = canvasFirma.getContext('2d');
-  var segnaposto = document.getElementById('sigPlaceholder');
-  var disegnando = false, firmata = false, ultimo = null;
-
-  function resizeCanvas() {
-    var ratio = window.devicePixelRatio || 1;
-    var rect = canvasFirma.getBoundingClientRect();
-    if (!rect.width) return;
-    var dati = firmata ? canvasFirma.toDataURL() : null;
-    canvasFirma.width = rect.width * ratio;
-    canvasFirma.height = rect.height * ratio;
-    ctxF.setTransform(ratio, 0, 0, ratio, 0, 0);
-    ctxF.lineWidth = 2.6; ctxF.lineCap = 'round'; ctxF.lineJoin = 'round'; ctxF.strokeStyle = '#1a1a1a';
-    if (dati) { var img = new Image(); img.onload = function () { ctxF.drawImage(img, 0, 0, rect.width, rect.height); }; img.src = dati; }
-  }
-  window.addEventListener('resize', function () { if (current === 12) resizeCanvas(); });
-
-  function posFirma(e) {
-    var rect = canvasFirma.getBoundingClientRect();
-    var p = e.touches ? e.touches[0] : e;
-    return { x: p.clientX - rect.left, y: p.clientY - rect.top };
-  }
-  function giuFirma(e) { e.preventDefault(); disegnando = true; ultimo = posFirma(e); segnaposto.style.opacity = '0'; }
-  function muoviFirma(e) {
-    if (!disegnando) return;
-    e.preventDefault();
-    var p = posFirma(e);
-    ctxF.beginPath(); ctxF.moveTo(ultimo.x, ultimo.y); ctxF.lineTo(p.x, p.y); ctxF.stroke();
-    ultimo = p; firmata = true;
-  }
-  function suFirma(e) { e.preventDefault(); disegnando = false; }
-  canvasFirma.addEventListener('pointerdown', giuFirma);
-  canvasFirma.addEventListener('pointermove', muoviFirma);
-  canvasFirma.addEventListener('pointerup', suFirma);
-  canvasFirma.addEventListener('pointerleave', suFirma);
-  canvasFirma.addEventListener('touchstart', giuFirma, { passive: false });
-  canvasFirma.addEventListener('touchmove', muoviFirma, { passive: false });
-  canvasFirma.addEventListener('touchend', suFirma, { passive: false });
-  document.getElementById('btnClear').addEventListener('click', function () {
-    ctxF.clearRect(0, 0, canvasFirma.width, canvasFirma.height);
-    firmata = false; segnaposto.style.opacity = '1';
-  });
-  function firmaPresente() { return firmata; }
-  document.getElementById('sigDate').textContent = 'Roma, ' + new Date().toLocaleDateString('it-IT');
-
   /* ============================ NAVIGAZIONE =========================== */
   STEP_LABELS.forEach(function (lab, i) {
     var c = document.createElement('div');
@@ -2430,8 +2291,7 @@ updateRF();
 
   function preparaPasso(i) {
     if (i === 6) suggerisciDistretti();
-    if (i === 12) resizeCanvas();
-    if (i === 13) buildSummary();
+    if (i === 10) buildSummary();
     if (i === 7) {
       autoEta();
       renderDomande();
@@ -2467,10 +2327,6 @@ updateRF();
     [].slice.call(document.querySelectorAll('.err')).forEach(function (e) { e.classList.remove('show'); });
     if (current === 0 && (!val('nome') || !val('cognome') || !val('tel'))) { document.getElementById('errNome').classList.add('show'); return; }
     if (current === 6 && !stato.distretti.length) { alert('Scegli almeno un distretto.'); return; }
-    if (current === 10 && !chk('c_informato')) { document.getElementById('errCi').classList.add('show'); return; }
-    if (current === 10 && !chk('c_privacy_cura')) { document.getElementById('errPrivacy').classList.add('show'); return; }
-    if (current === 11 && (!consensi.mk || !consensi.foto_clinico || !consensi.foto_social)) { document.getElementById('errScelte').classList.add('show'); return; }
-    if (current === 12 && !firmaPresente()) { document.getElementById('errFirma').classList.add('show'); return; }
     if (current < TOTAL - 1) goTo(current + 1);
   });
   btnBack.addEventListener('click', function () { if (current > 0) goTo(current - 1); });
@@ -2482,7 +2338,10 @@ updateRF();
   });
 
   document.getElementById('btnRestart').addEventListener('click', function () {
-    if (confirm('Azzerare la scheda e ricominciare?')) location.reload();
+    if (confirm('Azzerare la scheda e ricominciare?')) {
+      try { window.localStorage.removeItem(CHIAVE_CONSENSI); } catch (e) { /* niente da rimuovere */ }
+      location.reload();
+    }
   });
 
   /* ================================ PDF =============================== */
@@ -2537,76 +2396,6 @@ updateRF();
       doc.text(i + '/' + tot, W - M, 287, { align: 'right' });
       if (nota) doc.text(nota, M, 291);
     }
-  }
-
-  /* --------- blocchi legali, consensi e firma (condivisi dai PDF) ------ */
-  function blocchiLegali(sel) {
-    var out = [];
-    [].slice.call(document.querySelectorAll(sel + ' > *')).forEach(function (el) {
-      var tag = el.tagName.toLowerCase();
-      if (tag === 'h2' || tag === 'h3' || tag === 'p') {
-        out.push({ t: tag, x: el.textContent.replace(/\s+/g, ' ').trim() });
-      }
-    });
-    return out;
-  }
-
-  function scriviLegale(doc, y, blocchi) {
-    blocchi.forEach(function (b) {
-      if (y > 262) { doc.addPage(); y = 20; }
-      if (b.t === 'h2') { doc.setFont('helvetica', 'bold'); doc.setFontSize(11.5); doc.setTextColor(INK[0], INK[1], INK[2]); }
-      else if (b.t === 'h3') { doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(ACC[0], ACC[1], ACC[2]); }
-      else { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]); }
-      doc.splitTextToSize(asc(b.x), W - M * 2).forEach(function (l) {
-        if (y > 275) { doc.addPage(); y = 20; }
-        doc.text(l, M, y); y += (b.t === 'p' ? 4.4 : 5.2);
-      });
-      y += (b.t === 'p' ? 2.5 : 1.5);
-    });
-    return y;
-  }
-
-  function listaConsensi() {
-    function esito(v) { return v === true ? 'SI' : (v === false ? 'NO' : 'non indicato'); }
-    return [
-      ['Consenso informato al trattamento', esito(chk('c_informato'))],
-      ['Dati personali e sanitari per finalita di cura', esito(chk('c_privacy_cura'))],
-      ['Invio di referti e schede via email', esito(chk('c_privacy_email'))],
-      ['Comunicazioni promozionali', consensi.mk ? esito(consensi.mk === 'yes') : 'non indicato'],
-      ['Foto e video a scopo clinico', consensi.foto_clinico ? esito(consensi.foto_clinico === 'yes') : 'non indicato'],
-      ['Foto e video a scopo divulgativo', consensi.foto_social ? esito(consensi.foto_social === 'yes') : 'non indicato']
-    ];
-  }
-
-  function scriviConsensi(doc, y) {
-    listaConsensi().forEach(function (r) {
-      if (y > 268) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      var t = doc.splitTextToSize(asc(r[0]), W - M * 2 - 30);
-      doc.text(t, M, y);
-      doc.setFont('helvetica', 'bold');
-      if (r[1] === 'SI') doc.setTextColor(46, 125, 82);
-      else if (r[1] === 'NO') doc.setTextColor(INK[0], INK[1], INK[2]);
-      else doc.setTextColor(MUT[0], MUT[1], MUT[2]);
-      doc.text(r[1], W - M, y, { align: 'right' });
-      y += Math.max(t.length * 4.8, 5.4);
-    });
-    return y;
-  }
-
-  function scriviFirma(doc, y, d) {
-    if (y > 228) { doc.addPage(); y = 20; }
-    y += 8;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.text('Roma, ' + fmtData(d.dataval), M, y); y += 3;
-    try {
-      if (firmaPresente()) doc.addImage(canvasFirma.toDataURL('image/png'), 'PNG', M, y, 62, 23);
-    } catch (e) { /* firma non disponibile */ }
-    y += 25;
-    doc.setDrawColor(200, 200, 198); doc.setLineWidth(0.3); doc.line(M, y, M + 62, y); y += 4.5;
-    doc.setFontSize(8.5); doc.setTextColor(MUT[0], MUT[1], MUT[2]);
-    doc.text(asc('Firma del paziente - ' + (d.nome || '')), M, y);
-    return y + 4;
   }
 
   /* --------- mappa del dolore nel PDF (stesse geometrie dell'SVG) ------ */
@@ -2761,10 +2550,24 @@ updateRF();
     if (d.ragionamento) { par(d.ragionamento, SOFT); y += 2; }
     if (d.piano) { sez('Piano'); par(d.piano, SOFT); }
 
-    /* consensi raccolti */
-    sez('Consensi raccolti');
-    y = scriviConsensi(doc, y);
-    y = scriviFirma(doc, y, d);
+    /* consensi (esito del modulo firmato su consensi.html) */
+    sez('Consensi');
+    var cs = consensiPaziente();
+    if (cs) {
+      ETICHETTE_CONSENSI.forEach(function (e) {
+        pagina(268);
+        var ok = !!cs.consensi[e[0]];
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
+        doc.text(asc(e[1]), M, y);
+        doc.setFont('helvetica', 'bold');
+        if (ok) doc.setTextColor(46, 125, 82); else doc.setTextColor(INK[0], INK[1], INK[2]);
+        doc.text(ok ? 'SI' : 'NO', W - M, y, { align: 'right' });
+        y += 5.4;
+      });
+      par('Modulo firmato dal paziente ' + oraRecord(cs) + ': la copia con firma e nel PDF dei moduli.', MUT, true);
+    } else {
+      par('Consensi non registrati su questo dispositivo per questo paziente: fare riferimento al PDF dei moduli firmati.', MUT, true);
+    }
 
     /* pagina mappa del dolore */
     doc.addPage(); y = 20;
@@ -2896,113 +2699,36 @@ updateRF();
     doc.save(nomeFile('Referto'));
   });
 
-  /* ------------------------- PDF MODULI FIRMATI ----------------------- */
-  function datiPazienteModuli(doc, y, d) {
-    function riga(k, v) {
-      if (!v) return;
-      if (y > 268) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      doc.text(asc(k), M, y);
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(INK[0], INK[1], INK[2]);
-      var t = doc.splitTextToSize(asc(v), W - M - 58);
-      doc.text(t, M + 40, y);
-      y += Math.max(t.length * 4.6, 5.2);
-    }
-    riga('Nato/a a', d.luogonascita + (d.nascita ? ' il ' + fmtData(d.nascita) : ''));
-    riga('Residenza', d.residenza);
-    riga('Codice fiscale', d.cf);
-    riga('Telefono', d.tel);
-    riga('Email', d.email);
-    return y;
-  }
-
-  document.getElementById('btnPdfModuli').addEventListener('click', function () {
-    if (!window.jspdf) { alert('Generatore PDF non disponibile (verifica la connessione).'); return; }
-    if (!firmaPresente()) { alert('Manca la firma del paziente.'); return; }
-    var d = dati();
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    var y = intestazione(doc, 'Moduli firmati', d.dataval);
-
-    function sez(t) {
-      if (y > 255) { doc.addPage(); y = 20; }
-      y += 4;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
-      doc.text(asc(t).toUpperCase(), M, y); y += 2;
-      doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 6;
-    }
-
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text(asc(d.nome || 'Paziente'), M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 7;
-
-    sez('Dati del paziente');
-    y = datiPazienteModuli(doc, y, d);
-
-    sez('Modulo 1 - Consenso informato al trattamento');
-    y = scriviLegale(doc, y, blocchiLegali('#legale_ci'));
-
-    sez('Modulo 2 - Informativa privacy');
-    y = scriviLegale(doc, y, blocchiLegali('#legale_privacy'));
-
-    sez('Modulo 3 - Marketing e immagini');
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-    doc.splitTextToSize(asc('Consensi facoltativi e indipendenti tra loro, revocabili in qualsiasi momento. Le prestazioni non cambiano in caso di diniego.'), W - M * 2)
-      .forEach(function (l) { doc.text(l, M, y); y += 4.4; });
-    y += 3;
-
-    sez('Riepilogo dei consensi');
-    y = scriviConsensi(doc, y);
-
-    y = scriviFirma(doc, y, d);
-    piedi(doc, '');
-    doc.save(nomeFile('Moduli'));
-  });
-
-  /* ---------------------------- PDF PRIVACY --------------------------- */
-  document.getElementById('btnPdfPrivacy').addEventListener('click', function () {
-    if (!window.jspdf) { alert('Generatore PDF non disponibile (verifica la connessione).'); return; }
-    var d = dati();
-    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
-    var y = intestazione(doc, 'Informativa e consenso privacy', d.dataval);
-
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(INK[0], INK[1], INK[2]);
-    doc.text(asc(d.nome || 'Paziente'), M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); y += 7;
-
-    if (d.cf || d.nascita) {
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      doc.text(asc((d.nascita ? 'Nato/a il ' + fmtData(d.nascita) : '') + (d.cf ? '  -  CF ' + d.cf : '')), M, y);
-      y += 8;
-    }
-
-    y = scriviLegale(doc, y, blocchiLegali('#legale_privacy'));
-
-    y += 4;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(ACC[0], ACC[1], ACC[2]);
-    if (y > 255) { doc.addPage(); y = 20; }
-    doc.text('CONSENSI ESPRESSI', M, y); y += 2;
-    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.2); doc.line(M, y, W - M, y); y += 6;
-
-    var righe = listaConsensi().slice(0, 3).concat(listaConsensi().slice(3));
-    righe.forEach(function (r) {
-      if (y > 268) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(SOFT[0], SOFT[1], SOFT[2]);
-      var t = doc.splitTextToSize(asc(r[0]), W - M * 2 - 30);
-      doc.text(t, M, y);
-      doc.setFont('helvetica', 'bold');
-      if (r[1] === 'SI') doc.setTextColor(46, 125, 82); else doc.setTextColor(INK[0], INK[1], INK[2]);
-      doc.text(r[1], W - M, y, { align: 'right' });
-      y += Math.max(t.length * 4.8, 5.4);
-    });
-
-    y = scriviFirma(doc, y, d);
-    piedi(doc, '');
-    doc.save(nomeFile('Privacy'));
-  });
-
   /* ================================ AVVIO ============================= */
   buildDistretti();
-  document.getElementById('dataval').value = new Date().toISOString().slice(0, 10);
+  (function () {
+    var d = new Date();
+    document.getElementById('dataval').value =
+      d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  })();
+
+  /* Ripresa anagrafica dal modulo consensi (stesso dispositivo e browser), solo se recente. */
+  (function riprendiConsensi() {
+    var r = leggiRecord(), box = document.getElementById('bannerConsensi');
+    if (!r || !r.nome) return;
+    var eta = Date.now() - new Date(r.ts).getTime();
+    if (isNaN(eta) || eta > 12 * 3600 * 1000) return;
+    ['nome', 'cognome', 'nascita', 'tel', 'email'].forEach(function (c) {
+      var el = document.getElementById(c);
+      if (el && !el.value && r[c]) el.value = r[c];
+    });
+    box.innerHTML = '<div class="card" style="border-color:var(--accent);">' +
+      '<p style="font-size:14px;margin:0 0 10px;">Dati ripresi dal modulo consensi di <b>' +
+      (r.nome + ' ' + (r.cognome || '')).replace(/[<>&]/g, '') + '</b>, firmato ' + oraRecord(r) +
+      '. Controlla che sia il paziente giusto.</p>' +
+      '<button type="button" class="btn btn-ghost" id="btnNonLui" style="width:100%;">Non \u00e8 questo paziente: svuota</button></div>';
+    document.getElementById('btnNonLui').addEventListener('click', function () {
+      try { window.localStorage.removeItem(CHIAVE_CONSENSI); } catch (e) { /* niente da rimuovere */ }
+      ['nome', 'cognome', 'nascita', 'tel', 'email'].forEach(function (c) { document.getElementById(c).value = ''; });
+      box.innerHTML = '';
+    });
+  })();
+
   render();
 })();
 </script>

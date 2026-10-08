@@ -185,15 +185,12 @@
     <section class="step visible" data-step="0">
       <div class="eyebrow">Benvenuto</div>
       <h1 class="title">I tuoi dati</h1>
-      <p class="lead">Compila i tuoi dati: verranno riportati sul foglio di consenso che leggerai e firmerai nei prossimi passaggi.</p>
+      <p class="lead">Bastano pochi dati: verranno riportati sul foglio di consenso che leggerai e firmerai nei prossimi passaggi.</p>
       <div class="card">
         <div class="grid">
           <div class="field"><label for="nome">Nome <span class="req">*</span></label><input type="text" id="nome" autocomplete="off"></div>
           <div class="field"><label for="cognome">Cognome <span class="req">*</span></label><input type="text" id="cognome" autocomplete="off"></div>
-          <div class="field"><label for="luogonascita">Nato/a a</label><input type="text" id="luogonascita" autocomplete="off"></div>
-          <div class="field"><label for="nascita">Data di nascita <span class="req">*</span></label><input type="date" id="nascita"></div>
-          <div class="field full"><label for="residenza">Residenza (via, città, CAP)</label><input type="text" id="residenza" autocomplete="off"></div>
-          <div class="field"><label for="cf">Codice fiscale</label><input type="text" id="cf" style="text-transform:uppercase" autocapitalize="characters" spellcheck="false" maxlength="16" autocomplete="off"></div>
+          <div class="field"><label for="nascita">Data di nascita</label><input type="date" id="nascita"></div>
           <div class="field"><label for="tel">Telefono / WhatsApp <span class="req">*</span></label><input type="tel" id="tel" inputmode="tel" placeholder="+39 ..." autocomplete="off"></div>
           <div class="field full"><label for="email">Email</label><input type="email" id="email" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
         </div>
@@ -210,8 +207,7 @@
         <div class="grid">
           <div class="field"><label for="t_nome">Nome <span class="req">*</span></label><input type="text" id="t_nome" autocomplete="off"></div>
           <div class="field"><label for="t_cognome">Cognome <span class="req">*</span></label><input type="text" id="t_cognome" autocomplete="off"></div>
-          <div class="field"><label for="t_cf">Codice fiscale</label><input type="text" id="t_cf" style="text-transform:uppercase" autocapitalize="characters" spellcheck="false" maxlength="16" autocomplete="off"></div>
-          <div class="field"><label for="t_rapporto">In qualità di <span class="req">*</span></label>
+          <div class="field full"><label for="t_rapporto">In qualità di <span class="req">*</span></label>
             <select id="t_rapporto"><option value="">Scegli…</option><option>Madre</option><option>Padre</option><option>Tutore legale</option></select>
           </div>
         </div>
@@ -532,16 +528,14 @@
       : '<span style="font-family:var(--serif);font-size:18pt">fisio<b style="color:var(--accent)">·</b>expert</span>';
 
     var campo = function (k, v) { return v ? '<div><i>' + k + '</i><br>' + esc(v) + '</div>' : ''; };
-    var nato = (val('luogonascita') ? val('luogonascita') + ' ' : '') + (val('nascita') ? 'il ' + fmtData(val('nascita')) : '');
     var h = '<div class="f-head"><div>' + logoHtml + '</div><div class="r">DOTT. GIANMARCO MOLINARI · FISIOTERAPISTA · P.IVA 14315091000<br>info@fisioexpert.it · WhatsApp +39 328 273 8164</div></div>';
     h += '<h1>Consenso informato, informativa privacy e consensi</h1>';
     h += '<div class="f-paz">' +
       '<div><i>Paziente' + (m ? ' (minorenne)' : '') + '</i><br><b>' + esc(val('nome') + ' ' + val('cognome')) + '</b></div>' +
-      campo('Nato/a', nato) + campo('Codice fiscale', val('cf').toUpperCase()) +
-      campo('Residenza', val('residenza')) + campo('Telefono', val('tel')) + campo('Email', val('email')) + '</div>';
+      campo('Data di nascita', fmtData(val('nascita'))) + campo('Telefono', val('tel')) + campo('Email', val('email')) + '</div>';
     if (m) {
       h += '<div class="f-min"><b>Dichiarante:</b> ' + esc(val('t_nome') + ' ' + val('t_cognome')) +
-        (val('t_cf') ? ' (C.F. ' + esc(val('t_cf').toUpperCase()) + ')' : '') + ', in qualità di ' + esc(val('t_rapporto').toLowerCase()) +
+        ', in qualità di ' + esc(val('t_rapporto').toLowerCase()) +
         ' del paziente minorenne, agendo con il consenso dell\'altro genitore o quale unico esercente la responsabilità genitoriale. ' +
         'Ogni riferimento a «io» e «mi» è riferito al paziente rappresentato.</div>';
     }
@@ -633,13 +627,11 @@
   function validate(step) {
     clearErr();
     if (step === 0) {
-      if (!val('nome') || !val('cognome') || !val('tel') || !val('nascita')) return fail('err0', 'Compila nome, cognome, data di nascita e telefono per proseguire.');
+      if (!val('nome') || !val('cognome') || !val('tel')) return fail('err0', 'Compila nome, cognome e telefono per proseguire.');
       if (val('tel').replace(/\D/g, '').length < 6) return fail('err0', 'Il numero di telefono sembra incompleto.');
       if (val('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('email'))) return fail('err0', 'L\'indirizzo email non sembra corretto.');
-      if (val('cf') && !/^[A-Za-z0-9]{16}$/.test(val('cf'))) return fail('err0', 'Il codice fiscale deve avere 16 caratteri.');
       if (isMinore()) {
         if (!val('t_nome') || !val('t_cognome') || !val('t_rapporto')) return fail('err0', 'Compila nome, cognome e qualità del genitore o tutore.');
-        if (val('t_cf') && !/^[A-Za-z0-9]{16}$/.test(val('t_cf'))) return fail('err0', 'Il codice fiscale del genitore deve avere 16 caratteri.');
         if (!$('t_altro').checked) return fail('err0', 'Conferma la dichiarazione sul consenso dell\'altro genitore.');
       }
     }

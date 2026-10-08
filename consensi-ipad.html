@@ -128,39 +128,47 @@
     .card { padding: 22px; }
   }
 
-  /* ============ FOGLIO DA STAMPARE (nascosto a schermo) ============ */
-  #foglio { display: none; }
-  @page { size: A4; margin: 9mm 10mm; }
+  /* ===== data di nascita a tre caselle ===== */
+  .dob { display: grid; grid-template-columns: 1fr 1fr 1.7fr; gap: 8px; }
+  .dob input { text-align: center; padding-left: 6px; padding-right: 6px; }
+  input[type=text], input[type=tel], input[type=email], select { -webkit-appearance: none; appearance: none; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpolyline points='1 1 7 7 13 1' fill='none' stroke='%238a8a8a' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 40px; }
+  button, .consent-row { touch-action: manipulation; }
+
+  /* ============ FOGLIO DA STAMPARE ============ */
+  #foglio { display: none; width: 190mm; font-family: var(--sans); color: #000; font-size: 8.4pt; line-height: 1.28; }
+  /* modalità misura: il foglio viene composto fuori schermo per calcolarne l'altezza */
+  body.misura #foglio { display: block; position: absolute; left: -10000px; top: 0; visibility: hidden; }
+  .f-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1.2pt solid var(--accent); padding-bottom: 2mm; margin-bottom: 2.5mm; }
+  .f-head img { height: 36px; width: auto; display: block; }
+  .f-head .r { text-align: right; font-size: .83em; line-height: 1.35; color: #333; }
+  #foglio h1 { font-family: var(--serif); font-weight: 400; font-size: 1.55em; line-height: 1.1; margin: 0 0 2mm; }
+  .f-paz { border: .6pt solid #888; padding: 1.5mm 2.5mm; margin-bottom: 2.5mm; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: .6mm 5mm; }
+  .f-paz i { font-style: normal; color: #555; font-size: .8em; text-transform: uppercase; letter-spacing: .3pt; }
+  .f-min { font-size: .95em; margin: -1mm 0 2.5mm; text-align: justify; }
+  .f-cols { column-count: 2; column-gap: 6mm; }
+  .f-cols h2 { font-size: 1.07em; font-weight: 700; margin: 1.2mm 0 1mm; text-transform: uppercase; letter-spacing: .4pt; color: var(--accent-dark); break-after: avoid; }
+  .f-cols h2:first-child { margin-top: 0; }
+  .f-cols p { margin: 0 0 1.1mm; text-align: justify; hyphens: auto; -webkit-hyphens: auto; orphans: 2; widows: 2; }
+  .f-cols p b { font-weight: 700; }
+  .f-cons { margin-top: 2mm; border-top: .6pt solid #888; padding-top: 1.6mm; }
+  .f-cons h2 { font-size: 1.07em; font-weight: 700; margin: 0 0 1.2mm; text-transform: uppercase; letter-spacing: .4pt; color: var(--accent-dark); }
+  .f-row { display: flex; gap: 2mm; align-items: flex-start; margin-bottom: 1.1mm; break-inside: avoid; }
+  .f-row .bx { flex: none; width: 3.4mm; height: 3.4mm; border: .7pt solid #000; margin-top: .3mm; text-align: center; font-size: .9em; line-height: 3.2mm; font-weight: 700; }
+  .f-row .t { flex: 1; }
+  .f-row .sn { flex: none; font-weight: 700; font-size: .95em; text-align: right; }
+  .f-firma { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3mm; break-inside: avoid; }
+  .f-firma .sig { width: 76mm; min-height: 22mm; border-bottom: .7pt solid #000; display: flex; align-items: flex-end; }
+  .f-firma .sig img { max-height: 21mm; max-width: 74mm; display: block; }
+  .f-firma .cap { font-size: .83em; color: #444; margin-top: .8mm; }
+  .f-firma .dt { text-align: right; }
+  .f-foot { margin-top: 2.5mm; font-size: .78em; color: #666; text-align: center; }
+
+  @page { size: A4; margin: 10mm; }
   @media print {
-    html, body { background: #fff !important; }
+    html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
     header, .progress-track, .chips, main, .navbar { display: none !important; }
-    #foglio { display: block; font-family: var(--sans); color: #000; font-size: 8.4pt; line-height: 1.28; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .f-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1.2pt solid var(--accent); padding-bottom: 2mm; margin-bottom: 2.5mm; }
-    .f-head img { height: 36px; width: auto; display: block; }
-    .f-head .r { text-align: right; font-size: 7pt; line-height: 1.35; color: #333; }
-    #foglio h1 { font-family: var(--serif); font-weight: 400; font-size: 13pt; line-height: 1.1; margin: 0 0 2mm; }
-    .f-paz { border: .6pt solid #888; padding: 1.5mm 2.5mm; margin-bottom: 2.5mm; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: .6mm 5mm; font-size: 8.4pt; }
-    .f-paz .w { grid-column: 1 / -1; }
-    .f-paz i { font-style: normal; color: #555; font-size: 6.8pt; text-transform: uppercase; letter-spacing: .3pt; }
-    .f-min { font-size: 8pt; margin: -1mm 0 2.5mm; text-align: justify; }
-    .f-cols { column-count: 2; column-gap: 6mm; }
-    .f-cols h2 { font-size: 9pt; font-weight: 700; margin: 1.2mm 0 1mm; text-transform: uppercase; letter-spacing: .4pt; color: var(--accent-dark); break-after: avoid; }
-    .f-cols h2:first-child { margin-top: 0; }
-    .f-cols p { margin: 0 0 1.1mm; text-align: justify; hyphens: auto; -webkit-hyphens: auto; orphans: 2; widows: 2; }
-    .f-cols p b { font-weight: 700; }
-    .f-cons { margin-top: 2mm; border-top: .6pt solid #888; padding-top: 1.6mm; }
-    .f-cons h2 { font-size: 9pt; font-weight: 700; margin: 0 0 1.2mm; text-transform: uppercase; letter-spacing: .4pt; color: var(--accent-dark); }
-    .f-rows { display: block; }
-    .f-row { display: flex; gap: 2mm; align-items: flex-start; margin-bottom: 1.1mm; break-inside: avoid; }
-    .f-row .bx { flex: none; width: 3.4mm; height: 3.4mm; border: .7pt solid #000; margin-top: .3mm; text-align: center; font-size: 7.5pt; line-height: 3.2mm; font-weight: 700; }
-    .f-row .t { flex: 1; }
-    .f-row .sn { flex: none; font-weight: 700; font-size: 8pt; text-align: right; }
-    .f-firma { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3mm; break-inside: avoid; }
-    .f-firma .sig { width: 76mm; min-height: 24mm; border-bottom: .7pt solid #000; display: flex; align-items: flex-end; }
-    .f-firma .sig img { max-height: 23mm; max-width: 74mm; display: block; }
-    .f-firma .cap { font-size: 7pt; color: #444; margin-top: .8mm; }
-    .f-firma .dt { text-align: right; font-size: 8.8pt; }
-    .f-foot { margin-top: 2.5mm; font-size: 6.5pt; color: #666; text-align: center; }
+    #foglio { display: block; margin: 0 auto; page-break-inside: avoid; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -190,7 +198,13 @@
         <div class="grid">
           <div class="field"><label for="nome">Nome <span class="req">*</span></label><input type="text" id="nome" autocomplete="off"></div>
           <div class="field"><label for="cognome">Cognome <span class="req">*</span></label><input type="text" id="cognome" autocomplete="off"></div>
-          <div class="field"><label for="nascita">Data di nascita</label><input type="date" id="nascita"></div>
+          <div class="field"><label for="n_g">Data di nascita</label>
+            <div class="dob">
+              <input type="text" id="n_g" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="GG" autocomplete="off" aria-label="Giorno di nascita">
+              <input type="text" id="n_m" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" autocomplete="off" aria-label="Mese di nascita">
+              <input type="text" id="n_a" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="AAAA" autocomplete="off" aria-label="Anno di nascita">
+            </div>
+          </div>
           <div class="field"><label for="tel">Telefono / WhatsApp <span class="req">*</span></label><input type="tel" id="tel" inputmode="tel" placeholder="+39 ..." autocomplete="off"></div>
           <div class="field full"><label for="email">Email</label><input type="email" id="email" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
         </div>
@@ -376,6 +390,17 @@
     return { data: p.day + '/' + p.month + '/' + p.year, ora: (p.hour === '24' ? '00' : p.hour) + ':' + p.minute, iso: now.toISOString() };
   }
   function fmtData(iso) { if (!iso) return ''; var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  /* legge le tre caselle: {iso:''} se vuote, {err:true} se non valide, altrimenti {iso:'AAAA-MM-GG'} */
+  function leggiNascita() {
+    var g = val('n_g'), m = val('n_m'), a = val('n_a');
+    if (!g && !m && !a) return { iso: '' };
+    if (!/^\d{1,2}$/.test(g) || !/^\d{1,2}$/.test(m) || !/^\d{4}$/.test(a)) return { err: true };
+    var gi = +g, mi = +m, ai = +a, d = new Date(ai, mi - 1, gi);
+    if (d.getFullYear() !== ai || d.getMonth() !== mi - 1 || d.getDate() !== gi || ai < 1900 || d > new Date()) return { err: true };
+    return { iso: ai + '-' + pad2(mi) + '-' + pad2(gi) };
+  }
+  function nascitaIso() { return leggiNascita().iso || ''; }
   function etaDa(iso) {
     if (!iso) return null;
     var p = iso.split('-').map(Number); if (!p[0] || !p[1] || !p[2]) return null;
@@ -446,10 +471,20 @@
       : 'Firmando dichiari di aver letto e compreso i moduli precedenti e di confermare i consensi indicati.';
   }
   $('f_minore').addEventListener('change', function () { setMinore($('f_minore').checked); });
-  $('nascita').max = new Date().toISOString().slice(0, 10);
-  $('nascita').addEventListener('change', function () {
-    var e = etaDa(val('nascita'));
+  /* data di nascita: tastierino numerico, solo cifre, passaggio automatico alla casella dopo */
+  function aggiornaMinore() {
+    var e = etaDa(nascitaIso());
     if (e !== null && e >= 0 && e < 120) setMinore(e < 18);
+  }
+  [['n_g', 'n_m', 2, 3], ['n_m', 'n_a', 2, 1], ['n_a', null, 4, 9]].forEach(function (c) {
+    var el = $(c[0]);
+    el.addEventListener('input', function () {
+      el.value = el.value.replace(/\D/g, '').slice(0, c[2]);
+      /* una cifra che non può essere la prima di giorno/mese (es. 5) completa da sola: 05 */
+      if (c[3] !== 9 && el.value.length === 1 && +el.value > c[3]) el.value = '0' + el.value;
+      if (c[1] && el.value.length === c[2]) $(c[1]).focus();
+      aggiornaMinore();
+    });
   });
 
   /* ===== FIRMA ===== */
@@ -510,7 +545,7 @@
     try {
       window.localStorage.setItem(CHIAVE, JSON.stringify({
         v: 1, ts: new Date().toISOString(),
-        nome: val('nome'), cognome: val('cognome'), nascita: val('nascita'), tel: val('tel'), email: val('email'),
+        nome: val('nome'), cognome: val('cognome'), nascita: nascitaIso(), tel: val('tel'), email: val('email'),
         consensi: {
           informato: chk('ci'), privacy_cura: chk('privacy_letta'), privacy_email: chk('p_email'),
           mk: consensi.mk === 'yes', foto_clinico: consensi.foto_clinico === 'yes', foto_social: consensi.foto_social === 'yes'
@@ -532,7 +567,7 @@
     h += '<h1>Consenso informato, informativa privacy e consensi</h1>';
     h += '<div class="f-paz">' +
       '<div><i>Paziente' + (m ? ' (minorenne)' : '') + '</i><br><b>' + esc(val('nome') + ' ' + val('cognome')) + '</b></div>' +
-      campo('Data di nascita', fmtData(val('nascita'))) + campo('Telefono', val('tel')) + campo('Email', val('email')) + '</div>';
+      campo('Data di nascita', fmtData(nascitaIso())) + campo('Telefono', val('tel')) + campo('Email', val('email')) + '</div>';
     if (m) {
       h += '<div class="f-min"><b>Dichiarante:</b> ' + esc(val('t_nome') + ' ' + val('t_cognome')) +
         ', in qualità di ' + esc(val('t_rapporto').toLowerCase()) +
@@ -568,7 +603,28 @@
       '<div class="dt">Roma, ' + at.data + ' · ore ' + at.ora + '</div></div>';
     h += '<div class="f-foot">Modulo compilato e firmato su tablet · v. ' + VERSIONE + '</div>';
     $('foglio').innerHTML = h;
+    adattaFoglio();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(adattaFoglio);
   }
+
+  /* Compone il foglio fuori schermo, ne misura l'altezza e riduce il carattere
+     finché sta in una sola pagina A4 (190 x 277 mm utili). Sicurezza contro font e margini diversi su iPad. */
+  function adattaFoglio() {
+    var f = $('foglio');
+    if (!f || !f.innerHTML) return;
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;left:-10000px;top:0;width:1px;height:272mm';
+    document.body.appendChild(probe);
+    var maxH = probe.offsetHeight;
+    document.body.removeChild(probe);
+    if (!maxH) return;
+    var fs = 8.6;
+    document.body.classList.add('misura');
+    f.style.fontSize = fs + 'pt';
+    while (f.scrollHeight > maxH && fs > 6.4) { fs = Math.round((fs - 0.2) * 10) / 10; f.style.fontSize = fs + 'pt'; }
+    document.body.classList.remove('misura');
+  }
+  window.addEventListener('beforeprint', adattaFoglio);
 
   function buildSummary(at) {
     var yn = function (v) { return v === 'yes' ? 'Sì' : 'No'; };
@@ -629,6 +685,7 @@
     if (step === 0) {
       if (!val('nome') || !val('cognome') || !val('tel')) return fail('err0', 'Compila nome, cognome e telefono per proseguire.');
       if (val('tel').replace(/\D/g, '').length < 6) return fail('err0', 'Il numero di telefono sembra incompleto.');
+      if (leggiNascita().err) return fail('err0', 'La data di nascita non sembra corretta: scrivi giorno, mese e anno (oppure lasciala vuota).');
       if (val('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('email'))) return fail('err0', 'L\'indirizzo email non sembra corretto.');
       if (isMinore()) {
         if (!val('t_nome') || !val('t_cognome') || !val('t_rapporto')) return fail('err0', 'Compila nome, cognome e qualità del genitore o tutore.');
@@ -648,7 +705,7 @@
   btnNext.addEventListener('click', function () { if (validate(current)) goTo(current + 1); });
   btnBack.addEventListener('click', function () { if (current > 0) goTo(current - 1); });
 
-  $('btnStampa').addEventListener('click', function () { window.print(); });
+  $('btnStampa').addEventListener('click', function () { adattaFoglio(); window.print(); });
   $('btnRestart').addEventListener('click', function () {
     if (confirm('Svuotare tutti i dati e ricominciare con un nuovo paziente?')) {
       try { window.localStorage.removeItem(CHIAVE); } catch (e) { /* niente da rimuovere */ }

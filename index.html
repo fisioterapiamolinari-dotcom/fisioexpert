@@ -5,18 +5,6 @@
 <meta charset="UTF-8">
 <meta name="google-site-verification" content="xULgFNDw8VnOuKipQ9wmHeJ4m5V_mFd7WR3R1c2RReQ" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
-     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'denied'
-  });
-
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -24,65 +12,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-NZR859PL');</script>
 <!-- End Google Tag Manager -->
-
-  window.fxCookie = (function () {
-    var CHIAVE = 'fx_consenso_cookie';
-    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
-    var caricato = false;
-
-    function leggi() {
-      try {
-        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
-        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
-      } catch (e) {}
-      return null;
-    }
-
-    function salva(scelta) {
-      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
-    }
-
-    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
-    function caricaGoogle() {
-      if (caricato) return;
-      caricato = true;
-      gtag('consent', 'update', {
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied'
-      });
-     
-
-    function cancellaCookieGoogle() {
-      var host = location.hostname.replace(/^www\./, '');
-      document.cookie.split(';').forEach(function (c) {
-        var nome = c.split('=')[0].trim();
-        if (/^(_gcl_|_gac_)/.test(nome)) {
-          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
-            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
-          });
-        }
-      });
-    }
-
-    if (leggi() === 'si') caricaGoogle();
-
-    return {
-      scelta: leggi,
-      accetta: function () { salva('si'); caricaGoogle(); },
-      rifiuta: function () {
-        salva('no');
-        if (caricato) {
-          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
-        }
-        cancellaCookieGoogle();
-      },
-      
-      }
-    };
-  })();
-</script>
 <title>Fisioterapia Sportiva a Roma | Prima Visita | Fisio Expert</title>
 <meta name="description" content="Fisioterapia sportiva a Roma. Valutazione, terapia manuale ed esercizio terapeutico per tornare al movimento e allo sport senza dolore. Oltre 300 pazienti trattati. Prenota la tua prima visita su fisioexpert.it">
 <link rel="canonical" href="https://fisioexpert.it/">
@@ -441,7 +370,7 @@ nav.hide{transform:translateY(-100%)}
 /* ---------- FOOTER ---------- */
 footer{background:var(--footer-bg);padding:3rem 2rem;color:rgba(255,255,255,.5)}
 .footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1.4rem;flex-wrap:wrap}
-footer img{height:24px;opacity:.85;filter:invert(1) brightness(1.4)}
+footer img{height:24px;width:auto;display:block;opacity:.85;filter:brightness(0) invert(1)}
 .footer-meta{font-size:.76rem;color:rgba(255,255,255,.4)}
 .footer-links{display:flex;gap:1.4rem;flex-wrap:wrap}
 footer a{color:rgba(255,255,255,.5);text-decoration:none;font-size:.8rem;transition:color .2s}
@@ -515,7 +444,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="nav-wa" target="_blank" rel="noopener" onclick="fxCookie.conversione('zlSVCIeyqoEdEKf2isZE')">
+      <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="nav-wa" target="_blank" rel="noopener">
         <svg class="wa-ic" width="14" height="14" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
         WhatsApp
       </a>
@@ -545,7 +474,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p class="hero-p reveal d2">Fisioterapia specializzata per atleti e sportivi di ogni livello. Diagnosi precisa, terapia manuale ed esercizio terapeutico per superare il dolore e tornare a muoverti al meglio.</p>
       <div class="hero-actions reveal d3">
         <a href="/booking.html" class="btn-fill">Prenota la prima visita <span class="arr">→</span></a>
-        <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="btn-ghost" target="_blank" rel="noopener" onclick="fxCookie.conversione('zlSVCIeyqoEdEKf2isZE')">
+        <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="btn-ghost" target="_blank" rel="noopener">
           <svg class="wa-ic" width="17" height="17" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
           Scrivimi su WhatsApp
         </a>
@@ -621,7 +550,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="prob-card reveal d2" style="display:flex;flex-direction:column;justify-content:center;background:var(--accent-soft);border-color:transparent">
         <div class="prob-head"><div class="prob-ic" style="background:var(--accent);color:var(--on-accent)">🎯</div><h3>Non trovi il tuo caso?</h3></div>
         <p style="font-size:.86rem;color:var(--ink-soft);line-height:1.6;margin-bottom:1.2rem">Scrivici: in pochi minuti capiamo insieme se possiamo aiutarti.</p>
-        <a href="https://wa.me/393282738164" target="_blank" rel="noopener" onclick="fxCookie.conversione('zlSVCIeyqoEdEKf2isZE')" style="font-size:.85rem;font-weight:600;color:var(--accent-2);text-decoration:none">Chiedi su WhatsApp →</a>
+        <a href="https://wa.me/393282738164" target="_blank" rel="noopener" style="font-size:.85rem;font-weight:600;color:var(--accent-2);text-decoration:none">Chiedi su WhatsApp →</a>
       </div>
     </div>
   </div>
@@ -821,7 +750,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="book-feat"><span class="bi">✓</span><div><div class="bt">Conferma immediata</div><div class="bp">Evento creato automaticamente in agenda</div></div></div>
           </div>
           <a href="/booking.html" class="btn-submit">Prenota ora →</a>
-          <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="wa-link" target="_blank" rel="noopener" onclick="fxCookie.conversione('zlSVCIeyqoEdEKf2isZE')">
+          <a href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" class="wa-link" target="_blank" rel="noopener">
             <svg class="wa-ic" width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
             Oppure scrivici su WhatsApp
           </a>
@@ -846,7 +775,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <!-- floating WhatsApp -->
-<a class="wa-float" href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" target="_blank" rel="noopener" aria-label="Scrivi su WhatsApp" onclick="fxCookie.conversione('zlSVCIeyqoEdEKf2isZE')">
+<a class="wa-float" href="https://wa.me/393282738164?text=Ciao%2C%20vorrei%20prenotare%20una%20prima%20visita" target="_blank" rel="noopener" aria-label="Scrivi su WhatsApp">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
 </a>
 

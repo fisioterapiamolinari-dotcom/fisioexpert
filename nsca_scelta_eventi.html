@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSCA Global Conference 2026 – Scegli i tuoi eventi</title>
+<style>
+:root{--bg:#0e1a20;--panel:#15252d;--line:#2a414b;--text:#e8f1f4;--muted:#9db4bd;--gold:#d4b46a;--cyan:#38d6f5;--ok:#4fd18b;--okbg:#14352a;--no:#e0795f;--band:#1c313a;
+--r0:#d4b46a;--r1:#38d6f5;--r2:#5fd39a;--r3:#f08a5d;--r4:#a58bf0}
+@media (prefers-color-scheme:light){:root{--bg:#eef3f5;--panel:#fff;--line:#c9d8de;--text:#12242c;--muted:#546b75;--gold:#8a6a1c;--cyan:#0a7f99;--ok:#1b7f52;--okbg:#e0f4ea;--no:#b64a2f;--band:#dde8ec;
+--r0:#a07c1c;--r1:#0a7f99;--r2:#1f8f5f;--r3:#c25a26;--r4:#6b4fc7}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 "Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding-bottom:96px}
+header{max-width:1200px;margin:0 auto;padding:20px 14px 8px}
+h1{margin:0;font-size:clamp(1.3rem,3.5vw,1.9rem);font-weight:800;font-style:italic}
+header p{margin:6px 0 10px;color:var(--muted);font-size:.9rem;max-width:70ch}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;background:var(--c)}
+nav{max-width:1200px;margin:10px auto 0;padding:0 14px;display:flex;gap:8px}
+nav a{color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:5px 14px;text-decoration:none;font-weight:700;font-size:.85rem}
+main{max-width:1200px;margin:0 auto;padding:0 14px}
+.day>h2{margin:28px 0 0;font-size:1.3rem;font-style:italic;color:var(--gold);padding-bottom:6px;border-bottom:3px solid var(--gold)}
+.grp{margin-top:16px}
+.time{display:inline-block;background:var(--band);font-weight:800;font-variant-numeric:tabular-nums;padding:3px 12px;border-radius:4px;margin-bottom:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.ev{position:relative;background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:6px;padding:9px 10px 8px;cursor:pointer;min-width:0;overflow-wrap:anywhere;transition:background .15s,opacity .15s}
+.ev:hover{border-color:var(--c)}
+.ev:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.top{display:flex;justify-content:space-between;gap:8px;font-size:.74rem}
+.room{font-weight:700;color:var(--c)}
+.rng{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:2px}
+.s{font-weight:700;margin-top:3px}
+.d{font-size:.85rem;color:var(--muted);margin-top:2px}
+.d.tbd{font-style:italic;opacity:.8}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:.78rem;min-height:24px}
+.st{font-weight:700;color:var(--muted)}
+.rej{font:inherit;font-size:.75rem;background:none;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 8px;cursor:pointer}
+.rej:hover{color:var(--no);border-color:var(--no)}
+.ev.a{background:var(--okbg);border-color:var(--ok);border-left-color:var(--ok)}
+.ev.a .st{color:var(--ok)}
+.ev.x,.ev.r{opacity:.55}
+.ev.x .s,.ev.r .s,.ev.x .d,.ev.r .d{text-decoration:line-through}
+.ev.x .st,.ev.r .st{color:var(--no)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:2px solid var(--gold);padding:10px 14px;z-index:10}
+.bar div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.cnt{font-weight:700;font-size:.9rem}
+.cnt b{color:var(--ok)} .cnt i{color:var(--no);font-style:normal} .cnt u{text-decoration:none;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+button.b{font:inherit;font-size:.85rem;font-weight:700;border-radius:5px;padding:7px 12px;cursor:pointer;border:1px solid var(--gold);background:var(--gold);color:#12242c}
+button.b.sec{background:none;color:var(--text);border-color:var(--line)}
+button.b:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.ev{transition:none}}
+</style>
+</head>
+<body>
+<header>
+<h1>10th NSCA Global Conference – Scegli i tuoi eventi</h1>
+<p>Tocca un evento per sceglierlo: tutti gli eventi che si sovrappongono nello stesso giorno vengono rifiutati in automatico. Se ci ripensi, tocca un altro evento per scambiarlo, oppure tocca di nuovo quello scelto per annullare. Alla fine scarichi la lista di scelti e rifiutati.</p>
+<div class="legend" id="legend"></div>
+</header>
+<nav><a href="#d0">Sabato 24</a><a href="#d1">Domenica 25</a></nav>
+<main id="main"></main>
+<div class="bar"><div>
+<span class="cnt" id="cnt"></span>
+<span class="btns">
+<button class="b" id="dtxt">Scarica .txt</button>
+<button class="b" id="dcsv">Scarica .csv</button>
+<button class="b sec" id="rst">Azzera</button>
+</span></div></div>
+<script>
+const D=[
+{day:"Sabato 24 ottobre 2026",rooms:[
+{name:"Auditorium",blocks:[{ev:[
+["08:20–09:00","Riccardo Villa & Boyd Epley","Introduction"],
+["09:00–10:00","Luca Maestroni","Hierarchy of physical qualities necessary to achieve complete ballistic performance after ACL reconstruction"],
+["10:00–11:00","Francesco Bettariga","Data Doesn't 'Spot You: Rehumanising Strength and Conditioning"],
+["11:00–12:00","Rhodry Lloyd","Long-term athletic development: leanings from 20 years of science and practice"],
+["12:00–13:00","Jean Benoit Morin","Individual Sprint Biomechanics to help better manage hamstring injuries"],
+["14:00–15:00","Nicola Maffiuletti","Rate of force development reloaded"],
+["15:00–16:00","Martino Franchi","Muscle and Tendon adaptations to Eccentric Exercise from molecules to function: the positives of negatives"],
+["16:30–17:30","Silvano Zanuso","Technogym"],
+["17:50–18:30","Roundtable & Greetings",""]]}]},
+{name:"Sala Salieri – Strength and Conditioning",blocks:[
+{sub:"Scientific Panel «Speed Training»",ev:[
+["10:00–10:30","Johan Lahti","The science of testing and training the hamstrings for Acceleration, Maximal Velocity, and Deceleration"],
+["10:30–11:00","Marco Airale","From the Treatment room to the Track: Building robust sprinters"],
+["11:00–11:30","Andrea Monte","Strong Muscles, Stiff Tendons: Unlocking the Secrets Behind Rapid Force Production and Sprint Performance"],
+["11:30–12:00","Matteo Artina","Titolo TBD"]]},
+{sub:"Lecture",ev:[["12:00–13:00","Alan McCall","Data Doesn't 'Spot You: Rehumanising Strength and Conditioning"]]},
+{sub:"Scientific Panel «Strength Training»",ev:[
+["14:00–14:30","Javier Pena","A practical framework for priming strategies in team sports"],
+["14:30–15:00","Antonio Squillante","Velocity Based Training: How science turns into practice"],
+["15:00–15:30","Paul Comfort","TBD"],
+["15:30–16:00","Francesco Cuzzolin","TBD"]]},
+{sub:"Lecture",ev:[["16:30–17:30","Antonio Squillante","Understanding Power: Testing, training, and tracking"]]}]},
+{name:"Sala Vivaldi – Physical Therapy",blocks:[
+{sub:"Scientific Panel «Muscle & Tendon»",ev:[
+["10:00–10:30","Luca Vergani","Myth and facts about hamstring injuries, from inciting event to return to play"],
+["10:30–11:00","Massimo Zanovello","When the Hamstring Fails: Practical Insights into High-Grade Injuries"],
+["11:00–11:30","Davide Lama","Rehabilitation of hamstring injuries in professional football players"],
+["11:30–12:00","Luis Arrones","Hamstring injury-prevention in professional football: real World insights"]]},
+{sub:"Lecture",ev:[["12:00–13:00","Dr. Fumiaki Onishi e Dr. Yuki Iguchi – NSCA Japan","Monitoring by GPS and Strength & Conditioning"]]},
+{sub:"Scientific Panel «Knee Injury»",ev:[
+["14:00–14:30","Alessandro Compagnin","Optimising the testing and recovery process post-ACLR"],
+["14:30–15:00","Nicholas Miraglia","Bridging the gap: translating neuromuscular qualities into functional readiness after ACL reconstruction"],
+["15:00–15:30","Filippo Picinini","Late-Stage Rehabilitation & Return to Play in ACL injuries: from On-Field Rehabilitation to Return to Competition"],
+["15:30–16:00","Roberto Ricupito","Oh my quad! What happened to the muscle? Recovery strategies in early phase against arthrogenic muscle inhibition post ACLR"]]},
+{sub:"Lecture",ev:[["16:30–17:30","Jay Dawes","A practical framework for Developing Speed and Agility"]]}]},
+{name:"Hands-On Area – Salone Margherita 2",blocks:[{ev:[
+["10:00–11:00","Virgilio Zupanchich – HYROX","Train the Trainer – Technique & Coaching – Workshop 1"],
+["11:00–13:00","Jay Dawes","Training and Conditioning Games for Enhancing Athletic Performance"],
+["14:00–15:00","Virgilio Zupanchich – HYROX","Train the Trainer – Technique & Coaching – Workshop 2"],
+["15:00–16:00","Kevin Speer – NSCA Germany","Training and Conditioning Games for Enhancing Athletic Performance"],
+["16:30–17:30","Virgilio Zupanchich – HYROX","Train the Trainer – Technique & Coaching – Workshop 3"]]}]},
+{name:"Demo Area – Salone Margherita 1",blocks:[{ev:[
+["11:00–12:00","Ivana Banicevic – NSCA UAE","Beyond the MRI: Neuro-Mechanical Recalibration and Functional Resilience in Non-Surgical Meniscal Returns-to-Play"],
+["12:00–13:00","NSCA Greece","TBD"],
+["14:00–15:00","Raymond Wang – NSCA Singapore","Physical conditioning for esports players"],
+["15:00–16:00","Jake Rintoul","TBD"]]}]}
+]},
+{day:"Domenica 25 ottobre 2026",rooms:[
+{name:"Auditorium",blocks:[{ev:[
+["08:30–09:00","Ian Jeffreys","Introduction"],
+["09:00–10:00","Paul Comfort","Power – What are we really aiming to assess and develop"],
+["10:00–11:00","Brent Alvar","Dose-Response of Resistance Training – A Historical Perspective"],
+["11:00–12:00","Carlo Buzzichelli","TBD"],
+["12:00–13:00","Anthony Turner","Reverse-Engineering Physical Performance: Building Capacity for Competition"],
+["14:00–15:00","Ralf Iwan – HYROX","From Fitness Racing to Global Sport: How Science and Coaching Education Are Shaping HYROX"],
+["15:00–16:00","Antonio Paoli","Fasting and ketogenic diet for muscle's health and performance"],
+["16:30–17:30","Alessandra Scarton – Microgate","Topic TBD"],
+["18:00–18:30","Closing of the Conference and Farewells",""]]}]},
+{name:"Sala Salieri – Strength and Conditioning",blocks:[
+{sub:"Scientific Panel «Sport Science»",ev:[
+["10:00–10:30","Francesco Aiello","Sport Science 2030: back to the future"],
+["10:30–11:00","Antonio Gualtieri","Football Monitoring through a Synthetic Index without Loss of Information"],
+["11:00–11:30","Alberto Franceschi","TBD"],
+["11:30–12:00","Carlos Del Barrio","Bridging the Gap between Gym and Field Testing in Elite Sports"]]},
+{sub:"Lecture",ev:[["12:00–13:00","Samuele Marcora","Mental Fatigue and Sport Performance"]]},
+{sub:"Scientific Panel «Endurance Training»",ev:[
+["14:00–14:30","Andrea Meloni","Testing and training methodology in running"],
+["14:30–15:00","Elisa Pastorio","Gender differences in the training methodology of endurance sports"],
+["15:00–15:30","Luca Filipas","Physiological determinants of performance in endurance sports and methodological principles of training in cycling and running"],
+["15:30–16:00","Luca Festa","Testing and training methodology in cycling"]]},
+{sub:"Lecture",ev:[["16:30–17:30","Taewoong Kim – NSCA Korea","Building the Pathway: Integrating Daily Load Monitoring and Neuromuscular Readiness to Bridge the Academy-to-First Team Gap – English Football Club Case"]]}]},
+{name:"Sala Vivaldi – Physical Therapy",blocks:[
+{sub:"Scientific Panel «GIS Sport»",ev:[
+["10:00–10:30","Francesco Orlando","Implementation of injury surveillance practice in elite female football"],
+["10:30–11:00","Lisa Cosi","A survey assessed Italians' knowledge of RED-S, followed by an infographic and a comprehension check."],
+["11:00–11:30","Elena Bettega","Sport in different ages of life in Italian context: The role of physiotherapist to sustain athletes' practice"],
+["11:30–12:00","Giacomo Radici","The Grey Zone: Physiotherapists in the On-Field Transition to Performance"]]},
+{sub:"Lecture",ev:[["12:00–13:00","Maurizio Fanchini","Monitoring of training load: theoretical and practical aspects"]]},
+{sub:"Scientific Panel «Groin Pain and Ankle Foot Complex»",ev:[
+["14:00–14:30","Marco Candiloro","Adult acquired flat foot: foot strengthening strategies"],
+["14:30–15:00","Luca Turone","Rethinking Ankle Sprain – A Sensorimotor Roadmap from Injury to Performance"],
+["15:00–15:30","Federico Bristot","TBD"],
+["15:30–16:00","Marco Cattaneo","Clinical Relevance of Femoroacetabular Impingement in Athletes: How Concerned Should We Be?"]]},
+{sub:"Lecture",ev:[["16:30–17:30","Piers Plowman – HYROX","Integrating S&C with Skill Acquisition for HYROX Racing"]]}]},
+{name:"Hands-On Area – Salone Margherita 2",blocks:[{ev:[
+["10:00–11:00","Miroslaw Babiarz – NSCA Poland","From Testing to Training: Practical Force Plate Analysis for Coaches"],
+["11:00–13:00","Virgilio Zupanchich – HYROX","Performance Workshop"],
+["14:30–17:30","Virgilio Zupanchich – HYROX","Team Challenge + Final Debrief"]]}]},
+{name:"Demo Area – Salone Margherita 1",blocks:[{ev:[
+["11:00–12:00","NSCA China","TBD"],
+["12:00–13:00","Apurva Mathankar – NSCA India","Rotational power – hidden secret of injury prevention"],
+["14:00–15:00","NSCA Italy – Tactical","TBD"],
+["15:00–16:00","Jacob Mota","TBD"]]}]}
+]}];
+
+const RM={"Auditorium":["Auditorium",0],"Sala Salieri":["Sala Salieri (S&C)",1],"Sala Vivaldi":["Sala Vivaldi (PT)",2],"Hands-On Area":["Hands-On Area",3],"Demo Area":["Demo Area",4]};
+const DAYS=["Sabato 24 ottobre","Domenica 25 ottobre"], DSHORT=["Sab 24/10","Dom 25/10"];
+const key=n=>Object.keys(RM).find(k=>n.startsWith(k));
+const toMin=t=>{const [h,m]=t.split(":").map(Number);return h*60+m};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const EV=[];
+D.forEach((d,di)=>d.rooms.forEach(r=>r.blocks.forEach(b=>b.ev.forEach(e=>{
+  const [a,z]=e[0].split("–");
+  let tag="";
+  if(b.sub){tag=b.sub.startsWith("Scientific Panel")?"Panel "+b.sub.replace(/^Scientific Panel\s*/,"").replace(/[«»]/g,""):b.sub}
+  EV.push({id:EV.length,day:di,s:toMin(a),e:toMin(z),start:a.padStart(5,"0"),end:z,room:RM[key(r.name)],tag,who:e[1],title:e[2]});
+}))));
+const SK="nsca2026-scelte-v1";
+let sel={};
+try{sel=JSON.parse(localStorage.getItem(SK)||"{}")}catch(_){sel={}}
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(sel))}catch(_){}};
+const overlap=(a,b)=>a.id!==b.id&&a.day===b.day&&a.s<b.e&&b.s<a.e;
+function status(ev){
+  if(sel[ev.id]==="a")return{k:"a"};
+  const c=EV.find(o=>sel[o.id]==="a"&&overlap(o,ev));
+  if(c)return{k:"x",by:c};
+  return{k:sel[ev.id]==="r"?"r":"p"};
+}
+function accept(ev){EV.forEach(o=>{if(sel[o.id]==="a"&&overlap(o,ev))delete sel[o.id]});sel[ev.id]="a"}
+function toggle(ev){const s=status(ev).k; if(s==="a")delete sel[ev.id]; else accept(ev); save(); update()}
+function reject(ev){const s=status(ev).k; if(s==="r")delete sel[ev.id]; else if(s==="p")sel[ev.id]="r"; save(); update()}
+
+document.getElementById("legend").innerHTML=Object.values(RM).map(v=>`<span style="--c:var(--r${v[1]})">${esc(v[0])}</span>`).join("");
+const main=document.getElementById("main");
+main.innerHTML=DAYS.map((name,di)=>{
+  const evs=EV.filter(e=>e.day===di).sort((a,b)=>a.s-b.s||a.room[1]-b.room[1]);
+  const starts=[...new Set(evs.map(e=>e.start))];
+  return `<section class="day" id="d${di}"><h2>${name}</h2>`+starts.map(t=>`<div class="grp"><div class="time">${t}</div><div class="cards">`+evs.filter(e=>e.start===t).map(e=>{
+    const tbd=/^(TBD|Topic TBD|Titolo TBD)$/.test(e.title);
+    return `<div class="ev" role="button" tabindex="0" aria-pressed="false" data-id="${e.id}" style="--c:var(--r${e.room[1]})">
+<div class="top"><span class="room">${esc(e.room[0])}</span><span class="rng">${e.start}–${e.end}</span></div>
+${e.tag?`<div class="tag">${esc(e.tag)}</div>`:""}
+<div class="s">${esc(e.who)}</div>
+${e.title?`<div class="d${tbd?" tbd":""}">${esc(e.title)}</div>`:""}
+<div class="foot"><span class="st"></span><button class="rej" type="button">Rifiuta</button></div></div>`}).join("")+`</div></div>`).join("")+`</section>`;
+}).join("");
+
+const nodes={};
+main.querySelectorAll(".ev").forEach(n=>{
+  const ev=EV[+n.dataset.id];nodes[ev.id]=n;
+  n.addEventListener("click",()=>toggle(ev));
+  n.addEventListener("keydown",k=>{if((k.key==="Enter"||k.key===" ")&&k.target===n){k.preventDefault();toggle(ev)}});
+  n.querySelector(".rej").addEventListener("click",x=>{x.stopPropagation();reject(ev)});
+});
+function update(){
+  let a=0,r=0,p=0;
+  EV.forEach(ev=>{
+    const s=status(ev),n=nodes[ev.id],st=n.querySelector(".st"),b=n.querySelector(".rej");
+    n.className="ev "+s.k; n.setAttribute("aria-pressed",s.k==="a");
+    if(s.k==="a"){st.textContent="Scelto";a++}
+    else if(s.k==="x"){st.textContent="Escluso: in conflitto con "+s.by.who;r++}
+    else if(s.k==="r"){st.textContent="Rifiutato";r++}
+    else{st.textContent="Tocca per scegliere";p++}
+    b.style.display=(s.k==="p"||s.k==="r")?"":"none";
+    b.textContent=s.k==="r"?"Annulla":"Rifiuta";
+  });
+  document.getElementById("cnt").innerHTML=`<b>${a} scelti</b> · <i>${r} rifiutati</i> · <u>${p} da decidere</u>`;
+}
+update();
+
+function groups(){
+  const g={a:[],r:[],p:[]};
+  EV.slice().sort((x,y)=>x.day-y.day||x.s-y.s||x.room[1]-y.room[1]).forEach(ev=>{
+    const k=status(ev).k; g[k==="x"?"r":k].push(ev);
+  });
+  return g;
+}
+function download(name,text,type){
+  const blob=new Blob([text],{type});
+  const u=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+const line=e=>`${DSHORT[e.day]}  ${e.start}–${e.end}  [${e.room[0]}]  ${e.who}${e.title?" – "+e.title:""}`;
+document.getElementById("dtxt").onclick=()=>{
+  const g=groups();
+  const sec=(t,l)=>`${t} (${l.length})\n${"-".repeat(t.length+String(l.length).length+3)}\n${l.length?l.map(line).join("\n"):"(nessuno)"}\n`;
+  download("nsca2026-mie-scelte.txt",
+   "10th NSCA Global Conference – Verona, 24-25 ottobre 2026\nLa mia selezione\n\n"+sec("SCELTI",g.a)+"\n"+sec("RIFIUTATI",g.r)+"\n"+sec("DA DECIDERE",g.p),
+   "text/plain;charset=utf-8");
+};
+document.getElementById("dcsv").onclick=()=>{
+  const g=groups();
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const rows=[["Stato","Giorno","Inizio","Fine","Sala","Relatore","Titolo"]];
+  [["Scelto",g.a],["Rifiutato",g.r],["Da decidere",g.p]].forEach(([s,l])=>l.forEach(e=>rows.push([s,DSHORT[e.day],e.start,e.end,e.room[0],e.who,e.title])));
+  download("nsca2026-mie-scelte.csv","\ufeff"+rows.map(r=>r.map(q).join(";")).join("\r\n"),"text/csv;charset=utf-8");
+};
+document.getElementById("rst").onclick=()=>{if(confirm("Vuoi cancellare tutte le scelte?")){sel={};save();update()}};
+</script>
+</body>
+</html>

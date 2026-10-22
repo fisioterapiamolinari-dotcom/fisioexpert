@@ -1,0 +1,478 @@
+<title>Registro massimali</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: barra logo fissa chiara, poi scheda atleta, scelta sport, test a griglia, riepilogo, storico. */
+:root {
+  --bg: #f8f4ef;
+  --surface: #ffffff;
+  --surface-2: #f2ece4;
+  --fg: #1a1a1a;
+  --fg-soft: #4a4a4a;
+  --fg-mute: #7d766d;
+  --line: rgba(26,26,26,0.12);
+  --accent: #f47920;
+  --accent-dark: #d4660e;
+  --accent-soft: rgba(244,121,32,0.13);
+  --on-accent: #ffffff;
+  --ok: #2d7a4d;
+  --ok-soft: rgba(45,122,77,0.13);
+  --bad: #b3261e;
+  --bad-soft: rgba(179,38,30,0.12);
+  --f-serif: "DM Serif Display", Georgia, serif;
+  --f-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-label: "Montserrat", "DM Sans", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171512; --surface: #221f1b; --surface-2: #2b2722; --fg: #f3eee7; --fg-soft: #cfc8be; --fg-mute: #9a9288;
+    --line: rgba(243,238,231,0.14); --accent: #f47920; --accent-dark: #ff9650; --accent-soft: rgba(244,121,32,0.2);
+    --ok: #62c58a; --ok-soft: rgba(98,197,138,0.17); --bad: #ff8a80; --bad-soft: rgba(255,138,128,0.16);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171512; --surface: #221f1b; --surface-2: #2b2722; --fg: #f3eee7; --fg-soft: #cfc8be; --fg-mute: #9a9288;
+  --line: rgba(243,238,231,0.14); --accent: #f47920; --accent-dark: #ff9650; --accent-soft: rgba(244,121,32,0.2);
+  --ok: #62c58a; --ok-soft: rgba(98,197,138,0.17); --bad: #ff8a80; --bad-soft: rgba(255,138,128,0.16);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-sans); font-size: 15px; line-height: 1.45; }
+.bar { background: #ffffff; border-bottom: 1px solid rgba(26,26,26,0.1); }
+.bar-in { max-width: 920px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px;
+  padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.logo { height: 36px; width: auto; display: block; }
+.logo-fallback { display: none; font-family: var(--f-label); font-weight: 800; font-size: 20px; color: #1a1a1a; }
+.logo-fallback b { color: #f47920; }
+.bar-tag { font-family: var(--f-label); font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #7d766d; }
+main { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;
+  padding-block: 22px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font-family: var(--f-serif); font-weight: 400; font-size: 34px; line-height: 1.1; margin: 0; text-wrap: balance; }
+.eyebrow { font-family: var(--f-label); font-weight: 700; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft); padding: 5px 11px; border-radius: 99px; align-self: flex-start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; min-width: 0; }
+.lbl { display: block; font-family: var(--f-label); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-mute); margin-bottom: 6px; }
+input, select, textarea { font: inherit; color: var(--fg); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; min-width: 0; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+textarea { resize: vertical; min-height: 70px; }
+.grid { display: grid; gap: 12px; }
+.g-ath { grid-template-columns: 2fr 1.2fr 1fr; }
+.sports { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--f-label); font-weight: 700; font-size: 12px; letter-spacing: 0.04em; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  border-radius: 99px; padding: 10px 16px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.sport-note { color: var(--fg-soft); font-size: 13.5px; margin: 0; }
+.tests { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.test h3 { font-family: var(--f-serif); font-weight: 400; font-size: 19px; line-height: 1.2; margin: 0 0 4px; text-wrap: balance; }
+.test .how { font-size: 12.5px; color: var(--fg-mute); margin: 0 0 12px; }
+.test .crit { font-size: 12.5px; color: var(--accent-dark); margin: -6px 0 12px; }
+.frow { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+.field .name { font-size: 12.5px; color: var(--fg-soft); margin-bottom: 4px; display: flex; justify-content: space-between; gap: 6px; }
+.field .name span { color: var(--fg-mute); }
+.field .prev { font-size: 11.5px; color: var(--fg-mute); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.lr { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lr-title { font-size: 12.5px; color: var(--fg-soft); margin-bottom: 4px; grid-column: 1 / -1; }
+.lr small { display: block; font-family: var(--f-label); font-size: 9.5px; font-weight: 700; letter-spacing: .1em; color: var(--fg-mute); margin-bottom: 3px; }
+.lrwrap { grid-column: 1 / -1; }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; margin-top: 7px; font-variant-numeric: tabular-nums; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.neutral { background: var(--accent-soft); color: var(--accent-dark); }
+.sum h2, .hist h2 { font-family: var(--f-serif); font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+.sumgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.sumitem { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.sumitem .k { font-size: 12px; color: var(--fg-mute); }
+.sumitem .v { font-family: var(--f-label); font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
+.empty { color: var(--fg-mute); font-size: 13.5px; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button.btn { font: inherit; font-weight: 700; border-radius: 12px; padding: 11px 18px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.btn.small { padding: 6px 11px; font-size: 13px; border-radius: 9px; }
+button.btn.danger { color: var(--bad); }
+.status { color: var(--ok); font-weight: 700; font-size: 13.5px; }
+.editing { background: var(--accent-soft); color: var(--accent-dark); border-radius: 10px; padding: 8px 12px; font-size: 13.5px; font-weight: 500; }
+.hrow { display: grid; grid-template-columns: 90px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.hrow:first-of-type { border-top: 0; }
+.hrow .d { font-variant-numeric: tabular-nums; font-weight: 700; }
+.hrow .m { color: var(--fg-soft); font-size: 13.5px; min-width: 0; overflow-wrap: anywhere; }
+.hbtns { display: flex; gap: 6px; }
+details.bk { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 10px; }
+details.bk summary { cursor: pointer; font-weight: 700; color: var(--fg-soft); }
+.warn { background: var(--bad-soft); color: var(--bad); border-radius: 10px; padding: 8px 12px; font-size: 13px; }
+@media (max-width: 720px) {
+  .tests { grid-template-columns: minmax(0, 1fr); }
+  .g-ath { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 28px; }
+  .hrow { grid-template-columns: 1fr auto; }
+  .hrow .m { grid-column: 1 / -1; order: 3; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="bar"><div class="bar-in">
+  <div>
+    <img class="logo" alt="FisioExpert" src="data:image/png;base64,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" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+    <span class="logo-fallback">fisio<b>·</b>expert</span>
+  </div>
+  <span class="bar-tag">Registro test</span>
+</div></header>
+
+<main>
+  <span class="eyebrow">Visita · atleti</span>
+  <h1>Registro massimali</h1>
+
+  <section class="card" aria-label="Atleta">
+    <div class="grid g-ath">
+      <div><label class="lbl" for="ath">Atleta</label><input id="ath" type="text" list="athlist" placeholder="Nome e cognome" autocomplete="off"><datalist id="athlist"></datalist></div>
+      <div><label class="lbl" for="dt">Data visita</label><input id="dt" type="date"></div>
+      <div><label class="lbl" for="bw">Peso corporeo (kg)</label><input id="bw" type="number" inputmode="decimal" step="0.1" min="0" placeholder="es. 82"></div>
+    </div>
+  </section>
+
+  <section aria-label="Sport" style="display:flex;flex-direction:column;gap:10px">
+    <span class="lbl" style="margin:0">Sport</span>
+    <div class="sports" id="sports" role="group" aria-label="Scegli lo sport"></div>
+    <p class="sport-note" id="sportnote"></p>
+  </section>
+
+  <div id="editbox"></div>
+  <section class="tests" id="tests" aria-label="Test"></section>
+
+  <section class="card">
+    <label class="lbl" for="note">Note e dolore (0-10)</label>
+    <textarea id="note" placeholder="Dolore, compensi, condizioni del test, attrezzo usato"></textarea>
+  </section>
+
+  <section class="card sum"><h2>Riepilogo</h2><div id="sumbox"></div></section>
+
+  <div class="actions">
+    <button class="btn primary" id="save" type="button">Salva visita</button>
+    <button class="btn" id="reset" type="button">Nuova visita</button>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </div>
+  <div id="storewarn"></div>
+
+  <section class="card hist"><h2>Storico</h2><div id="hist"></div>
+    <details class="bk"><summary>Copia di sicurezza</summary>
+      <p class="empty" style="margin:10px 0">I dati restano in questo browser. Copia il testo e conservalo (nota, email), oppure incolla qui sotto un testo copiato per ripristinare.</p>
+      <div class="actions"><button class="btn small" id="bkcopy" type="button">Copia tutti i dati</button></div>
+      <label class="lbl" for="bktext" style="margin-top:12px">Ripristina da testo</label>
+      <textarea id="bktext" placeholder="Incolla qui i dati copiati"></textarea>
+      <div class="actions" style="margin-top:8px"><button class="btn small" id="bkrestore" type="button">Ripristina</button><span class="status" id="bkstatus"></span></div>
+    </details>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "fe_massimali_v1";
+  var SEL_OPTS = ["", "Superato", "Compenso", "Dolore"];
+  var YN_OPTS = ["", "Superato", "Non superato"];
+
+  function n(id, label, unit, extra) { var o = { id: id, label: label, unit: unit || "", kind: "n" }; for (var k in (extra || {})) o[k] = extra[k]; return o; }
+  function lr(id, label, unit) { return { id: id, label: label, unit: unit || "", kind: "lr" }; }
+  function sel(id, label, opts) { return { id: id, label: label, kind: "sel", opts: opts || SEL_OPTS }; }
+  function tm(id, label) { return { id: id, label: label, kind: "t", unit: "mm:ss" }; }
+  function num(v) { if (v === undefined || v === null || v === "") return NaN; var x = parseFloat(String(v).replace(",", ".")); return isFinite(x) ? x : NaN; }
+  function secs(v) { if (!v) return NaN; var s = String(v).trim(); if (s.indexOf(":") > -1) { var p = s.split(":"); var m = num(p[0]), x = num(p[1]); return isFinite(m) && isFinite(x) ? m * 60 + x : NaN; } return num(s); }
+  function r1(x) { return Math.round(x * 10) / 10; }
+
+  var SPORTS = [
+    { id: "tennis", name: "Tennis",
+      note: "Batteria da campo con palla medica, coni e cronometro. Fonti: ITF Coaching Review e test di spalla per atleti overhead (PubMed 29564843).",
+      tests: [
+        { title: "Lancio palla medica 2 kg", how: "Palla medica 2 kg e metro. 3 lanci per tipo, segna il migliore.", fields: [n("tn_mb_s", "Servizio", "m"), n("tn_mb_d", "Dritto", "m"), n("tn_mb_r", "Rovescio", "m")] },
+        { title: "Sprint 20 m", how: "Coni e cronometro. 3 prove per condizione, segna la migliore.", fields: [n("tn_sp_0", "Senza racchetta", "s"), n("tn_sp_1", "Con racchetta", "s")] },
+        { title: "T-Test (agilità)", how: "Coni e cronometro. 3 prove, 2 minuti di recupero.", fields: [n("tn_t_0", "Senza racchetta", "s"), n("tn_t_1", "Con racchetta", "s")] },
+        { title: "Hit and Turn Tennis Test", how: "Coni e audio con segnale sonoro. Segna lo stadio o il risultato raggiunto.", fields: [n("tn_hit", "Stadio raggiunto", "")] },
+        { title: "CKCUEST", how: "Appoggio sulle mani, nastro adesivo e cronometro. Tocchi in 15 secondi.", fields: [n("tn_ckc", "Tocchi", "in 15\"")] },
+        { title: "Y Balance Upper Quarter", how: "Nastro metrico. Distanza raggiunta in ogni direzione, per lato.", fields: [lr("tn_y_m", "Mediale", "cm"), lr("tn_y_il", "Inferolaterale", "cm"), lr("tn_y_sl", "Superolaterale", "cm")] },
+        { title: "Seated Medicine Ball Throw", how: "Lancio da seduto con due mani. Usa sempre la stessa palla.", fields: [n("tn_smbt", "Distanza", "m"), n("tn_smbt_kg", "Peso palla", "kg")] }
+      ], derived: function () { return []; } },
+
+    { id: "crossfit", name: "CrossFit",
+      note: "Il CrossFit Total predice Grace e Fran (Bellar et al. 2015, 14 atleti). Cindy non è predetta da nessuna misura.",
+      tests: [
+        { title: "CrossFit Total", how: "Bilanciere e rack. 1RM di back squat, overhead press e stacco.", fields: [n("cf_sq", "Back squat", "kg"), n("cf_ohp", "Overhead press", "kg"), n("cf_dl", "Stacco", "kg")] },
+        { title: "Grace", how: "30 clean & jerk. Segna il tempo e il carico usato.", fields: [tm("cf_grace", "Tempo"), n("cf_grace_kg", "Carico", "kg")] },
+        { title: "Fran", how: "Thruster e trazioni 21-15-9. Segna il tempo e il carico usato.", fields: [tm("cf_fran", "Tempo"), n("cf_fran_kg", "Carico", "kg")] },
+        { title: "Cindy", how: "AMRAP 20': 5 trazioni, 10 flessioni, 15 squat.", fields: [n("cf_cindy", "Round completati", "round")] }
+      ],
+      derived: function (g, bw) {
+        var t = g("cf_sq") + g("cf_ohp") + g("cf_dl"), out = [];
+        if (isFinite(t)) { out.push({ k: "CrossFit Total", v: r1(t) + " kg" }); if (bw) out.push({ k: "Total / peso corporeo", v: r1(t / bw) + " ×" }); }
+        return out;
+      } },
+
+    { id: "powerlifting", name: "Powerlifting",
+      note: "Alzate di gara. Il 1RM di squat è lo standard della forza massimale (revisione Apunts). Segna se il valore è 1RM o 3RM.",
+      tests: [
+        { title: "Protocollo", how: "Vale per le tre alzate di questa visita.", fields: [sel("pl_mode", "Tipo di massimale", ["", "1RM", "3RM"])] },
+        { title: "Squat", how: "Riscaldamento progressivo e tentativi fino al massimale tecnico.", fields: [n("pl_sq", "Carico", "kg")] },
+        { title: "Panca", how: "Fermo al petto se previsto in gara. Stessa regola a ogni visita.", fields: [n("pl_bp", "Carico", "kg")] },
+        { title: "Stacco", how: "Stesso stile (convenzionale o sumo) a ogni visita.", fields: [n("pl_dl", "Carico", "kg")] }
+      ],
+      derived: function (g, bw) {
+        var s = g("pl_sq"), b = g("pl_bp"), d = g("pl_dl"), out = [], t = s + b + d;
+        if (isFinite(t)) { out.push({ k: "Totale", v: r1(t) + " kg" }); if (bw) out.push({ k: "Totale / peso corporeo", v: r1(t / bw) + " ×" }); }
+        if (bw) { if (isFinite(s)) out.push({ k: "Squat / peso", v: r1(s / bw) + " ×" }); if (isFinite(b)) out.push({ k: "Panca / peso", v: r1(b / bw) + " ×" }); if (isFinite(d)) out.push({ k: "Stacco / peso", v: r1(d / bw) + " ×" }); }
+        return out;
+      } },
+
+    { id: "corsa", name: "Corsa",
+      note: "Batteria di rientro alla corsa (Physiotutors) e criteri sul polpaccio (Sports Med Open 2021): calf raise > 25 (≥ 30 per il polpaccio) e asimmetrie ≤ 10%.",
+      tests: [
+        { title: "Calf raise monopodalico", how: "Dal pavimento, metronomo a 80 bpm.", crit: "Criterio: > 25 ripetizioni, per il polpaccio ≥ 30 con asimmetria ≤ 10%.", fields: [lr("co_calf", "Ripetizioni", "rip."), ], calf: "co_calf" },
+        { title: "Dorsiflessione di caviglia", how: "Knee-to-wall con metro.", crit: "Criterio: asimmetria ≤ 10%.", fields: [lr("co_df", "Distanza", "cm")] },
+        { title: "Camminata", how: "30 minuti a circa 5-5,5 km/h.", fields: [sel("co_walk", "Esito")] },
+        { title: "Step-up", how: "Scalino 30-45 cm, 30 secondi per gamba.", fields: [sel("co_step_sx", "Sinistra"), sel("co_step_dx", "Destra")] },
+        { title: "Salti a due gambe", how: "60 secondi.", fields: [sel("co_jump", "Esito")] },
+        { title: "Hopping monopodalico", how: "30 secondi per gamba.", fields: [sel("co_hop_sx", "Sinistra"), sel("co_hop_dx", "Destra")] },
+        { title: "Single leg squat", how: "30 secondi per gamba, 0-40°, metronomo a 80 bpm.", fields: [sel("co_sls_sx", "Sinistra"), sel("co_sls_dx", "Destra")] },
+        { title: "Running Readiness Scale", how: "5 test da 1 minuto a 160 bpm, 30 secondi di pausa. Si consiglia 5/5 prima di tornare a correre.", fields: [sel("rr_hop", "Hopping", YN_OPTS), sel("rr_plank", "Plank", YN_OPTS), sel("rr_step", "Step-up (scalino 15 cm)", YN_OPTS), sel("rr_sls", "Single-limb squat", YN_OPTS), sel("rr_wall", "Wall sit", YN_OPTS)] }
+      ],
+      derived: function (g, bw, v) {
+        var ids = ["rr_hop", "rr_plank", "rr_step", "rr_sls", "rr_wall"], c = 0, f = 0;
+        ids.forEach(function (i) { if (v[i]) f++; if (v[i] === "Superato") c++; });
+        return f ? [{ k: "Running Readiness Scale", v: c + " / 5", flag: c === 5 ? "ok" : "bad" }] : [];
+      } },
+
+    { id: "weightlifting", name: "Weightlifting",
+      note: "Le alzate di gara e i derivati. Ripeti i massimali con le stesse regole a ogni visita.",
+      tests: [
+        { title: "Strappo", how: "1RM con tentativi progressivi.", fields: [n("wl_sn", "Carico", "kg")] },
+        { title: "Slancio", how: "1RM. Segna lo slancio completo (girata + slancio).", fields: [n("wl_cj", "Carico", "kg")] },
+        { title: "Back squat", how: "1RM, profondità sotto il parallelo.", fields: [n("wl_bs", "Carico", "kg")] },
+        { title: "Front squat", how: "1RM, profondità sotto il parallelo.", fields: [n("wl_fs", "Carico", "kg")] }
+      ],
+      derived: function (g, bw) {
+        var sn = g("wl_sn"), cj = g("wl_cj"), bs = g("wl_bs"), fs = g("wl_fs"), out = [];
+        if (isFinite(sn) && isFinite(cj)) out.push({ k: "Strappo / slancio", v: r1(sn / cj * 100) + " %" });
+        if (isFinite(fs) && isFinite(bs)) out.push({ k: "Front / back squat", v: r1(fs / bs * 100) + " %" });
+        if (isFinite(bs) && bw) out.push({ k: "Back squat / peso", v: r1(bs / bw) + " ×" });
+        if (isFinite(sn) && isFinite(cj)) out.push({ k: "Totale gara", v: r1(sn + cj) + " kg" });
+        return out;
+      } },
+
+    { id: "calisthenics", name: "Calisthenics",
+      note: "Pull-up e dip zavorrati sono molto affidabili (ICC 0,96-0,99, ECU). I test di spalla sono validati su atleti overhead. Cuffia e trapezio sono test clinici nostri.",
+      tests: [
+        { title: "Trazione zavorrata 1RM", how: "Sbarra e cintura. Segna solo la zavorra aggiunta.", fields: [n("ca_pu", "Zavorra", "kg"), n("ca_pu_max", "Trazioni strict max", "rip.")] },
+        { title: "Dip zavorrato 1RM", how: "Parallele e cintura. Segna solo la zavorra aggiunta.", fields: [n("ca_dip", "Zavorra", "kg"), n("ca_dip_max", "Dip max", "rip.")] },
+        { title: "CKCUEST", how: "Appoggio sulle mani, nastro adesivo e cronometro. Tocchi in 15 secondi.", fields: [n("ca_ckc", "Tocchi", "in 15\"")] },
+        { title: "Y Balance Upper Quarter", how: "Nastro metrico. Distanza raggiunta in ogni direzione, per lato.", fields: [lr("ca_y_m", "Mediale", "cm"), lr("ca_y_il", "Inferolaterale", "cm"), lr("ca_y_sl", "Superolaterale", "cm")] },
+        { title: "Seated Medicine Ball Throw", how: "Lancio da seduto con due mani. Usa sempre la stessa palla.", fields: [n("ca_smbt", "Distanza", "m"), n("ca_smbt_kg", "Peso palla", "kg")] },
+        { title: "Extrarotazione sul fianco", how: "Manubrio fisso, ripetizioni a ritmo costante fino a cedimento.", fields: [n("ca_er_kg", "Manubrio", "kg"), lr("ca_er", "Ripetizioni", "rip.")] },
+        { title: "Intrarotazione sul fianco", how: "Stesso manubrio e stesso ritmo dell'extrarotazione.", fields: [lr("ca_ir", "Ripetizioni", "rip.")] },
+        { title: "Prone Y e T", how: "Su panca con 1 kg. Tenuta in secondi, nota i compensi del trapezio superiore.", fields: [lr("ca_py", "Prone Y", "s"), lr("ca_pt", "Prone T", "s")] }
+      ],
+      derived: function (g, bw) {
+        var out = [], pu = g("ca_pu"), dp = g("ca_dip");
+        if (bw && isFinite(pu)) out.push({ k: "Trazione (peso + zavorra) / peso", v: r1((bw + pu) / bw) + " ×" });
+        if (bw && isFinite(dp)) out.push({ k: "Dip (peso + zavorra) / peso", v: r1((bw + dp) / bw) + " ×" });
+        ["sx", "dx"].forEach(function (s) {
+          var er = g("ca_er_" + s), ir = g("ca_ir_" + s);
+          if (isFinite(er) && isFinite(ir) && ir > 0) out.push({ k: "Extra / intrarotazione " + s, v: r1(er / ir * 100) + " %" });
+        });
+        return out;
+      } }
+  ];
+
+  // ---------- stato ----------
+  var state = { sport: SPORTS[0].id, values: {}, editing: null, athlete: "", date: "", bw: "", note: "" };
+  var store = { visits: [] };
+  var memoryOnly = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function load() {
+    try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && Array.isArray(o.visits)) store = o; } } catch (e) { memoryOnly = true; }
+    try { var s = localStorage.getItem(KEY + "_sport"); if (s && SPORTS.some(function (x) { return x.id === s; })) state.sport = s; } catch (e) {}
+  }
+  function persist() { try { localStorage.setItem(KEY, JSON.stringify(store)); memoryOnly = false; } catch (e) { memoryOnly = true; } renderWarn(); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function fmtDate(d) { if (!d) return ""; var p = d.split("-"); return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : d; }
+  function today() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function sportObj() { return SPORTS.filter(function (s) { return s.id === state.sport; })[0]; }
+  function g(id) { return num(state.values[id]); }
+
+  function allFields(sp) { var a = []; sp.tests.forEach(function (t) { t.fields.forEach(function (f) { if (f.kind === "lr") { a.push(f.id + "_sx"); a.push(f.id + "_dx"); } else a.push(f.id); }); }); return a; }
+
+  // ultima visita precedente dello stesso atleta e sport
+  function prevVisit() {
+    var name = state.athlete.trim().toLowerCase(); if (!name) return null;
+    var cands = store.visits.filter(function (v) { return v.sport === state.sport && v.athlete.trim().toLowerCase() === name && v.id !== state.editing && (!state.date || v.date <= state.date); });
+    cands.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.ts - a.ts; });
+    return cands[0] || null;
+  }
+
+  // ---------- render ----------
+  function renderSports() {
+    var box = $("sports"); box.innerHTML = "";
+    SPORTS.forEach(function (s) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = s.name; b.setAttribute("aria-pressed", String(s.id === state.sport));
+      b.addEventListener("click", function () { state.sport = s.id; state.values = {}; state.editing = null; try { localStorage.setItem(KEY + "_sport", s.id); } catch (e) {} renderAll(); });
+      box.appendChild(b);
+    });
+    $("sportnote").textContent = sportObj().note;
+  }
+
+  function inputHtml(f, id, prevVal, label) {
+    var val = state.values[id] === undefined ? "" : state.values[id];
+    var prev = prevVal ? '<div class="prev">prec. ' + esc(prevVal.v) + " · " + fmtDate(prevVal.d) + "</div>" : "";
+    var ctl;
+    if (f.kind === "sel") {
+      ctl = '<select id="f_' + id + '" data-id="' + id + '">' + f.opts.map(function (o) { return '<option value="' + esc(o) + '"' + (o === val ? " selected" : "") + ">" + (o || "—") + "</option>"; }).join("") + "</select>";
+    } else if (f.kind === "t") {
+      ctl = '<input id="f_' + id + '" data-id="' + id + '" type="text" inputmode="numeric" placeholder="es. 3:45" value="' + esc(val) + '" autocomplete="off">';
+    } else {
+      ctl = '<input id="f_' + id + '" data-id="' + id + '" type="number" inputmode="decimal" step="any" min="0" value="' + esc(val) + '">';
+    }
+    return '<div class="field"><div class="name">' + esc(label) + (f.unit ? "<span>" + esc(f.unit) + "</span>" : "") + "</div>" + ctl + prev + "</div>";
+  }
+
+  function renderTests() {
+    var sp = sportObj(), pv = prevVisit(), html = "";
+    sp.tests.forEach(function (t, ti) {
+      html += '<article class="card test"><h3>' + esc(t.title) + '</h3><p class="how">' + esc(t.how) + "</p>" + (t.crit ? '<p class="crit">' + esc(t.crit) + "</p>" : "");
+      var rows = "";
+      t.fields.forEach(function (f) {
+        if (f.kind === "lr") {
+          var pS = pv && pv.values[f.id + "_sx"] ? { v: pv.values[f.id + "_sx"], d: pv.date } : null, pD = pv && pv.values[f.id + "_dx"] ? { v: pv.values[f.id + "_dx"], d: pv.date } : null;
+          rows += '<div class="lrwrap"><div class="lr-title">' + esc(f.label) + (f.unit ? " (" + esc(f.unit) + ")" : "") + '</div><div class="lr"><div><small>SINISTRA</small>' + inputHtml({ kind: "n" }, f.id + "_sx", pS, "").replace('<div class="name"></div>', "") + '</div><div><small>DESTRA</small>' + inputHtml({ kind: "n" }, f.id + "_dx", pD, "").replace('<div class="name"></div>', "") + '</div></div><div id="as_' + f.id + '"></div></div>';
+        } else {
+          var p = pv && pv.values[f.id] ? { v: pv.values[f.id], d: pv.date } : null;
+          rows += inputHtml(f, f.id, p, f.label);
+        }
+      });
+      html += '<div class="frow">' + rows + "</div></article>";
+    });
+    $("tests").innerHTML = html;
+    Array.prototype.forEach.call($("tests").querySelectorAll("[data-id]"), function (el) {
+      el.addEventListener("input", function () { state.values[el.getAttribute("data-id")] = el.value; renderDerived(); });
+      el.addEventListener("change", function () { state.values[el.getAttribute("data-id")] = el.value; renderDerived(); });
+    });
+    renderDerived();
+  }
+
+  function renderDerived() {
+    var sp = sportObj();
+    // asimmetrie
+    sp.tests.forEach(function (t) {
+      t.fields.forEach(function (f) {
+        if (f.kind !== "lr") return;
+        var box = $("as_" + f.id); if (!box) return;
+        var a = g(f.id + "_sx"), b = g(f.id + "_dx"), h = "";
+        if (isFinite(a) && isFinite(b) && Math.max(a, b) > 0) {
+          var asym = Math.abs(a - b) / Math.max(a, b) * 100;
+          var weaker = a < b ? "sinistra" : b < a ? "destra" : "";
+          h += '<span class="pill ' + (asym <= 10 ? "ok" : "bad") + '">Asimmetria ' + r1(asym) + "%" + (weaker && asym > 0 ? " · più debole " + weaker : "") + "</span>";
+        }
+        if (t.calf === f.id) {
+          var m = Math.min(a, b);
+          if (isFinite(m)) h += ' <span class="pill ' + (m >= 30 ? "ok" : m > 25 ? "neutral" : "bad") + '">' + (m >= 30 ? "≥ 30: criterio polpaccio ok" : m > 25 ? "> 25: criterio corsa ok" : "sotto 25") + "</span>";
+        }
+        box.innerHTML = h;
+      });
+    });
+    // riepilogo
+    var bw = num(state.bw), items = sp.derived(g, isFinite(bw) ? bw : 0, state.values), html = "";
+    items.forEach(function (i) { html += '<div class="sumitem"><div class="k">' + esc(i.k) + '</div><div class="v"' + (i.flag === "ok" ? ' style="color:var(--ok)"' : i.flag === "bad" ? ' style="color:var(--bad)"' : "") + ">" + esc(i.v) + "</div></div>"; });
+    var needBw = !isFinite(bw) && /rapporti|peso/.test("");
+    $("sumbox").innerHTML = html ? '<div class="sumgrid">' + html + "</div>" + (!isFinite(bw) ? '<p class="empty" style="margin-top:10px">Inserisci il peso corporeo per vedere i rapporti con il peso.</p>' : "")
+      : '<p class="empty">Compila i test per vedere totali, rapporti e asimmetrie. Il riepilogo si aggiorna mentre scrivi.</p>';
+  }
+
+  function renderEdit() {
+    $("editbox").innerHTML = state.editing ? '<div class="editing">Stai modificando una visita già salvata. "Salva visita" la aggiorna, "Nuova visita" svuota il modulo.</div>' : "";
+    $("save").textContent = state.editing ? "Aggiorna visita" : "Salva visita";
+  }
+
+  function renderAthList() {
+    var names = {}; store.visits.forEach(function (v) { names[v.athlete] = 1; });
+    $("athlist").innerHTML = Object.keys(names).sort().map(function (n2) { return '<option value="' + esc(n2) + '">'; }).join("");
+  }
+
+  var pendingDel = null;
+  function renderHist() {
+    var name = state.athlete.trim().toLowerCase();
+    var list = store.visits.filter(function (v) { return v.sport === state.sport && (!name || v.athlete.trim().toLowerCase() === name); });
+    list.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.ts - a.ts; });
+    var box = $("hist");
+    if (!list.length) { box.innerHTML = '<p class="empty">Nessuna visita salvata per ' + esc(sportObj().name) + (name ? " e questo atleta" : "") + ". Le visite che salvi compaiono qui.</p>"; return; }
+    box.innerHTML = list.map(function (v) {
+      var filled = Object.keys(v.values).filter(function (k) { return v.values[k] !== ""; }).length;
+      var bwt = v.bw ? " · " + esc(v.bw) + " kg" : "";
+      return '<div class="hrow"><span class="d">' + fmtDate(v.date) + '</span><span class="m"><b>' + esc(v.athlete || "Senza nome") + "</b> · " + filled + " valori" + bwt + (v.note ? " · " + esc(v.note.slice(0, 80)) : "") + '</span><span class="hbtns"><button class="btn small" data-open="' + v.id + '" type="button">Apri</button><button class="btn small danger" data-del="' + v.id + '" type="button">' + (pendingDel === v.id ? "Conferma" : "Elimina") + "</button></span></div>";
+    }).join("");
+    Array.prototype.forEach.call(box.querySelectorAll("[data-open]"), function (b) { b.addEventListener("click", function () { openVisit(b.getAttribute("data-open")); }); });
+    Array.prototype.forEach.call(box.querySelectorAll("[data-del]"), function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-del");
+        if (pendingDel === id) { store.visits = store.visits.filter(function (v) { return v.id !== id; }); if (state.editing === id) state.editing = null; pendingDel = null; persist(); renderAll(); say("Visita eliminata."); }
+        else { pendingDel = id; renderHist(); setTimeout(function () { if (pendingDel === id) { pendingDel = null; renderHist(); } }, 4000); }
+      });
+    });
+  }
+
+  function renderWarn() { $("storewarn").innerHTML = memoryOnly ? '<div class="warn">Il browser non permette di salvare qui: i dati si perdono alla chiusura. Usa "Copia di sicurezza" qui sotto.</div>' : ""; }
+
+  function renderAll() { renderSports(); renderEdit(); renderTests(); renderAthList(); renderHist(); renderWarn(); }
+  var statusTimer; function say(t) { $("status").textContent = t; clearTimeout(statusTimer); statusTimer = setTimeout(function () { $("status").textContent = ""; }, 3500); }
+
+  // ---------- azioni ----------
+  function collect() {
+    var vals = {}; allFields(sportObj()).forEach(function (id) { if (state.values[id] !== undefined && state.values[id] !== "") vals[id] = state.values[id]; });
+    return vals;
+  }
+  function saveVisit() {
+    var name = state.athlete.trim();
+    if (!name) { say("Scrivi il nome dell'atleta."); $("ath").focus(); return; }
+    var vals = collect();
+    if (!Object.keys(vals).length) { say("Inserisci almeno un valore."); return; }
+    var rec = { id: state.editing || ("v" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)), ts: Date.now(), athlete: name, date: state.date || today(), bw: state.bw, sport: state.sport, values: vals, note: state.note };
+    var i = store.visits.findIndex(function (v) { return v.id === rec.id; });
+    if (i > -1) { rec.ts = store.visits[i].ts; store.visits[i] = rec; } else store.visits.push(rec);
+    state.editing = rec.id; persist(); renderAll(); say(i > -1 ? "Visita aggiornata." : "Visita salvata.");
+  }
+  function openVisit(id) {
+    var v = store.visits.filter(function (x) { return x.id === id; })[0]; if (!v) return;
+    state.sport = v.sport; state.values = JSON.parse(JSON.stringify(v.values)); state.editing = v.id; state.athlete = v.athlete; state.date = v.date; state.bw = v.bw || ""; state.note = v.note || "";
+    $("ath").value = state.athlete; $("dt").value = state.date; $("bw").value = state.bw; $("note").value = state.note;
+    renderAll(); window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function newVisit() { state.values = {}; state.editing = null; state.note = ""; $("note").value = ""; state.date = today(); $("dt").value = state.date; renderAll(); }
+
+  function init() {
+    load();
+    state.date = today(); $("dt").value = state.date;
+    $("ath").addEventListener("input", function () { state.athlete = this.value; });
+    $("ath").addEventListener("change", function () { state.athlete = this.value; renderTests(); renderHist(); });
+    $("dt").addEventListener("change", function () { state.date = this.value; renderTests(); });
+    $("bw").addEventListener("input", function () { state.bw = this.value; renderDerived(); });
+    $("note").addEventListener("input", function () { state.note = this.value; });
+    $("save").addEventListener("click", saveVisit);
+    $("reset").addEventListener("click", newVisit);
+    $("bkcopy").addEventListener("click", function () {
+      var txt = JSON.stringify(store);
+      var done = function () { $("bkstatus").textContent = "Dati copiati."; };
+      var fb = function () { $("bktext").value = txt; $("bktext").select(); $("bkstatus").textContent = "Testo pronto nel riquadro: copialo a mano."; };
+      try { navigator.clipboard.writeText(txt).then(done, fb); } catch (e) { fb(); }
+    });
+    $("bkrestore").addEventListener("click", function () {
+      try {
+        var o = JSON.parse($("bktext").value);
+        if (!o || !Array.isArray(o.visits)) throw new Error("x");
+        var have = {}; store.visits.forEach(function (v) { have[v.id] = 1; });
+        var added = 0; o.visits.forEach(function (v) { if (v && v.id && !have[v.id]) { store.visits.push(v); added++; } });
+        persist(); renderAll(); $("bkstatus").textContent = added + " visite ripristinate.";
+      } catch (e) { $("bkstatus").textContent = "Testo non valido."; }
+    });
+    renderAll();
+  }
+  init();
+})();
+</script>

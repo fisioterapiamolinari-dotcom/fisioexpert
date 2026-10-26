@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
+     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+
+  window.fxCookie = (function () {
+    var ID_ADS = 'AW-18400590631';
+    var CHIAVE = 'fx_consenso_cookie';
+    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
+        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
+      } catch (e) {}
+      return null;
+    }
+
+    function salva(scelta) {
+      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
+    }
+
+    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
+    function caricaGoogle() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', ID_ADS, { send_page_view: false });
+    }
+
+    function cancellaCookieGoogle() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
+          });
+        }
+      });
+    }
+
+    if (leggi() === 'si') caricaGoogle();
+
+    return {
+      scelta: leggi,
+      accetta: function () { salva('si'); caricaGoogle(); },
+      rifiuta: function () {
+        salva('no');
+        if (caricato) {
+          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+        }
+        cancellaCookieGoogle();
+      },
+      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
+      conversione: function (etichetta) {
+        if (!caricato || !etichetta) return;
+        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
+      }
+    };
+  })();
+</script>
+<title>Stiramento posteriore coscia: recupero e tempi | Fisio Expert Roma</title>
+<meta name="description" content="Fitta dietro la coscia in accelerazione? Cosa succede al muscolo, quanto dura il recupero reale e perché le ricadute sono così frequenti. Roma EUR.">
+<link rel="canonical" href="https://fisioexpert.it/blog/stiramento-ischiocrurali-sprint.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stiramento posteriore coscia: recupero e tempi | Fisio Expert Roma">
+<meta property="og:description" content="Fitta dietro la coscia in accelerazione? Cosa succede al muscolo, quanto dura il recupero reale e perché le ricadute sono così frequenti. Roma EUR.">
+<meta property="og:url" content="https://fisioexpert.it/blog/stiramento-ischiocrurali-sprint.html">
+<meta property="og:image" content="https://fisioexpert.it/logo.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalWebPage","name":"Stiramento posteriore coscia: recupero e tempi","url":"https://fisioexpert.it/blog/stiramento-ischiocrurali-sprint.html","datePublished":"2026-09-28","author":{"@type":"Person","name":"Gianmarco Molinari","jobTitle":"Fisioterapista Sportivo"},"publisher":{"@type":"LocalBusiness","name":"Fisio Expert Roma","vatID":"14315091000","url":"https://fisioexpert.it"},"mainEntity":{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Stiramento flessori coscia quanto tempo per guarire?","acceptedAnswer":{"@type":"Answer","text":"Il tempo di recupero varia in base alla sede esatta della lesione, al grado di danneggiamento delle fibre e al tipo di attività a cui devi tornare. Non esiste un numero di settimane valido per tutti: il rientro allo sport si basa su criteri funzionali — forza, mobilità, tolleranza alla velocità — non sul calendario. Un fisioterapista sportivo può darti un'indicazione realistica solo dopo una valutazione clinica diretta."}},{"@type":"Question","name":"Come capire se è stiramento o strappo alla coscia?","acceptedAnswer":{"@type":"Answer","text":"Uno stiramento (lesione di primo grado) produce dolore localizzato durante il gesto ma permette di camminare, anche se con fastidio. Uno strappo parziale o completo causa dolore più intenso, gonfiore rapido, possibile ematoma visibile e difficoltà significativa nel piegare o estendere la gamba. La distinzione certa si fa con una valutazione clinica e, quando necessario, con un'ecografia muscolo-scheletrica."}},{"@type":"Question","name":"Si può correre con uno stiramento ai flessori?","acceptedAnswer":{"@type":"Answer","text":"Correre con un flessore stirato significa caricare un tessuto che è già oltre il suo limite di tolleranza, e il rischio concreto è trasformare uno stiramento in una lesione più estesa. Prima di tornare a correre serve recuperare la forza eccentrica del muscolo e testarlo con accelerazioni progressive in ambiente controllato. Il dolore che scompare camminando non significa che il muscolo sia pronto per la corsa."}},{"@type":"Question","name":"Esercizi per stiramento muscoli posteriori coscia?","acceptedAnswer":{"@type":"Answer","text":"Gli esercizi più utili nella fase di recupero sono quelli che allenano il muscolo a produrre forza mentre si allunga: stacchi rumeni con carico progressivo, isometrici in posizione di allungamento, Nordic hamstring curl nelle fasi avanzate, e bridge con scivolamento dei talloni. La scelta, la sequenza e il dosaggio dipendono dalla fase di guarigione e vanno definiti con un fisioterapista che conosca il tuo caso specifico."}}]}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#1a1a1a;--ink-soft:#4a4a4a;--ink-muted:#8a8a8a;--accent:#f47920;--accent-dark:#d4660e;--accent-light:rgba(244,121,32,0.08);--warm:#f8f4ef;--warm-dark:#ede8e0;--white:#ffffff;--border:rgba(26,26,26,0.1);--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--mono:'Montserrat',system-ui,sans-serif}
+  body{font-family:var(--sans);background:var(--warm);color:var(--ink);line-height:1.6}
+  nav{position:sticky;top:0;z-index:100;background:rgba(248,244,239,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 4rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:inline-flex;align-items:center;text-decoration:none}
+  .header-logo{height:36px;width:auto;display:block}
+  .logo-fallback{display:none;font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--ink);letter-spacing:-0.01em}
+  .logo-fallback b{color:var(--accent);font-weight:inherit}
+  .nav-back{font-size:0.875rem;color:var(--accent);text-decoration:none;font-weight:500}
+  .nav-back:hover{text-decoration:underline}
+  .article-hero{background:var(--white);border-bottom:1px solid var(--border);padding:4rem 4rem 3rem}
+  .breadcrumb{font-size:0.8rem;color:var(--ink-muted);margin-bottom:1.5rem}
+  .breadcrumb a{color:var(--accent);text-decoration:none}
+  .article-category{display:inline-block;background:var(--accent);color:var(--white);font-size:0.7rem;font-weight:500;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.25rem}
+  .article-hero h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;color:var(--ink);margin-bottom:1rem;max-width:700px}
+  .article-meta{font-size:0.82rem;color:var(--ink-muted)}
+  .article-meta span{margin-right:1.5rem}
+  .article-layout{display:grid;grid-template-columns:1fr 300px;gap:3rem;max-width:1100px;margin:0 auto;padding:3rem 4rem 5rem;align-items:start}
+  .article-body h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin:2.5rem 0 0.75rem;line-height:1.25}
+  .article-body h3{font-size:1.05rem;font-weight:500;color:var(--ink);margin:1.75rem 0 0.5rem}
+  .article-body p{font-size:1rem;color:var(--ink-soft);line-height:1.8;margin-bottom:1.25rem}
+  .article-body a{color:var(--accent);text-decoration:none}
+  .article-body a:hover{text-decoration:underline}
+  .article-body ul{margin:0.5rem 0 1.25rem;list-style:none;padding:0}
+  .article-body ul li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0 0.3rem 1.25rem;position:relative}
+  .article-body ul li::before{content:'';position:absolute;left:0;top:0.75rem;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .article-body ol{margin:0.5rem 0 1.25rem;padding-left:1.35rem}
+  .article-body ol li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0}
+  .article-body .highlight-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin:1.5rem 0}
+  .article-body .highlight-box p{margin:0;color:var(--ink)}
+  .article-body strong{color:var(--ink);font-weight:500}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+  .sidebar{position:sticky;top:80px}
+  .sidebar-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem}
+  .sidebar-card h4{font-family:var(--serif);font-size:1.1rem;color:var(--ink);margin-bottom:0.75rem}
+  .sidebar-card p{font-size:0.875rem;color:var(--ink-muted);line-height:1.6;margin-bottom:1rem}
+  .sidebar-btn{display:block;background:var(--accent);color:var(--white);text-align:center;padding:12px;border-radius:100px;text-decoration:none;font-size:0.875rem;font-weight:500;transition:background 0.2s}
+  .sidebar-btn:hover{background:var(--accent-dark)}
+  .sidebar-btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border);margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:6px}
+  .sidebar-btn.ghost:hover{border-color:var(--accent);background:var(--accent-light)}
+  .toc-title{font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.75rem}
+  .toc a{display:block;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;padding:0.3rem 0;border-left:2px solid var(--border);padding-left:0.75rem;transition:border-color 0.2s,color 0.2s}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .faq-section{margin-top:3rem}
+  .faq-section h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin-bottom:1.25rem}
+  .faq-item{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;background:var(--white)}
+  .faq-question{width:100%;text-align:left;background:none;border:none;padding:1.1rem 1.25rem;font-family:var(--sans);font-size:0.97rem;font-weight:500;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color 0.2s}
+  .faq-question:hover{color:var(--accent)}
+  .faq-icon{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:300;line-height:1;transition:transform 0.25s}
+  .faq-item.open .faq-icon{transform:rotate(45deg)}
+  .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;padding:0 1.25rem}
+  .faq-item.open .faq-answer{max-height:400px;padding:0 1.25rem 1.25rem}
+  .faq-answer p{font-size:0.93rem;color:var(--ink-soft);line-height:1.75;margin:0}
+  .article-cta{background:var(--ink);color:var(--white);border-radius:16px;padding:2rem;margin-top:3rem;text-align:center}
+  .article-cta h3{font-family:var(--serif);font-size:1.4rem;margin-bottom:0.5rem}
+  .article-cta p{font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:1.25rem;line-height:1.6}
+  .article-cta a{display:inline-block;background:var(--accent);color:var(--white);padding:13px 28px;border-radius:100px;text-decoration:none;font-weight:500;font-size:0.95rem;transition:background 0.2s}
+  .article-cta a:hover{background:var(--accent-dark)}
+  .disclaimer{max-width:1100px;margin:0 auto;padding:0 4rem 3rem;font-size:0.78rem;color:var(--ink-muted);line-height:1.7}
+  footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:2.5rem 5rem;font-size:0.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+  .footer-logo{display:flex;align-items:center;gap:10px}
+  .footer-logo img{height:24px;width:auto;display:block;filter:invert(1);opacity:0.85}
+  .logo-fallback-footer{display:none;font-family:var(--mono);font-weight:700;font-size:0.95rem;color:rgba(255,255,255,0.8)}
+  .logo-fallback-footer b{color:var(--accent);font-weight:inherit}
+  footer a{color:rgba(255,255,255,0.5);text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media(max-width:900px){nav,.article-hero{padding-left:1.5rem;padding-right:1.5rem}.article-layout{grid-template-columns:1fr;padding:2rem 1.5rem;gap:2rem}.sidebar{position:static}.disclaimer{padding:0 1.5rem 2rem}footer{padding:2rem 1.5rem;flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://fisioexpert.it" class="logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+    <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+  </a>
+  <a class="nav-back" href="/blog/">← Blog</a>
+</nav>
+
+<div class="article-hero">
+  <div class="breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/blog/">Blog</a> &nbsp;/&nbsp; Muscoli</div>
+  <span class="article-category">Muscoli</span>
+  <h1>Stiramento dei flessori: perché la coscia cede proprio durante lo sprint</h1>
+  <div class="article-meta"><span>Settembre 2026</span><span>Lettura: 9 minuti</span><span>Fisio Expert Roma</span></div>
+</div>
+
+<div class="article-layout">
+  <article class="article-body">
+<!-- CORPO:START -->
+    <h2 id="cosa-succede-davvero-dietro-la-coscia-durante-uno-sprint">Cosa succede davvero dietro la coscia durante uno sprint</h2>
+    <p>Quando acceleri in corsa, i muscoli posteriori della coscia — bicipite femorale, semitendinoso e semimembranoso — lavorano in una condizione paradossale: devono contrarsi per spingerti in avanti e contemporaneamente allungarsi per frenare la gamba che si sta estendendo. Questo tipo di lavoro si chiama contrazione eccentrica, ed è il momento di massimo stress meccanico per le fibre muscolari. La fitta che senti non arriva &quot;a caso&quot;: arriva nel punto esatto in cui il muscolo sta sopportando il carico più alto mentre è più allungato.</p>
+    <p>Il picco di tensione si concentra nella fase finale dell'oscillazione della gamba, un istante prima che il piede tocchi il suolo. Il bicipite femorale, in particolare la sua porzione lunga, è il fascio che in quella frazione di secondo subisce il carico maggiore. Ecco perché la maggior parte degli stiramenti posteriori di coscia colpisce proprio quel muscolo, proprio in quel punto, proprio in quel gesto.</p>
+    <p>Non è sfortuna. È biomeccanica.</p>
+    <h2 id="perche-il-muscolo-cede-in-quel-punto-preciso">Perché il muscolo cede in quel punto preciso</h2>
+    <p>Lo stiramento dei flessori si localizza quasi sempre nella giunzione miotendinea, cioè la zona di transizione tra la parte contrattile del muscolo e il tendine. Questa zona è strutturalmente meno elastica delle fibre muscolari pure e meno rigida del tendine vero e proprio: è un punto di compromesso meccanico, e i punti di compromesso sono i primi a cedere quando il carico supera la capacità di assorbimento.</p>
+    <p>In studio a Roma — sia nella sede dell'EUR in Viale Pasteur che in quella del Fleming — Gianmarco Molinari, fisioterapista sportivo iscritto all'albo FNOFI n. 2841, vede una costante: chi arriva con uno stiramento dei flessori racconta quasi sempre lo stesso schema. Una partita infrasettimanale dopo un periodo di allenamenti ridotti. Una ripresa di corsa dopo settimane di sola palestra. Un allungo a freddo nei primi minuti di gioco. Il contesto cambia, ma il denominatore comune è sempre un muscolo che non era pronto a gestire quel carico in quella posizione.</p>
+    <p><strong>Il cedimento non dipende dalla potenza dello sprint. Dipende dalla differenza tra ciò che il muscolo può tollerare e ciò che gli stai chiedendo.</strong> Un calciatore dilettante che scatta per un contropiede dopo tre settimane senza allenamento sul campo sottopone i suoi flessori a un divario enorme tra capacità e richiesta. Un runner amatoriale che inserisce ripetute in salita senza aver mai lavorato su velocità e decelerazione crea lo stesso tipo di squilibrio.</p>
+    <h3>La questione della lunghezza attiva</h3>
+    <p>Un muscolo può essere forte in accorciamento e fragile in allungamento. La forza non è un valore unico: cambia in base all'angolo articolare e alla velocità del movimento. I flessori di coscia raggiungono il picco di stress eccentrico quando il ginocchio è quasi esteso e l'anca è flessa — la posizione esatta della fase terminale dello sprint. Se non hai mai allenato il muscolo a produrre forza in quella posizione, stai correndo con un margine di sicurezza sottilissimo.</p>
+    <p>Questo spiega un pattern che si presenta con regolarità: persone che fanno leg curl in palestra con carichi importanti, con il ginocchio che parte da 90° e arriva a 0°, ma che non hanno mai lavorato in esercizi dove il muscolo è caricato in posizione allungata — come uno stacco rumeno lento e controllato o un Nordic hamstring curl. La forza c'è, ma è costruita nell'arco di movimento sbagliato. La coscia è forte dove non serve e vulnerabile dove serve.</p>
+    <h2 id="come-distinguere-uno-stiramento-da-una-contrattura-o-da-qualcosa-di-piu-serio">Come distinguere uno stiramento da una contrattura o da qualcosa di più serio</h2>
+    <p>Uno stiramento produce un dolore acuto e localizzato durante il gesto: sai indicare con un dito dove fa male, e il dolore è arrivato in un istante preciso. Una contrattura, invece, si manifesta come una tensione diffusa che cresce progressivamente, senza un momento netto di &quot;cedimento&quot;. La differenza è importante perché cambia completamente il percorso di gestione.</p>
+    <p><strong>Se durante uno scatto hai sentito uno schiocco, se la zona si è gonfiata rapidamente o se nelle ore successive è comparso un ematoma visibile, devi escludere una lesione di grado più alto.</strong> Un'ecografia muscolo-scheletrica, meglio se eseguita dopo 48-72 ore dall'evento per permettere al tessuto di stabilizzarsi, è lo strumento che permette di capire se le fibre sono solo sovraccaricate o se c'è un'interruzione strutturale.</p>
+    <p>Un altro segnale che richiede attenzione: il dolore che non migliora affatto dopo i primi giorni di riposo. Uno stiramento di primo grado — dove le fibre sono stressate ma non interrotte — tende a perdere intensità nei primi tre-quattro giorni, anche se non scompare. Se il dolore resta identico o peggiora, la situazione potrebbe essere diversa da quello che pensi.</p>
+    <div class="highlight-box"><p><strong>Concetto chiave:</strong> non cercare di farti una diagnosi da solo. Il dolore posteriore di coscia ha diverse possibili origini — muscolare, tendinea, radicolare, riferita dall'articolazione sacroiliaca — e solo una valutazione clinica con test specifici permette di capire cosa sta succedendo davvero.</p></div>
+    <h2 id="cosa-determina-se-ti-succedera-di-nuovo">Cosa determina se ti succederà di nuovo</h2>
+    <p>Il fattore di rischio più potente per uno stiramento dei flessori è averne già avuto uno. Non perché il muscolo sia &quot;segnato&quot;, ma perché il tessuto che si forma durante la riparazione ha caratteristiche meccaniche diverse dalla fibra muscolare originale: è meno elastico, meno capace di assorbire carichi eccentrici, e crea un punto di rigidità relativa che altera la distribuzione delle forze nelle fibre adiacenti.</p>
+    <p>Questo non vuol dire che sei condannato alla recidiva. Vuol dire che il percorso di ritorno allo sport deve includere un lavoro specifico per ridare al tessuto la capacità di tollerare l'allungamento sotto carico. E qui emerge il problema più frequente che si vede in studio: la persona smette di sentire dolore nella vita quotidiana, interpreta l'assenza di dolore come guarigione, e torna a correre o a giocare saltando tutta la fase di riallenamento progressivo.</p>
+    <p><strong>Il dolore se ne va prima che il muscolo sia pronto.</strong> Un flessore che non fa male durante una camminata può cedere di nuovo al primo scatto, perché camminare e sprintare sono due richieste meccaniche che non hanno nulla in comune per quel tessuto.</p>
+    <h3>I fattori che vedo ripetersi nelle recidive</h3>
+    <ul>
+      <li><strong>Ritorno allo sport basato solo sull'assenza di dolore</strong>, senza aver testato il muscolo in condizioni simili al gesto sportivo: accelerazioni progressive, cambi di direzione, decelerazioni brusche.</li>
+      <li><strong>Nessun lavoro eccentrico nella fase di recupero.</strong> Il Nordic hamstring curl, gli stacchi rumeni, le varianti di bridge con scivolamento sono esercizi che insegnano al muscolo a produrre forza mentre si allunga. Senza questo passaggio, il muscolo guarisce ma non si adatta.</li>
+      <li><strong>Squilibrio tra quadricipite e flessori.</strong> Chi allena prevalentemente la parte anteriore della coscia — squat, pressa, estensioni — e trascura la catena posteriore costruisce un rapporto di forza sbilanciato che aumenta il carico eccentrico sui flessori durante la corsa.</li>
+      <li><strong>Rigidità del bacino e scarsa mobilità dell'anca.</strong> Un'anca che non si estende a sufficienza durante la corsa trasferisce stress compensatorio ai flessori, che devono allungarsi di più per compensare il movimento che l'anca non concede.</li>
+    </ul>
+    <h2 id="il-percorso-di-recupero-cosa-funziona-e-in-che-ordine">Il percorso di recupero: cosa funziona e in che ordine</h2>
+    <p>Il recupero da uno stiramento dei flessori segue una logica precisa: prima riduci l'infiammazione e proteggi il tessuto, poi ricostruisci la capacità di carico, poi riesposizioni al gesto sportivo in modo graduato. Saltare un passaggio è il modo più sicuro per tornare al punto di partenza.</p>
+    <p>Nella fase iniziale, il riposo assoluto non è necessariamente la scelta migliore. Il tessuto muscolare ha bisogno di stimoli meccanici controllati per organizzare le fibre di riparazione nella direzione giusta. Immobilizzare completamente il muscolo per settimane produce un tessuto cicatriziale disorganizzato e rigido, che è esattamente ciò che vuoi evitare. Camminare, se non provoca dolore, è già uno stimolo utile.</p>
+    <p>La terapia manuale in questa fase serve a mantenere la mobilità dei tessuti circostanti, ridurre la tensione protettiva dei muscoli adiacenti, e migliorare la qualità del movimento dell'anca e del ginocchio. Non è il trattamento manuale che &quot;guarisce&quot; lo stiramento — è il carico progressivo che lo fa — ma la terapia manuale crea le condizioni perché il carico venga distribuito nel modo giusto.</p>
+    <p><strong>La fase critica è quella intermedia</strong>, quando il dolore quotidiano è sparito e cominci a sentirti bene. Qui serve un programma di esercizi specifici che aumenti progressivamente il carico eccentrico sui flessori, la velocità del movimento e l'ampiezza articolare. Ogni persona che arriva in studio al Fleming o all'EUR con questa situazione riceve un programma costruito sulle richieste del suo sport specifico: un calciatore ha bisogno di decelerazioni e cambi di direzione, un runner di tolleranza al volume di corsa, un tennista di affondi laterali e scatti brevi.</p>
+    <div class="highlight-box"><p><strong>Concetto chiave:</strong> la riabilitazione di uno stiramento non finisce quando non senti più dolore. Finisce quando il muscolo dimostra di poter gestire lo stesso tipo di carico che lo ha fatto cedere, senza compensi e senza esitazione.</p></div>
+    <h2 id="quando-farti-valutare-e-come-lavoriamo-in-studio">Quando farti valutare e come lavoriamo in studio</h2>
+    <p>Se hai sentito una fitta acuta dietro la coscia durante uno scatto, una corsa o un cambio di direzione, e il dolore ti ha costretto a fermarti, hai bisogno di una valutazione professionale. Non fra una settimana, non &quot;se non passa&quot;: adesso. Sapere cosa è successo esattamente — quale muscolo, quale zona, quale grado di lesione — è ciò che ti permette di prendere decisioni sensate su tempi e modalità di recupero, invece di procedere a tentativi.</p>
+    <p>Nello studio di Fisio Expert Roma — nelle sedi di Viale Pasteur 56 all'EUR e Via Città di Castello 20 al Fleming — il primo passo è sempre una valutazione clinica completa. Testiamo la forza dei flessori in diverse posizioni, la mobilità dell'anca, la qualità del movimento del bacino, e riproduciamo il meccanismo che ha causato il problema per capire esattamente cosa risponde e cosa no. Se serve un approfondimento ecografico, ti indirizziamo verso il professionista giusto.</p>
+    <p>Il percorso che segue è strutturato in fasi, con criteri di progressione basati su quello che il muscolo sa fare — non su quante settimane sono passate. Ogni fase ha obiettivi misurabili: range di movimento senza dolore, livelli di forza eccentrica, tolleranza a velocità crescenti di movimento. Non ti dico &quot;torna fra tre settimane e vediamo&quot;: ti dico cosa devi raggiungere per passare al livello successivo.</p>
+    <p><a href="/chi-sono.html">Con oltre quindici anni di esperienza nel trattamento di infortuni muscolari in ambito sportivo</a>, Gianmarco Molinari lavora con un approccio che integra terapia manuale, esercizio terapeutico progressivo e gestione del ritorno al gesto atletico. L'obiettivo non è solo risolvere lo stiramento attuale, ma costruire un muscolo che non ceda più nello stesso punto.</p>
+    <p>Se hai un dolore posteriore di coscia che ti sta limitando, <a href="/booking.html">prenota una valutazione</a> e vieni a capire esattamente cosa sta succedendo.</p>
+<!-- CORPO:END -->
+
+    <div class="faq-section">
+      <h2 id="faq">Domande frequenti</h2>
+<!-- FAQ:START -->
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Stiramento flessori coscia quanto tempo per guarire?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Il tempo di recupero varia in base alla sede esatta della lesione, al grado di danneggiamento delle fibre e al tipo di attività a cui devi tornare. Non esiste un numero di settimane valido per tutti: il rientro allo sport si basa su criteri funzionali — forza, mobilità, tolleranza alla velocità — non sul calendario. Un fisioterapista sportivo può darti un'indicazione realistica solo dopo una valutazione clinica diretta.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Come capire se è stiramento o strappo alla coscia?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Uno stiramento (lesione di primo grado) produce dolore localizzato durante il gesto ma permette di camminare, anche se con fastidio. Uno strappo parziale o completo causa dolore più intenso, gonfiore rapido, possibile ematoma visibile e difficoltà significativa nel piegare o estendere la gamba. La distinzione certa si fa con una valutazione clinica e, quando necessario, con un'ecografia muscolo-scheletrica.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Si può correre con uno stiramento ai flessori?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Correre con un flessore stirato significa caricare un tessuto che è già oltre il suo limite di tolleranza, e il rischio concreto è trasformare uno stiramento in una lesione più estesa. Prima di tornare a correre serve recuperare la forza eccentrica del muscolo e testarlo con accelerazioni progressive in ambiente controllato. Il dolore che scompare camminando non significa che il muscolo sia pronto per la corsa.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Esercizi per stiramento muscoli posteriori coscia?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Gli esercizi più utili nella fase di recupero sono quelli che allenano il muscolo a produrre forza mentre si allunga: stacchi rumeni con carico progressivo, isometrici in posizione di allungamento, Nordic hamstring curl nelle fasi avanzate, e bridge con scivolamento dei talloni. La scelta, la sequenza e il dosaggio dipendono dalla fase di guarigione e vanno definiti con un fisioterapista che conosca il tuo caso specifico.</p></div>
+      </div>
+<!-- FAQ:END -->
+    </div>
+
+    <div class="article-cta">
+      <h3>Hai bisogno di una valutazione?</h3>
+      <p>Prenota una prima visita: in 60 minuti capiamo esattamente cosa non va e costruiamo insieme il piano di cura piu efficace per te.</p>
+      <a href="/booking.html">Prenota la prima visita</a>
+    </div>
+  </article>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Prenota una visita</h4>
+      <p>Prima valutazione completa con piano di trattamento personalizzato.</p>
+      <a href="/booking.html" class="sidebar-btn">Prenota ora</a>
+      <a href="https://wa.me/393282738164" class="sidebar-btn ghost" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/></svg>
+        Scrivici su WhatsApp
+      </a>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">In questo articolo</div>
+      <div class="toc">
+<!-- TOC:START -->
+        <a href="#cosa-succede-davvero-dietro-la-coscia-durante-uno-sprint">Cosa succede davvero dietro la coscia durante uno sprint</a>
+        <a href="#perche-il-muscolo-cede-in-quel-punto-preciso">Perché il muscolo cede in quel punto preciso</a>
+        <a href="#come-distinguere-uno-stiramento-da-una-contrattura-o-da-qualcosa-di-piu-serio">Come distinguere uno stiramento da una contrattura o da qualcosa di più serio</a>
+        <a href="#cosa-determina-se-ti-succedera-di-nuovo">Cosa determina se ti succederà di nuovo</a>
+        <a href="#il-percorso-di-recupero-cosa-funziona-e-in-che-ordine">Il percorso di recupero: cosa funziona e in che ordine</a>
+        <a href="#quando-farti-valutare-e-come-lavoriamo-in-studio">Quando farti valutare e come lavoriamo in studio</a>
+        <a href="#faq">Domande frequenti</a>
+<!-- TOC:END -->
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">Articoli correlati</div>
+      <div class="toc">
+<!-- CORRELATI:START -->
+        <a href="/blog/tunnel-carpale-formicolio-mani.html">Tunnel carpale: perché le mani si addormentano proprio di notte</a>
+        <a href="/blog/epicondilite-gomito-del-tennista.html">Epicondilite: il gomito del tennista che viene soprattutto a chi non gioca</a>
+<!-- CORRELATI:END -->
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="disclaimer">
+  I contenuti di questo articolo hanno scopo informativo e divulgativo e non sostituiscono
+  la valutazione clinica di un professionista sanitario. In caso di dolore o sintomi
+  persistenti, rivolgiti a un fisioterapista o al tuo medico.
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert"
+         onerror="this.style.display='none'; document.getElementById('logoFallbackFooter').style.display='inline';">
+    <span id="logoFallbackFooter" class="logo-fallback-footer">fisio<b>·</b>expert</span>
+  </div>
+  <span>P.IVA 14315091000 &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy policy</a> &nbsp;·&nbsp; <a href="#" data-preferenze-cookie>Preferenze cookie</a> &nbsp;·&nbsp; Roma</span>
+</footer>
+
+<script>
+  function toggleFaq(btn){var item=btn.closest('.faq-item');var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(el){el.classList.remove('open')});if(!isOpen)item.classList.add('open')}
+</script>
+<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
+<style>
+  .cc-banner {
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: calc(100% - 40px); max-width: 380px;
+    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
+    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
+  }
+  .cc-banner[hidden] { display: none; }
+  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
+  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
+  .cc-testo a { color: #d4660e; text-decoration: underline; }
+  .cc-chiudi {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
+    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
+  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .cc-btn {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
+    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
+  }
+  .cc-rifiuta { background: #1a1a1a; }
+  .cc-rifiuta:hover { background: #3a3a3a; }
+  .cc-accetta { background: #f47920; }
+  .cc-accetta:hover { background: #d4660e; }
+  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .cc-banner {
+      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
+      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
+      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .cc-titolo { font-size: 19px; }
+    .cc-testo { font-size: 13.5px; }
+  }
+</style>
+<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
+  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
+  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
+  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
+  <div class="cc-pulsanti">
+    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
+    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var banner = document.getElementById('ccBanner');
+    if (!banner || !window.fxCookie) return;
+    function mostra() { banner.hidden = false; }
+    function nascondi() { banner.hidden = true; }
+    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
+    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
+      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
+    });
+    if (fxCookie.scelta() === null) mostra();
+  })();
+</script>
+
+</body>
+</html>

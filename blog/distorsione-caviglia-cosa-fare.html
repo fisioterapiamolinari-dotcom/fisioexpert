@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
+     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+
+  window.fxCookie = (function () {
+    var ID_ADS = 'AW-18400590631';
+    var CHIAVE = 'fx_consenso_cookie';
+    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
+        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
+      } catch (e) {}
+      return null;
+    }
+
+    function salva(scelta) {
+      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
+    }
+
+    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
+    function caricaGoogle() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', ID_ADS, { send_page_view: false });
+    }
+
+    function cancellaCookieGoogle() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
+          });
+        }
+      });
+    }
+
+    if (leggi() === 'si') caricaGoogle();
+
+    return {
+      scelta: leggi,
+      accetta: function () { salva('si'); caricaGoogle(); },
+      rifiuta: function () {
+        salva('no');
+        if (caricato) {
+          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+        }
+        cancellaCookieGoogle();
+      },
+      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
+      conversione: function (etichetta) {
+        if (!caricato || !etichetta) return;
+        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
+      }
+    };
+  })();
+</script>
+<title>Distorsione caviglia: cosa fare subito | Roma EUR | Fisio Expert Roma</title>
+<meta name="description" content="Caviglia girata e gonfia? Cosa fare nelle prime ore, quando serve una radiografia e perché il riposo totale è la scelta peggiore. Studio a Roma EUR.">
+<link rel="canonical" href="https://fisioexpert.it/blog/distorsione-caviglia-cosa-fare.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Distorsione caviglia: cosa fare subito | Roma EUR | Fisio Expert Roma">
+<meta property="og:description" content="Caviglia girata e gonfia? Cosa fare nelle prime ore, quando serve una radiografia e perché il riposo totale è la scelta peggiore. Studio a Roma EUR.">
+<meta property="og:url" content="https://fisioexpert.it/blog/distorsione-caviglia-cosa-fare.html">
+<meta property="og:image" content="https://fisioexpert.it/logo.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalWebPage","name":"Distorsione caviglia: cosa fare subito | Roma EUR","url":"https://fisioexpert.it/blog/distorsione-caviglia-cosa-fare.html","datePublished":"2026-09-24","author":{"@type":"Person","name":"Gianmarco Molinari","jobTitle":"Fisioterapista Sportivo"},"publisher":{"@type":"LocalBusiness","name":"Fisio Expert Roma","vatID":"14315091000","url":"https://fisioexpert.it"},"mainEntity":{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Distorsione caviglia quanto ghiaccio mettere al giorno?","acceptedAnswer":{"@type":"Answer","text":"Applica il ghiaccio per dieci-quindici minuti alla volta, con un panno tra la pelle e il ghiaccio, aspettando almeno un'ora tra un'applicazione e l'altra. Dopo le prime ventiquattro-trentasei ore il ghiaccio perde gran parte della sua utilità, perché il corpo ha bisogno di portare sangue alla zona per riparare i tessuti. Non dormire con il ghiaccio sulla caviglia per evitare ustioni da freddo."}},{"@type":"Question","name":"Dopo una storta alla caviglia quando posso ricominciare a camminare?","acceptedAnswer":{"@type":"Answer","text":"Già dopo le prime ventiquattro ore puoi provare a poggiare il piede a terra con una parte del peso, usando una stampella o un appoggio, se il dolore te lo consente. Non si tratta di camminare normalmente, ma di dare al legamento uno stimolo meccanico leggero che aiuti la formazione di tessuto cicatriziale di buona qualità. Se non riesci a caricare neanche parzialmente dopo un giorno, è importante farti valutare per escludere fratture o lesioni più serie."}},{"@type":"Question","name":"Perché mi si storce sempre la stessa caviglia?","acceptedAnswer":{"@type":"Answer","text":"La distorsione danneggia i recettori propriocettivi dentro e intorno al legamento, cioè i sensori che permettono al cervello di sapere dove si trova il piede nello spazio. Quando questi recettori non funzionano bene, i muscoli che dovrebbero stabilizzare la caviglia reagiscono in ritardo e il piede ruota verso l'interno prima che il corpo riesca a fermarlo. Un percorso di rieducazione propriocettiva specifico interrompe questo ciclo di instabilità."}},{"@type":"Question","name":"Distorsione caviglia devo andare al pronto soccorso o dal fisioterapista?","acceptedAnswer":{"@type":"Answer","text":"Se hai sentito uno schiocco, la caviglia è molto gonfia, non riesci a caricare il peso neanche parzialmente dopo ventiquattro ore, o il dolore è localizzato direttamente sull'osso, vai al pronto soccorso per escludere una frattura con una radiografia. Se la radiografia è negativa o la distorsione appare lieve, prenota una valutazione fisioterapica entro i primi cinque-sette giorni per testare la stabilità del legamento e impostare il recupero corretto fin da subito."}}]}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#1a1a1a;--ink-soft:#4a4a4a;--ink-muted:#8a8a8a;--accent:#f47920;--accent-dark:#d4660e;--accent-light:rgba(244,121,32,0.08);--warm:#f8f4ef;--warm-dark:#ede8e0;--white:#ffffff;--border:rgba(26,26,26,0.1);--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--mono:'Montserrat',system-ui,sans-serif}
+  body{font-family:var(--sans);background:var(--warm);color:var(--ink);line-height:1.6}
+  nav{position:sticky;top:0;z-index:100;background:rgba(248,244,239,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 4rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:inline-flex;align-items:center;text-decoration:none}
+  .header-logo{height:36px;width:auto;display:block}
+  .logo-fallback{display:none;font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--ink);letter-spacing:-0.01em}
+  .logo-fallback b{color:var(--accent);font-weight:inherit}
+  .nav-back{font-size:0.875rem;color:var(--accent);text-decoration:none;font-weight:500}
+  .nav-back:hover{text-decoration:underline}
+  .article-hero{background:var(--white);border-bottom:1px solid var(--border);padding:4rem 4rem 3rem}
+  .breadcrumb{font-size:0.8rem;color:var(--ink-muted);margin-bottom:1.5rem}
+  .breadcrumb a{color:var(--accent);text-decoration:none}
+  .article-category{display:inline-block;background:var(--accent);color:var(--white);font-size:0.7rem;font-weight:500;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.25rem}
+  .article-hero h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;color:var(--ink);margin-bottom:1rem;max-width:700px}
+  .article-meta{font-size:0.82rem;color:var(--ink-muted)}
+  .article-meta span{margin-right:1.5rem}
+  .article-layout{display:grid;grid-template-columns:1fr 300px;gap:3rem;max-width:1100px;margin:0 auto;padding:3rem 4rem 5rem;align-items:start}
+  .article-body h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin:2.5rem 0 0.75rem;line-height:1.25}
+  .article-body h3{font-size:1.05rem;font-weight:500;color:var(--ink);margin:1.75rem 0 0.5rem}
+  .article-body p{font-size:1rem;color:var(--ink-soft);line-height:1.8;margin-bottom:1.25rem}
+  .article-body a{color:var(--accent);text-decoration:none}
+  .article-body a:hover{text-decoration:underline}
+  .article-body ul{margin:0.5rem 0 1.25rem;list-style:none;padding:0}
+  .article-body ul li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0 0.3rem 1.25rem;position:relative}
+  .article-body ul li::before{content:'';position:absolute;left:0;top:0.75rem;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .article-body ol{margin:0.5rem 0 1.25rem;padding-left:1.35rem}
+  .article-body ol li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0}
+  .article-body .highlight-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin:1.5rem 0}
+  .article-body .highlight-box p{margin:0;color:var(--ink)}
+  .article-body strong{color:var(--ink);font-weight:500}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+  .sidebar{position:sticky;top:80px}
+  .sidebar-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem}
+  .sidebar-card h4{font-family:var(--serif);font-size:1.1rem;color:var(--ink);margin-bottom:0.75rem}
+  .sidebar-card p{font-size:0.875rem;color:var(--ink-muted);line-height:1.6;margin-bottom:1rem}
+  .sidebar-btn{display:block;background:var(--accent);color:var(--white);text-align:center;padding:12px;border-radius:100px;text-decoration:none;font-size:0.875rem;font-weight:500;transition:background 0.2s}
+  .sidebar-btn:hover{background:var(--accent-dark)}
+  .sidebar-btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border);margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:6px}
+  .sidebar-btn.ghost:hover{border-color:var(--accent);background:var(--accent-light)}
+  .toc-title{font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.75rem}
+  .toc a{display:block;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;padding:0.3rem 0;border-left:2px solid var(--border);padding-left:0.75rem;transition:border-color 0.2s,color 0.2s}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .faq-section{margin-top:3rem}
+  .faq-section h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin-bottom:1.25rem}
+  .faq-item{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;background:var(--white)}
+  .faq-question{width:100%;text-align:left;background:none;border:none;padding:1.1rem 1.25rem;font-family:var(--sans);font-size:0.97rem;font-weight:500;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color 0.2s}
+  .faq-question:hover{color:var(--accent)}
+  .faq-icon{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:300;line-height:1;transition:transform 0.25s}
+  .faq-item.open .faq-icon{transform:rotate(45deg)}
+  .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;padding:0 1.25rem}
+  .faq-item.open .faq-answer{max-height:400px;padding:0 1.25rem 1.25rem}
+  .faq-answer p{font-size:0.93rem;color:var(--ink-soft);line-height:1.75;margin:0}
+  .article-cta{background:var(--ink);color:var(--white);border-radius:16px;padding:2rem;margin-top:3rem;text-align:center}
+  .article-cta h3{font-family:var(--serif);font-size:1.4rem;margin-bottom:0.5rem}
+  .article-cta p{font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:1.25rem;line-height:1.6}
+  .article-cta a{display:inline-block;background:var(--accent);color:var(--white);padding:13px 28px;border-radius:100px;text-decoration:none;font-weight:500;font-size:0.95rem;transition:background 0.2s}
+  .article-cta a:hover{background:var(--accent-dark)}
+  .disclaimer{max-width:1100px;margin:0 auto;padding:0 4rem 3rem;font-size:0.78rem;color:var(--ink-muted);line-height:1.7}
+  footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:2.5rem 5rem;font-size:0.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+  .footer-logo{display:flex;align-items:center;gap:10px}
+  .footer-logo img{height:24px;width:auto;display:block;filter:invert(1);opacity:0.85}
+  .logo-fallback-footer{display:none;font-family:var(--mono);font-weight:700;font-size:0.95rem;color:rgba(255,255,255,0.8)}
+  .logo-fallback-footer b{color:var(--accent);font-weight:inherit}
+  footer a{color:rgba(255,255,255,0.5);text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media(max-width:900px){nav,.article-hero{padding-left:1.5rem;padding-right:1.5rem}.article-layout{grid-template-columns:1fr;padding:2rem 1.5rem;gap:2rem}.sidebar{position:static}.disclaimer{padding:0 1.5rem 2rem}footer{padding:2rem 1.5rem;flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://fisioexpert.it" class="logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+    <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+  </a>
+  <a class="nav-back" href="/blog/">← Blog</a>
+</nav>
+
+<div class="article-hero">
+  <div class="breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/blog/">Blog</a> &nbsp;/&nbsp; Caviglia</div>
+  <span class="article-category">Caviglia</span>
+  <h1>Distorsione di caviglia: cosa fare nelle prime 72 ore e cosa evitare</h1>
+  <div class="article-meta"><span>Settembre 2026</span><span>Lettura: 9 minuti</span><span>Fisio Expert Roma</span></div>
+</div>
+
+<div class="article-layout">
+  <article class="article-body">
+<!-- CORPO:START -->
+    <p>La caviglia si è girata, è gonfia e cammini di lato. Quello che fai nelle prime settantadue ore decide se fra tre settimane sarai tornato in campo o starai ancora zoppicando. Eppure, quasi ogni settimana, nello studio di Fisio Expert Roma all'EUR o al Fleming, vedo pazienti che si presentano dopo dieci giorni con una caviglia ancora viola e tumefatta, non perché la distorsione fosse grave, ma perché nelle prime ore hanno fatto esattamente il contrario di ciò che serviva.</p>
+    <p>Questo articolo è il protocollo che do ai miei pazienti appena mi chiamano dopo una storta. Non sostituisce una valutazione dal vivo, ma ti dà una mappa chiara per non peggiorare le cose prima di arrivare in studio.</p>
+    <h2 id="cosa-succede-davvero-quando-la-caviglia-si-gira">Cosa succede davvero quando la caviglia &quot;si gira&quot;</h2>
+    <p>Quando il piede ruota verso l'interno più di quanto i legamenti possano controllare, le fibre del legamento peroneo-astragalico anteriore — il più esposto — si stirano o si lacerano parzialmente. Il dolore che senti non è solo il legamento che si danneggia: è la risposta infiammatoria immediata del corpo, che riversa liquido nella zona per proteggerla. Quel gonfiore caldo, che compare già nei primi minuti, è un segnale che il tuo organismo sta cercando di immobilizzare la zona.</p>
+    <p>Il problema è che questa risposta, se non la guidi, diventa eccessiva. Il liquido si accumula oltre il necessario, comprime le strutture circostanti e rallenta la guarigione dei tessuti. L'ematoma che vedi comparire sotto il malleolo esterno — quella macchia scura che scende verso la pianta del piede — indica che alcuni capillari si sono rotti e il sangue si è infiltrato nei tessuti molli.</p>
+    <p>Ecco il punto che quasi nessuno ti spiega: <strong>il legamento inizia a ripararsi fin dalle prime ore</strong>, e la qualità di quella riparazione dipende dall'ambiente chimico e meccanico che troverà intorno. Se la caviglia resta immersa in un eccesso di edema e non riceve stimoli corretti, il tessuto cicatriziale si forma disorganizzato, debole, e predispone a nuove distorsioni. Questo è il motivo per cui la gestione delle prime settantadue ore non è un dettaglio: è il fondamento di tutto il recupero.</p>
+    <h2 id="le-prime-72-ore-il-protocollo-che-funziona">Le prime 72 ore: il protocollo che funziona</h2>
+    <p>Il vecchio acronimo RICE (riposo, ghiaccio, compressione, elevazione) è stato aggiornato dalla comunità scientifica con il protocollo PEACE &amp; LOVE, che bilancia protezione iniziale e carico progressivo precoce. Ti traduco cosa significa nella pratica, senza sigle da manuale.</p>
+    <h3>Protezione e scarico intelligente (ore 0-48)</h3>
+    <p>Nelle prime ore il tuo compito è <strong>proteggere la caviglia senza bloccarla del tutto</strong>. Questo significa evitare di caricarci sopra il peso se il dolore è forte, usare le stampelle se necessario, ma non restare immobile a letto per giorni. L'immobilità prolungata è uno degli errori che vedo più di frequente nei pazienti che arrivano nello studio di Viale Pasteur, all'EUR: &quot;Mi hanno detto di non muoverla per una settimana&quot; è la frase che sento più di qualsiasi altra.</p>
+    <p>Il bendaggio compressivo è il tuo migliore alleato in questa fase. Un bendaggio coesivo applicato dalla base delle dita fino a metà gamba, con pressione decrescente dal basso verso l'alto, limita l'espansione dell'edema senza tagliare la circolazione. Se le dita diventano blu, formicolano o si gonfiano a salsicciotto, il bendaggio è troppo stretto e va rifatto.</p>
+    <p>Tieni la caviglia sollevata quando sei seduto o sdraiato, idealmente con il piede sopra il livello del cuore. Non serve un cuscino enorme: basta uno spessore che porti il tallone più in alto dell'anca. Questo sfrutta la gravità per drenare il liquido in eccesso.</p>
+    <h3>Il ghiaccio: quanto, come, e quando smettere</h3>
+    <p>Il ghiaccio riduce il dolore e rallenta l'espansione dell'edema, ma <strong>non accelera la guarigione del legamento</strong>. Applicalo per dieci-quindici minuti alla volta, con un panno tra la pelle e il ghiaccio, e aspetta almeno un'ora prima di ripetere. Non dormire col ghiaccio sulla caviglia: il rischio di ustione da freddo è reale, e lo vedo capitare.</p>
+    <p>Dopo le prime ventiquattro-trentasei ore, il ghiaccio perde gran parte della sua utilità. A quel punto il corpo ha bisogno di portare sangue nuovo alla zona per avviare la riparazione, e il freddo continuo ostacola questo processo. Se dopo due giorni stai ancora applicando ghiaccio ogni ora, stai probabilmente facendo più danno che beneficio.</p>
+    <h3>Il carico precoce controllato (ore 24-72)</h3>
+    <p>Questo è il passaggio che fa la differenza tra un recupero veloce e uno che si trascina. Già dopo le prime ventiquattro ore, se il dolore lo permette, prova a poggiare il piede a terra con una parte del peso, tenendoti a un mobile o a una stampella. Non devi camminare normalmente: devi dare al legamento un segnale meccanico leggero che orienti la formazione del tessuto cicatriziale nella direzione giusta.</p>
+    <div class="highlight-box"><p><strong>Il concetto chiave è questo:</strong> il tessuto cicatriziale si allinea lungo le linee di forza che riceve. Se non riceve nessuna forza, si forma in modo caotico e sarà fragile. Se ne riceve troppa e troppo presto, si strappa di nuovo. La finestra giusta è un carico parziale, progressivo, guidato dal dolore.</p></div>
+    <p>Muovi le dita del piede, fai piccoli cerchi con la caviglia nello spazio — senza forzare verso il movimento che ha causato la distorsione — e contrai i muscoli del polpaccio anche da seduto. Questi micro-movimenti pompano via l'edema e mantengono attivo il sistema neuromuscolare, che è la vera protezione della tua caviglia nel lungo periodo.</p>
+    <h2 id="i-cinque-errori-che-trasformano-una-storta-da-tre-settimane-in-un-problema-da-tre-mesi">I cinque errori che trasformano una storta da tre settimane in un problema da tre mesi</h2>
+    <p>Gianmarco Molinari, fisioterapista sportivo iscritto all'albo FNOFI n. 2841, gestisce quotidianamente distorsioni di caviglia nel suo <a href="/chi-sono.html">percorso clinico ventennale</a>. Questi sono gli errori che vede ripetersi con una regolarità sconfortante.</p>
+    <p><strong>Primo errore: farsi fare una radiografia d'urgenza e fermarsi lì.</strong> La radiografia serve a escludere una frattura, ed è importante. Ma se è negativa — e nella maggior parte delle distorsioni lo è — il paziente esce dal pronto soccorso con un foglio che dice &quot;nessuna frattura&quot; e la convinzione che sia tutto a posto. Il legamento non si vede in radiografia. Serve un'ecografia o una risonanza se c'è il sospetto di una lesione significativa, e serve una valutazione funzionale per capire quanto è instabile l'articolazione.</p>
+    <p><strong>Secondo errore: il riposo assoluto prolungato.</strong> Ho già toccato questo punto, ma vale la pena insistere. Due o tre giorni di scarico parziale sono utili. Due settimane sul divano con il tutore bloccato no. I muscoli peronei — quelli che stabilizzano attivamente la caviglia — perdono forza e reattività con una velocità impressionante. Dopo dieci giorni di immobilità, la caviglia è più debole di quando ti sei fatto male.</p>
+    <p><strong>Terzo errore: gli impacchi caldi nelle prime quarantotto ore.</strong> Il calore dilata i vasi sanguigni e aumenta l'afflusso di sangue. Se lo applichi quando l'infiammazione è al picco, il gonfiore esplode. Ho visto caviglie raddoppiare di volume perché il paziente si è immerso in acqua calda la sera stessa della distorsione.</p>
+    <p><strong>Quarto errore: i massaggi sulla zona gonfia.</strong> Nessun tipo di massaggio diretto sulla caviglia acuta. Il tessuto è infiammato, i capillari sono fragili, e la pressione meccanica peggiora l'ematoma. Il drenaggio manuale linfatico è un'altra cosa, ma va fatto da mani esperte e con tempistiche precise.</p>
+    <p><strong>Quinto errore: tornare a correre appena il dolore diminuisce.</strong> Il dolore si riduce prima che il legamento sia guarito. Questo divario è una trappola in cui cadono praticamente tutti gli sportivi. Il dolore può calare già dopo cinque-sei giorni, ma il tessuto connettivo ha bisogno di settimane per raggiungere una resistenza meccanica sufficiente. Riprendere a correre o a cambiare direzione basandosi solo sull'assenza di dolore è il modo più diretto per cronicizzare il problema.</p>
+    <h2 id="perche-la-distorsione-di-caviglia-si-ripete-e-come-interrompere-il-ciclo">Perché la distorsione di caviglia si ripete — e come interrompere il ciclo</h2>
+    <p>Una caviglia che si è distorta una volta ha una probabilità significativamente più alta di distorcersi di nuovo. Non perché il legamento sia &quot;lento&quot; — questa è una semplificazione — ma perché la distorsione danneggia i recettori propriocettivi dentro e intorno al legamento. La propriocezione è la capacità del cervello di sapere esattamente dove si trova il tuo piede nello spazio, senza guardarlo. Quando questi recettori sono compromessi, il tempo di reazione dei muscoli peronei si allunga: il piede inizia a ruotare verso l'interno e i muscoli che dovrebbero fermarlo arrivano in ritardo.</p>
+    <p><strong>Il recupero propriocettivo è la parte più importante della riabilitazione</strong>, eppure è quella che viene saltata con maggiore frequenza. Il paziente smette di zoppicare, torna a camminare, e considera chiuso il capitolo. Ma la caviglia resta &quot;cieca&quot;: funziona bene in linea retta, su una superficie piana, con le scarpe da ginnastica. Poi basta un gradino, un terreno irregolare, un cambio di direzione in partita, e il meccanismo si ripete.</p>
+    <p>Nello studio di Via Città di Castello, nella zona Fleming, lavoro su questo aspetto con tavolette propriocettive, esercizi su superfici instabili e perturbazioni improvvise che rieducano la velocità di risposta dei muscoli stabilizzatori. Non è un lavoro che puoi improvvisare da solo con un video su YouTube, perché la progressione deve rispettare la fase di guarigione tissutale e il livello di controllo neuromuscolare che hai in quel momento.</p>
+    <div class="highlight-box"><p><strong>Ogni distorsione non riabilitata correttamente deposita un debito di instabilità che prima o poi la caviglia presenta il conto.</strong> L'instabilità cronica di caviglia non è una diagnosi rara: è la conseguenza diretta di storte sottovalutate e recuperi incompleti.</p></div>
+    <h2 id="quando-farsi-valutare-e-come-lavoriamo-in-studio">Quando farsi valutare e come lavoriamo in studio</h2>
+    <p>Se la caviglia è molto gonfia, non riesci a caricare il peso neanche parzialmente dopo ventiquattro ore, hai sentito un rumore secco al momento della distorsione, o il dolore è localizzato sull'osso e non lateralmente ai legamenti, hai bisogno di una valutazione professionale urgente, perché potrebbe esserci una frattura o una lesione legamentosa completa che richiede un percorso diverso.</p>
+    <p>Anche se la distorsione sembra lieve, ti consiglio una valutazione entro i primi cinque-sette giorni. In quella sede testo la stabilità dell'articolazione con manovre specifiche, valuto il grado di lesione legamentosa, e soprattutto definisco un piano di rientro che tenga conto del tuo sport, del tuo livello e delle tue scadenze. Una distorsione trattata da subito con criterio guarisce in tempi radicalmente diversi rispetto a una lasciata a sé stessa per settimane.</p>
+    <p>In Fisio Expert Roma, sia nella sede di Viale Pasteur 56 all'EUR che in quella di Via Città di Castello 20 al Fleming, il protocollo per la distorsione di caviglia segue tre fasi che si sovrappongono gradualmente: gestione dell'edema e del dolore con terapia manuale, bendaggio funzionale e tecniche strumentali mirate; recupero dell'articolarità e della forza dei muscoli stabilizzatori; rieducazione propriocettiva e simulazione dei gesti sportivi specifici, fino al ritorno in campo con test funzionali che confermino che la caviglia è pronta.</p>
+    <p>Non esiste un tempo di recupero standard, perché dipende dal grado della lesione, dalla tua storia di distorsioni precedenti e da quanto hai fatto — o non fatto — nelle prime settantadue ore. Quello che posso dirti è che il recupero guidato accorcia i tempi in modo consistente rispetto al &quot;vediamo come va&quot;.</p>
+    <p>Se hai una distorsione fresca o una caviglia che continua a cedere, <a href="/booking.html">prenota una valutazione</a> e vieni con le scarpe che usi per allenarti: mi servono per capire come il tuo piede lavora nella vita reale, non solo sul lettino.</p>
+<!-- CORPO:END -->
+
+    <div class="faq-section">
+      <h2 id="faq">Domande frequenti</h2>
+<!-- FAQ:START -->
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Distorsione caviglia quanto ghiaccio mettere al giorno?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Applica il ghiaccio per dieci-quindici minuti alla volta, con un panno tra la pelle e il ghiaccio, aspettando almeno un'ora tra un'applicazione e l'altra. Dopo le prime ventiquattro-trentasei ore il ghiaccio perde gran parte della sua utilità, perché il corpo ha bisogno di portare sangue alla zona per riparare i tessuti. Non dormire con il ghiaccio sulla caviglia per evitare ustioni da freddo.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Dopo una storta alla caviglia quando posso ricominciare a camminare?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Già dopo le prime ventiquattro ore puoi provare a poggiare il piede a terra con una parte del peso, usando una stampella o un appoggio, se il dolore te lo consente. Non si tratta di camminare normalmente, ma di dare al legamento uno stimolo meccanico leggero che aiuti la formazione di tessuto cicatriziale di buona qualità. Se non riesci a caricare neanche parzialmente dopo un giorno, è importante farti valutare per escludere fratture o lesioni più serie.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Perché mi si storce sempre la stessa caviglia?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>La distorsione danneggia i recettori propriocettivi dentro e intorno al legamento, cioè i sensori che permettono al cervello di sapere dove si trova il piede nello spazio. Quando questi recettori non funzionano bene, i muscoli che dovrebbero stabilizzare la caviglia reagiscono in ritardo e il piede ruota verso l'interno prima che il corpo riesca a fermarlo. Un percorso di rieducazione propriocettiva specifico interrompe questo ciclo di instabilità.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Distorsione caviglia devo andare al pronto soccorso o dal fisioterapista?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Se hai sentito uno schiocco, la caviglia è molto gonfia, non riesci a caricare il peso neanche parzialmente dopo ventiquattro ore, o il dolore è localizzato direttamente sull'osso, vai al pronto soccorso per escludere una frattura con una radiografia. Se la radiografia è negativa o la distorsione appare lieve, prenota una valutazione fisioterapica entro i primi cinque-sette giorni per testare la stabilità del legamento e impostare il recupero corretto fin da subito.</p></div>
+      </div>
+<!-- FAQ:END -->
+    </div>
+
+    <div class="article-cta">
+      <h3>Hai bisogno di una valutazione?</h3>
+      <p>Prenota una prima visita: in 60 minuti capiamo esattamente cosa non va e costruiamo insieme il piano di cura piu efficace per te.</p>
+      <a href="/booking.html">Prenota la prima visita</a>
+    </div>
+  </article>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Prenota una visita</h4>
+      <p>Prima valutazione completa con piano di trattamento personalizzato.</p>
+      <a href="/booking.html" class="sidebar-btn">Prenota ora</a>
+      <a href="https://wa.me/393282738164" class="sidebar-btn ghost" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/></svg>
+        Scrivici su WhatsApp
+      </a>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">In questo articolo</div>
+      <div class="toc">
+<!-- TOC:START -->
+        <a href="#cosa-succede-davvero-quando-la-caviglia-si-gira">Cosa succede davvero quando la caviglia &quot;si gira&quot;</a>
+        <a href="#le-prime-72-ore-il-protocollo-che-funziona">Le prime 72 ore: il protocollo che funziona</a>
+        <a href="#i-cinque-errori-che-trasformano-una-storta-da-tre-settimane-in-un-problema-da-tre-mesi">I cinque errori che trasformano una storta da tre settimane in un problema da tre mesi</a>
+        <a href="#perche-la-distorsione-di-caviglia-si-ripete-e-come-interrompere-il-ciclo">Perché la distorsione di caviglia si ripete — e come interrompere il ciclo</a>
+        <a href="#quando-farsi-valutare-e-come-lavoriamo-in-studio">Quando farsi valutare e come lavoriamo in studio</a>
+        <a href="#faq">Domande frequenti</a>
+<!-- TOC:END -->
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">Articoli correlati</div>
+      <div class="toc">
+<!-- CORRELATI:START -->
+        <a href="/blog/tunnel-carpale-formicolio-mani.html">Tunnel carpale: perché le mani si addormentano proprio di notte</a>
+        <a href="/blog/epicondilite-gomito-del-tennista.html">Epicondilite: il gomito del tennista che viene soprattutto a chi non gioca</a>
+<!-- CORRELATI:END -->
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="disclaimer">
+  I contenuti di questo articolo hanno scopo informativo e divulgativo e non sostituiscono
+  la valutazione clinica di un professionista sanitario. In caso di dolore o sintomi
+  persistenti, rivolgiti a un fisioterapista o al tuo medico.
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert"
+         onerror="this.style.display='none'; document.getElementById('logoFallbackFooter').style.display='inline';">
+    <span id="logoFallbackFooter" class="logo-fallback-footer">fisio<b>·</b>expert</span>
+  </div>
+  <span>P.IVA 14315091000 &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy policy</a> &nbsp;·&nbsp; <a href="#" data-preferenze-cookie>Preferenze cookie</a> &nbsp;·&nbsp; Roma</span>
+</footer>
+
+<script>
+  function toggleFaq(btn){var item=btn.closest('.faq-item');var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(el){el.classList.remove('open')});if(!isOpen)item.classList.add('open')}
+</script>
+<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
+<style>
+  .cc-banner {
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: calc(100% - 40px); max-width: 380px;
+    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
+    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
+  }
+  .cc-banner[hidden] { display: none; }
+  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
+  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
+  .cc-testo a { color: #d4660e; text-decoration: underline; }
+  .cc-chiudi {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
+    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
+  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .cc-btn {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
+    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
+  }
+  .cc-rifiuta { background: #1a1a1a; }
+  .cc-rifiuta:hover { background: #3a3a3a; }
+  .cc-accetta { background: #f47920; }
+  .cc-accetta:hover { background: #d4660e; }
+  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .cc-banner {
+      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
+      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
+      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .cc-titolo { font-size: 19px; }
+    .cc-testo { font-size: 13.5px; }
+  }
+</style>
+<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
+  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
+  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
+  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
+  <div class="cc-pulsanti">
+    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
+    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var banner = document.getElementById('ccBanner');
+    if (!banner || !window.fxCookie) return;
+    function mostra() { banner.hidden = false; }
+    function nascondi() { banner.hidden = true; }
+    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
+    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
+      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
+    });
+    if (fxCookie.scelta() === null) mostra();
+  })();
+</script>
+
+</body>
+</html>

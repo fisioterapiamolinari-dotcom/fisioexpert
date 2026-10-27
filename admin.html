@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f4ef">
+<title>Admin | Fisio Expert Allenamenti</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --green-light:rgba(46,158,91,0.12); --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+}
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.5; min-height:100vh; }
+.wrap { max-width:980px; margin:0 auto; padding:0 16px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0 0; position:sticky; top:0; z-index:20; }
+header .riga { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.logo { display:inline-flex; align-items:center; text-decoration:none; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; color:var(--ink); }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.tag { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
+.btn-esci { font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-muted); background:none; border:0; cursor:pointer; padding:8px 0 8px 12px; }
+nav { display:flex; gap:4px; margin-top:12px; overflow-x:auto; scrollbar-width:none; }
+nav a { font-family:var(--mono); font-weight:700; font-size:13px; color:var(--ink-muted); text-decoration:none; padding:10px 12px 12px; border-bottom:3px solid transparent; white-space:nowrap; }
+nav a.attiva { color:var(--ink); border-color:var(--accent); }
+nav .conta { background:var(--accent); color:var(--white); border-radius:10px; padding:1px 7px; font-size:11px; margin-left:4px; }
+
+h1 { font-family:var(--serif); font-weight:400; font-size:30px; line-height:1.15; margin:26px 0 6px; }
+h2 { font-family:var(--serif); font-weight:400; font-size:22px; line-height:1.2; margin:26px 0 10px; }
+.sotto { color:var(--ink-soft); font-size:15px; margin-bottom:18px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:6px; display:block; }
+.card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:12px; }
+a { color:var(--accent-dark); }
+
+input, select, textarea {
+  width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+  padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--white); outline:none;
+}
+input:focus, select:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+textarea { resize:vertical; }
+.campo { margin-bottom:12px; }
+.griglia2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:640px) { .griglia2 { grid-template-columns:1fr; } }
+
+.btn { display:inline-block; text-align:center; text-decoration:none; font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:.3px;
+  border:0; border-radius:12px; padding:13px 18px; cursor:pointer; background:var(--accent); color:var(--white); }
+.btn:hover { background:var(--accent-dark); }
+.btn:disabled { opacity:.6; cursor:wait; }
+.btn-sec { background:var(--white); color:var(--ink); border:1px solid var(--border); }
+.btn-sec:hover { background:var(--warm-dark); }
+.btn-pericolo { background:var(--white); color:var(--rosso); border:1px solid rgba(192,57,43,.35); }
+.btn-pericolo:hover { background:rgba(192,57,43,.06); }
+.btn-piccolo { padding:8px 12px; font-size:12px; border-radius:9px; }
+.btn-largo { display:block; width:100%; padding:16px; font-size:16px; }
+.azioni { display:flex; flex-wrap:wrap; gap:8px; }
+.link { background:none; border:0; color:var(--accent-dark); font-family:var(--mono); font-weight:700; font-size:12px; cursor:pointer; padding:4px 0; }
+
+.badge { display:inline-block; font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.4px; text-transform:uppercase; border-radius:20px; padding:3px 8px; white-space:nowrap; }
+.badge.ok { background:var(--green-light); color:var(--green); }
+.badge.attesa { background:var(--accent-light); color:var(--accent-dark); }
+.badge.spento { background:var(--warm-dark); color:var(--ink-soft); }
+
+/* Elenco pazienti */
+.cerca { margin-bottom:12px; }
+.paziente { display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+.paziente:hover { border-color:rgba(244,121,32,.4); }
+.paziente .iniziali { flex:0 0 44px; height:44px; border-radius:50%; background:var(--warm-dark); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:14px; }
+.paziente .testo { flex:1; min-width:0; }
+.paziente .nome { font-weight:700; }
+.paziente .info { color:var(--ink-muted); font-size:13px; }
+
+/* Editor scheda */
+.esempio { background:var(--warm); border-radius:10px; padding:10px 12px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); white-space:pre-wrap; margin-bottom:10px; }
+#testoScheda { min-height:260px; font-family:ui-monospace,Menlo,monospace; font-size:14px; line-height:1.55; }
+.tabella-righe { width:100%; border-collapse:separate; border-spacing:0 6px; }
+.tabella-righe th { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); text-align:left; padding:0 4px; }
+.tabella-righe td { padding:0 3px; vertical-align:top; }
+.tabella-righe input, .tabella-righe textarea { padding:8px 8px; font-size:14px; border-radius:8px; }
+.tabella-righe textarea { min-height:38px; }
+.tabella-righe .stretto { width:58px; }
+.tabella-righe .medio { width:82px; }
+.giorno-testa td { padding-top:14px; font-family:var(--serif); font-size:19px; }
+.riga-tools { display:flex; gap:2px; }
+.riga-tools button { background:none; border:0; color:var(--ink-muted); font-size:16px; cursor:pointer; padding:6px 5px; }
+.riga-tools button:hover { color:var(--ink); }
+.scorri { overflow-x:auto; }
+@media (max-width:760px) {
+  .tabella-righe, .tabella-righe tbody, .tabella-righe tr, .tabella-righe td { display:block; width:100%; }
+  .tabella-righe thead { display:none; }
+  .tabella-righe tr.riga-es { background:var(--warm); border-radius:12px; padding:10px; margin-bottom:8px; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .tabella-righe tr.riga-es td { padding:0; }
+  .tabella-righe tr.riga-es td.largo { grid-column:1 / -1; }
+  .tabella-righe .stretto, .tabella-righe .medio { width:100%; }
+  .tabella-righe td[data-label]::before { content:attr(data-label); display:block; font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); }
+}
+
+/* Dettaglio paziente */
+.dati-paziente { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 18px; font-size:14px; }
+.dati-paziente b { display:block; font-family:var(--mono); font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
+.scheda-attiva .righe { font-size:14px; color:var(--ink-soft); margin-top:8px; }
+.scheda-attiva .righe div { margin-bottom:2px; }
+details.sessione { background:var(--white); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
+details.sessione summary { list-style:none; cursor:pointer; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+details.sessione summary::-webkit-details-marker { display:none; }
+details.sessione .corpo { padding:0 16px 14px; font-size:14px; }
+details.sessione .corpo .es { margin-bottom:6px; }
+details.sessione .nota { background:var(--accent-light); border-radius:10px; padding:8px 10px; margin-top:8px; }
+.nota-flag { color:var(--accent-dark); font-weight:700; }
+
+/* Grafici progressi: una linea per esercizio (small multiples) */
+.grafici { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+.grafico { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:14px 14px 10px; position:relative; }
+.grafico .titolo { font-weight:700; font-size:14px; }
+.grafico .delta { font-size:13px; color:var(--ink-soft); }
+.grafico svg { display:block; width:100%; height:auto; margin-top:6px; overflow:visible; }
+.grafico .asse { stroke:rgba(26,26,26,.12); stroke-width:1; }
+.grafico .linea { fill:none; stroke:var(--accent-dark); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+.grafico .punto { fill:var(--accent-dark); stroke:var(--white); stroke-width:2; }
+.grafico .bersaglio { fill:transparent; cursor:pointer; }
+.grafico .etich { font-family:var(--sans); font-size:11px; fill:var(--ink-muted); }
+.tooltip { position:absolute; pointer-events:none; background:var(--ink); color:var(--white); font-size:12px; border-radius:8px; padding:6px 9px; white-space:nowrap; transform:translate(-50%,-110%); display:none; z-index:5; }
+
+/* Esercizi */
+details.esercizio { background:var(--white); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
+details.esercizio summary { list-style:none; cursor:pointer; padding:12px 16px; display:flex; justify-content:space-between; gap:10px; align-items:center; }
+details.esercizio summary::-webkit-details-marker { display:none; }
+details.esercizio .corpo { padding:4px 16px 16px; }
+
+.avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin:14px 0; }
+.avviso-info { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); }
+.avviso-errore { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); color:var(--rosso); }
+.avviso-ok { background:var(--green-light); border:1px solid rgba(46,158,91,0.3); color:#1f6e3f; }
+.vuoto { color:var(--ink-muted); text-align:center; padding:22px 10px; }
+.caricamento { text-align:center; color:var(--ink-muted); padding:50px 0; }
+.indietro { display:inline-block; font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-muted); text-decoration:none; margin-top:18px; }
+#toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--white); border-radius:12px; padding:12px 18px; font-size:14px; z-index:50; display:none; max-width:calc(100% - 32px); }
+footer { height:60px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="riga">
+      <a href="#pazienti" class="logo">
+        <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+             onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+        <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+      </a>
+      <span><span class="tag">Admin</span><button class="btn-esci" onclick="esci()">Esci</button></span>
+    </div>
+    <nav>
+      <a href="#pazienti" data-tab="pazienti">Pazienti<span id="contaAttesa"></span></a>
+      <a href="#nuova" data-tab="nuova">Nuova scheda</a>
+      <a href="#schede" data-tab="schede">Schede</a>
+      <a href="#esercizi" data-tab="esercizi">Esercizi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="pagina"><div class="caricamento">Carico…</div></main>
+<div id="toast"></div>
+<footer></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script>
+<script>
+// ---------------------------------------------------------------------
+// Configurazione
+// ---------------------------------------------------------------------
+const SUPABASE_URL = 'https://gaymgwkjpmrysuiltvvu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vHYG8XJx6bRHuN0zu_Zejw_IQrfZ9fl';
+const FUSO = 'Europe/Rome';
+const CHIAVE_BOZZA = 'fx_admin_bozza_scheda';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+let mioId = null;
+let pazienti = [];   // cache elenco
+let esercizi = [];   // cache libreria
+
+// ---------------------------------------------------------------------
+// Utilità
+// ---------------------------------------------------------------------
+function esc(t) {
+  return String(t ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function oggiRoma() { return new Intl.DateTimeFormat('en-CA', { timeZone: FUSO }).format(new Date()); }
+function dataBreve(iso) {
+  if (!iso) return '';
+  const [a, m, g] = iso.slice(0, 10).split('-').map(Number);
+  return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short', year: a !== new Date().getFullYear() ? 'numeric' : undefined, timeZone: 'UTC' })
+    .format(new Date(Date.UTC(a, m - 1, g, 12)));
+}
+function numero(n) { return Number(n).toLocaleString('it-IT', { maximumFractionDigits: 2 }); }
+function nomeCompleto(p) { return `${p.nome || ''} ${p.cognome || ''}`.trim() || p.nome_utente; }
+function iniziali(p) { return ((p.nome || '?')[0] + ((p.cognome || '')[0] || '')).toUpperCase(); }
+function toast(testo) {
+  const t = $('toast'); t.textContent = testo; t.style.display = 'block';
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.style.display = 'none', 3200);
+}
+function errore(err, prefisso = 'Errore') {
+  console.error(err);
+  const m = err?.message || String(err);
+  toast(`${prefisso}: ${m.includes('Failed to fetch') ? 'connessione assente' : m}`);
+}
+function attesa(btn, attivo, testo) {
+  if (!btn) return;
+  if (attivo) { btn.dataset.testo = btn.textContent; btn.textContent = testo || 'Attendi…'; btn.disabled = true; }
+  else { btn.textContent = btn.dataset.testo || btn.textContent; btn.disabled = false; }
+}
+
+// ---------------------------------------------------------------------
+// Avvio e navigazione
+// ---------------------------------------------------------------------
+async function avvio() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return location.replace('/login.html');
+  mioId = session.user.id;
+  const { data: io } = await sb.from('profili').select('ruolo').eq('id', mioId).single();
+  if (io?.ruolo !== 'admin') return location.replace('/app.html');
+  window.addEventListener('hashchange', instrada);
+  aggiornaContaAttesa();
+  instrada();
+}
+
+function instrada() {
+  const [tab, id] = (location.hash.slice(1) || 'pazienti').split('/');
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('attiva', a.dataset.tab === (tab === 'paziente' ? 'pazienti' : tab)));
+  window.scrollTo(0, 0);
+  $('pagina').innerHTML = '<div class="caricamento">Carico…</div>';
+  ({ pazienti: vistaPazienti, paziente: () => vistaPaziente(id), nuova: () => vistaNuova(id),
+     schede: vistaSchede, esercizi: vistaEsercizi }[tab] || vistaPazienti)();
+}
+
+async function aggiornaContaAttesa() {
+  const { count } = await sb.from('profili').select('id', { count: 'exact', head: true }).eq('ruolo', 'paziente').eq('attivo', false);
+  $('contaAttesa').innerHTML = count ? `<span class="conta">${count}</span>` : '';
+}
+
+async function esci() { await sb.auth.signOut(); location.replace('/login.html'); }
+
+// =====================================================================
+// PAZIENTI
+// =====================================================================
+async function vistaPazienti() {
+  const [{ data: elenco, error }, { data: ultime }] = await Promise.all([
+    sb.from('profili').select('*').eq('ruolo', 'paziente').order('creato_il', { ascending: false }),
+    sb.from('sessioni').select('paziente_id, data').eq('completata', true).order('data', { ascending: false }).limit(1000)
+  ]);
+  if (error) return errore(error, 'Pazienti non caricati');
+  pazienti = elenco;
+  const ultimaDi = {};
+  (ultime || []).forEach(s => { ultimaDi[s.paziente_id] ||= s.data; });
+
+  const inAttesa = elenco.filter(p => !p.attivo);
+  let html = `<h1>Pazienti</h1>
+    <p class="sotto">${elenco.length} ${elenco.length === 1 ? 'paziente registrato' : 'pazienti registrati'}${inAttesa.length ? ` · <b>${inAttesa.length} da attivare</b>` : ''}</p>
+    <input class="cerca" id="cercaPaz" placeholder="Cerca per nome, nome utente o email…" oninput="filtraPazienti()">
+    <div id="elencoPaz"></div>`;
+  $('pagina').innerHTML = html;
+  window._ultimaDi = ultimaDi;
+  filtraPazienti();
+}
+
+function filtraPazienti() {
+  const q = ($('cercaPaz')?.value || '').toLowerCase().trim();
+  const lista = pazienti
+    .filter(p => !q || [p.nome, p.cognome, p.nome_utente, p.email].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (a.attivo - b.attivo) || nomeCompleto(a).localeCompare(nomeCompleto(b), 'it'));
+  if (!lista.length) { $('elencoPaz').innerHTML = `<div class="card vuoto">${pazienti.length ? 'Nessun risultato.' : 'Nessun paziente registrato. Manda ai pazienti il link fisioexpert.it/login.html'}</div>`; return; }
+  $('elencoPaz').innerHTML = lista.map(p => {
+    const ultima = window._ultimaDi[p.id];
+    return `
+      <a class="card paziente" href="#paziente/${p.id}">
+        <span class="iniziali">${esc(iniziali(p))}</span>
+        <span class="testo">
+          <span class="nome">${esc(nomeCompleto(p))}</span>
+          <span class="info">@${esc(p.nome_utente)}${ultima ? ` · ultimo allenamento ${dataBreve(ultima)}` : ''}</span>
+        </span>
+        ${p.attivo ? '<span class="badge ok">Attivo</span>' : '<span class="badge attesa">Da attivare</span>'}
+      </a>`;
+  }).join('');
+}
+
+// ---------------------------------------------------------------------
+// Dettaglio paziente
+// ---------------------------------------------------------------------
+async function vistaPaziente(id) {
+  const [r1, r2, r3] = await Promise.all([
+    sb.from('profili').select('*').eq('id', id).single(),
+    sb.from('assegnazioni').select(`id, data_inizio, data_fine, stato, scheda_id,
+        schede ( id, nome, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, esercizi ( nome ) ) )`)
+      .eq('paziente_id', id).order('data_inizio', { ascending: false }),
+    sb.from('sessioni').select(`id, giorno, data, completata, note, assegnazione_id,
+        serie_registrate ( numero_serie, ripetizioni, carico_kg, rpe, scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
+      .eq('paziente_id', id).order('data', { ascending: false }).order('creato_il', { ascending: false }).limit(150)
+  ]);
+  if (r1.error) return errore(r1.error, 'Paziente non trovato');
+  const p = r1.data, assegnazioni = r2.data || [], sessioni = r3.data || [];
+  const attive = assegnazioni.filter(a => a.stato === 'attiva');
+
+  let html = `
+    <a class="indietro" href="#pazienti">← Pazienti</a>
+    <h1>${esc(nomeCompleto(p))}</h1>
+    <p class="sotto">@${esc(p.nome_utente)} · registrato il ${dataBreve(p.creato_il)} ·
+      ${p.attivo ? '<span class="badge ok">Attivo</span>' : '<span class="badge attesa">Da attivare</span>'}</p>`;
+
+  if (!p.attivo) html += `
+    <div class="card" style="border-color:rgba(244,121,32,.5)">
+      <p style="margin-bottom:12px">Questo paziente si è registrato e aspetta l'attivazione. Finché non lo attivi non vede nessuna scheda.</p>
+      <button class="btn" onclick="impostaAttivo('${p.id}', true, this)">Attiva paziente</button>
+    </div>`;
+
+  // Schede
+  html += `<h2>Scheda</h2>`;
+  if (!attive.length) html += `<div class="card vuoto">Nessuna scheda attiva.</div>`;
+  attive.forEach(a => {
+    const righe = (a.schede?.scheda_esercizi || []).sort((x, y) => x.giorno - y.giorno || x.ordine - y.ordine);
+    let perGiorno = '', g = null;
+    righe.forEach(r => {
+      if (r.giorno !== g) { g = r.giorno; perGiorno += `<div style="margin-top:6px"><b>Giorno ${g}</b></div>`; }
+      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}</div>`;
+    });
+    html += `
+      <div class="card scheda-attiva">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <div><b>${esc(a.schede?.nome)}</b><div class="sotto" style="margin:0;font-size:13px">dal ${dataBreve(a.data_inizio)}</div></div>
+          <span class="badge ok">Attiva</span>
+        </div>
+        <div class="righe">${perGiorno}</div>
+        <div class="azioni" style="margin-top:12px">
+          <a class="btn btn-sec btn-piccolo" href="#nuova/${p.id}" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}'); return false;">Modifica (nuova versione)</a>
+          <button class="btn btn-sec btn-piccolo" onclick="concludiAssegnazione('${a.id}', this)">Concludi</button>
+        </div>
+      </div>`;
+  });
+  html += `<a class="btn" href="#nuova/${p.id}">+ Nuova scheda per ${esc(p.nome || 'il paziente')}</a>`;
+
+  // Progressi e storico
+  html += `<h2>Progressi</h2><div id="grafici"></div>`;
+  html += `<h2>Storico allenamenti</h2>` + storicoAdmin(sessioni);
+
+  // Dati
+  html += `
+    <h2>Dati</h2>
+    <form class="card" onsubmit="salvaDatiPaziente(event, '${p.id}')">
+      <div class="griglia2">
+        <div class="campo"><label class="etichetta">Nome</label><input name="nome" value="${esc(p.nome)}"></div>
+        <div class="campo"><label class="etichetta">Cognome</label><input name="cognome" value="${esc(p.cognome)}"></div>
+        <div class="campo"><label class="etichetta">Email</label><input name="email" type="email" value="${esc(p.email)}"></div>
+        <div class="campo"><label class="etichetta">Telefono</label><input name="telefono" value="${esc(p.telefono)}"></div>
+        <div class="campo"><label class="etichetta">Collegamento CRM (id gestionale)</label><input name="crm_id" value="${esc(p.crm_id)}"></div>
+        <div class="campo"><label class="etichetta">Consenso privacy</label><input disabled value="${p.consenso_privacy_il ? esc(p.consenso_versione) + ' · ' + dataBreve(p.consenso_privacy_il) : 'Non dato'}"></div>
+      </div>
+      <button class="btn btn-sec">Salva dati</button>
+    </form>
+
+    <h2>Account e privacy</h2>
+    <div class="card azioni">
+      <button class="btn btn-sec" onclick="reimpostaPassword('${p.id}', '${esc(p.nome_utente)}')">Reimposta password</button>
+      <button class="btn btn-sec" onclick="esportaDati('${p.id}', '${esc(p.nome_utente)}', this)">Esporta dati (GDPR)</button>
+      ${p.attivo ? `<button class="btn btn-sec" onclick="impostaAttivo('${p.id}', false, this)">Disattiva</button>` : ''}
+      <button class="btn btn-pericolo" onclick="eliminaPaziente('${p.id}', '${esc(p.nome_utente)}')">Elimina paziente e dati</button>
+    </div>`;
+
+  $('pagina').innerHTML = html;
+  disegnaGrafici(sessioni);
+}
+
+function storicoAdmin(sessioni) {
+  if (!sessioni.length) return `<div class="card vuoto">Nessun allenamento registrato.</div>`;
+  return sessioni.map(s => {
+    const perEs = new Map();
+    (s.serie_registrate || []).slice()
+      .sort((a, b) => (a.scheda_esercizi?.ordine ?? 0) - (b.scheda_esercizi?.ordine ?? 0) || a.numero_serie - b.numero_serie)
+      .forEach(r => {
+        const n = r.scheda_esercizi?.esercizi?.nome || 'Esercizio';
+        if (!perEs.has(n)) perEs.set(n, []);
+        perEs.get(n).push(r);
+      });
+    let corpo = '';
+    perEs.forEach((serie, nome) => {
+      corpo += `<div class="es"><b>${esc(nome)}</b>: ${serie.map(r =>
+        `${r.ripetizioni ?? '–'}${Number(r.carico_kg) > 0 ? '×' + numero(r.carico_kg) + 'kg' : ''}${r.rpe != null ? ' @' + numero(r.rpe) : ''}`).join(' · ')}</div>`;
+    });
+    if (!corpo) corpo = '<div class="es">Nessuna serie registrata.</div>';
+    if (s.note) corpo += `<div class="nota">💬 ${esc(s.note)}</div>`;
+    return `
+      <details class="sessione">
+        <summary>
+          <span><b>${dataBreve(s.data)}</b> · Giorno ${s.giorno} · ${(s.serie_registrate || []).length} serie
+            ${s.note ? '<span class="nota-flag">· nota</span>' : ''}</span>
+          ${s.completata ? '<span class="badge ok">Completato</span>' : '<span class="badge spento">Non finito</span>'}
+        </summary>
+        <div class="corpo">${corpo}</div>
+      </details>`;
+  }).join('');
+}
+
+// Un grafico per esercizio: carico massimo per allenamento (o ripetizioni massime se a corpo libero)
+function disegnaGrafici(sessioni) {
+  const serieEs = new Map(); // nome → [{data, valore}]
+  sessioni.filter(s => s.completata).slice().reverse().forEach(s => {
+    const massimi = new Map();
+    (s.serie_registrate || []).forEach(r => {
+      const n = r.scheda_esercizi?.esercizi?.nome; if (!n) return;
+      const m = massimi.get(n) || { kg: 0, rip: 0 };
+      m.kg = Math.max(m.kg, Number(r.carico_kg) || 0);
+      m.rip = Math.max(m.rip, Number(r.ripetizioni) || 0);
+      massimi.set(n, m);
+    });
+    massimi.forEach((m, n) => {
+      if (!serieEs.has(n)) serieEs.set(n, []);
+      serieEs.get(n).push({ data: s.data, kg: m.kg, rip: m.rip });
+    });
+  });
+
+  const grafici = [];
+  serieEs.forEach((punti, nome) => {
+    if (punti.length < 2) return;
+    const usaKg = punti.some(p => p.kg > 0);
+    const valori = punti.map(p => ({ data: p.data, v: usaKg ? p.kg : p.rip })).filter(p => p.v > 0);
+    if (valori.length < 2) return;
+    grafici.push({ nome, unita: usaKg ? 'kg' : 'rip', valori });
+  });
+  if (!grafici.length) { $('grafici').innerHTML = `<div class="card vuoto">I grafici compaiono dopo almeno due allenamenti con lo stesso esercizio.</div>`; return; }
+
+  const L = 300, H = 110, sx = 8, dx = 8, su = 14, giu = 20;
+  $('grafici').innerHTML = `<div class="grafici">${grafici.map((g, gi) => {
+    const vs = g.valori.map(p => p.v);
+    let min = Math.min(...vs), max = Math.max(...vs);
+    if (min === max) { min = Math.max(0, min - 1); max = max + 1; }
+    const x = i => sx + (L - sx - dx) * (g.valori.length === 1 ? 0.5 : i / (g.valori.length - 1));
+    const y = v => su + (H - su - giu) * (1 - (v - min) / (max - min));
+    const primo = g.valori[0].v, ultimo = g.valori[g.valori.length - 1].v;
+    const diff = ultimo - primo;
+    const percorso = g.valori.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+    return `
+      <div class="grafico" data-g="${gi}">
+        <div class="titolo">${esc(g.nome)}</div>
+        <div class="delta">${numero(primo)} → <b>${numero(ultimo)} ${g.unita}</b> ${diff ? `(${diff > 0 ? '+' : ''}${numero(diff)})` : ''} · ${g.valori.length} allenamenti</div>
+        <svg viewBox="0 0 ${L} ${H}" role="img" aria-label="${esc(g.nome)}: da ${numero(primo)} a ${numero(ultimo)} ${g.unita}">
+          <line class="asse" x1="${sx}" x2="${L - dx}" y1="${H - giu}" y2="${H - giu}"/>
+          <path class="linea" d="${percorso}"/>
+          ${g.valori.map((p, i) => `<circle class="punto" cx="${x(i)}" cy="${y(p.v)}" r="4"/>`).join('')}
+          ${g.valori.map((p, i) => `<circle class="bersaglio" cx="${x(i)}" cy="${y(p.v)}" r="12" data-testo="${esc(dataBreve(p.data))}: ${numero(p.v)} ${g.unita}"/>`).join('')}
+          <text class="etich" x="${sx}" y="${H - 4}">${esc(dataBreve(g.valori[0].data))}</text>
+          <text class="etich" x="${L - dx}" y="${H - 4}" text-anchor="end">${esc(dataBreve(g.valori[g.valori.length - 1].data))}</text>
+        </svg>
+        <div class="tooltip"></div>
+      </div>`;
+  }).join('')}</div>`;
+
+  document.querySelectorAll('.grafico .bersaglio').forEach(c => {
+    const box = c.closest('.grafico'), tip = box.querySelector('.tooltip');
+    const mostra = () => {
+      const r = c.getBoundingClientRect(), b = box.getBoundingClientRect();
+      tip.textContent = c.dataset.testo; tip.style.display = 'block';
+      tip.style.left = (r.left + r.width / 2 - b.left) + 'px'; tip.style.top = (r.top - b.top + 6) + 'px';
+    };
+    c.addEventListener('mouseenter', mostra); c.addEventListener('click', mostra);
+    c.addEventListener('mouseleave', () => tip.style.display = 'none');
+  });
+}
+
+// ---------------------------------------------------------------------
+// Azioni sul paziente
+// ---------------------------------------------------------------------
+async function impostaAttivo(id, attivo, btn) {
+  attesa(btn, true);
+  const { error } = await sb.from('profili').update({ attivo }).eq('id', id);
+  attesa(btn, false);
+  if (error) return errore(error);
+  toast(attivo ? 'Paziente attivato' : 'Paziente disattivato');
+  aggiornaContaAttesa(); vistaPaziente(id);
+}
+
+async function salvaDatiPaziente(e, id) {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const dati = {};
+  ['nome', 'cognome', 'email', 'telefono', 'crm_id'].forEach(k => dati[k] = (f.get(k) || '').trim() || (k === 'nome' || k === 'cognome' ? '' : null));
+  if (dati.email) dati.email = dati.email.toLowerCase();
+  const { error } = await sb.from('profili').update(dati).eq('id', id);
+  if (error) return errore(error);
+  toast('Dati salvati');
+}
+
+async function concludiAssegnazione(id, btn) {
+  if (!confirm('Concludere questa scheda? Il paziente non la vedrà più, lo storico resta.')) return;
+  attesa(btn, true);
+  const { error } = await sb.from('assegnazioni').update({ stato: 'conclusa', data_fine: oggiRoma() }).eq('id', id);
+  attesa(btn, false);
+  if (error) return errore(error);
+  toast('Scheda conclusa'); instrada();
+}
+
+function passwordCasuale() {
+  const c = 'abcdefghjkmnpqrstuvwxyz23456789';
+  const a = new Uint32Array(10); crypto.getRandomValues(a);
+  return Array.from(a, n => c[n % c.length]).join('');
+}
+
+async function reimpostaPassword(id, utente) {
+  const nuova = prompt(`Nuova password per @${utente} (almeno 8 caratteri). Ne ho generata una, puoi cambiarla:`, passwordCasuale());
+  if (nuova === null) return;
+  if (nuova.length < 8) return toast('Serve almeno 8 caratteri');
+  const { error } = await sb.rpc('reimposta_password', { p_paziente: id, p_nuova: nuova });
+  if (error) return errore(error);
+  prompt(`Password aggiornata. Comunicala al paziente (copiala ora, non verrà più mostrata):`, `Nome utente: ${utente}  Password: ${nuova}`);
+}
+
+async function esportaDati(id, utente, btn) {
+  attesa(btn, true, 'Preparo…');
+  const { data, error } = await sb.rpc('esporta_dati_paziente', { p_paziente: id });
+  attesa(btn, false);
+  if (error) return errore(error);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `dati-${utente}-${oggiRoma()}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+async function eliminaPaziente(id, utente) {
+  const conferma = prompt(`ATTENZIONE: cancelli per sempre l'account e TUTTI i dati di @${utente} (schede assegnate, allenamenti, consensi). Non si può annullare.\n\nScarica prima l'export se serve.\n\nPer confermare scrivi il nome utente: ${utente}`);
+  if (conferma === null) return;
+  if (conferma.trim().toLowerCase() !== utente) return toast('Nome utente non corrispondente: niente è stato cancellato');
+  const { error } = await sb.rpc('elimina_paziente', { p_paziente: id });
+  if (error) return errore(error);
+  toast('Paziente eliminato');
+  aggiornaContaAttesa();
+  location.hash = '#pazienti';
+}
+
+// =====================================================================
+// NUOVA SCHEDA: scrivi in testo libero → tabella modificabile → salva
+// =====================================================================
+let bozza = null; // { nome, indicazioni, testo, pazienteId, righe:[{giorno,nome,serie,ripetizioni,rpe,recupero,indicazioni,note}] }
+
+const ESEMPIO = `Indicazioni: se il dolore supera 4/10 fermati e scrivimi.
+
+Giorno 1
+Squat bulgaro 3x8-10 RPE 7 rec 90" - scendi lento in 3 secondi
+Ponte glutei 3x12 RPE 6 nota: stringi i glutei in alto
+Plank 3x30 sec rec 60"
+
+Giorno 2
+Stacco rumeno 4x6 RPE 7-8 rec 2 min
+> schiena neutra, spingi il bacino indietro
+Calf raise 3x15`;
+
+async function vistaNuova(pazienteId) {
+  if (!pazienti.length) {
+    const { data } = await sb.from('profili').select('*').eq('ruolo', 'paziente').order('nome');
+    pazienti = data || [];
+  }
+  if (!esercizi.length) await caricaEsercizi();
+  if (!bozza) bozza = leggiBozza() || { nome: '', indicazioni: '', testo: '', pazienteId: '', righe: [] };
+  if (pazienteId) bozza.pazienteId = pazienteId;
+
+  const opzioni = pazienti.slice().sort((a, b) => nomeCompleto(a).localeCompare(nomeCompleto(b), 'it'))
+    .map(p => `<option value="${p.id}" ${p.id === bozza.pazienteId ? 'selected' : ''}>${esc(nomeCompleto(p))} (@${esc(p.nome_utente)})${p.attivo ? '' : ' · da attivare'}</option>`).join('');
+
+  $('pagina').innerHTML = `
+    <h1>Nuova scheda</h1>
+    <p class="sotto">Scrivila come la scriveresti a me. La trasformo in tabella: controlli, correggi e salvi.</p>
+
+    <div class="card">
+      <div class="griglia2">
+        <div class="campo"><label class="etichetta" for="nomeScheda">Nome scheda</label>
+          <input id="nomeScheda" placeholder="Es. Ginocchio – fase 2" value="${esc(bozza.nome)}"></div>
+        <div class="campo"><label class="etichetta" for="pazienteScheda">Assegna a</label>
+          <select id="pazienteScheda"><option value="">— Solo modello, non assegnare —</option>${opzioni}</select></div>
+      </div>
+      <label class="etichetta" for="testoScheda">Scheda in testo libero</label>
+      <details style="margin-bottom:8px"><summary class="link" style="list-style:none;cursor:pointer">Come scriverla (esempio)</summary>
+        <div class="esempio">${esc(ESEMPIO)}</div>
+        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">
+          <b>Giorno N</b> su una riga apre il giorno · <b>3x10</b> = serie × ripetizioni (anche 3x8-10, 3x30 sec, 3xmax) ·
+          <b>RPE 7</b> · <b>rec 90"</b> / rec 2 min · dopo <b>-</b> le indicazioni · <b>nota:</b> la nota ·
+          una riga che inizia con <b>&gt;</b> aggiunge indicazioni all'esercizio sopra · <b>Indicazioni:</b> prima del Giorno 1 = indicazioni generali.</p>
+        <button type="button" class="btn btn-sec btn-piccolo" onclick="$('testoScheda').value = ESEMPIO; leggiTesto()">Usa l'esempio</button>
+      </details>
+      <textarea id="testoScheda" placeholder="Giorno 1&#10;Squat bulgaro 3x8-10 RPE 7 rec 90&quot; - scendi lento…">${esc(bozza.testo)}</textarea>
+      <div class="azioni" style="margin-top:10px">
+        <button type="button" class="btn" onclick="leggiTesto()">Crea tabella dal testo</button>
+        <button type="button" class="btn btn-sec" onclick="svuotaBozza()">Svuota</button>
+      </div>
+    </div>
+
+    <div id="anteprima"></div>
+    <datalist id="nomiEsercizi">${esercizi.map(e => `<option value="${esc(e.nome)}">`).join('')}</datalist>`;
+
+  $('nomeScheda').addEventListener('input', e => { bozza.nome = e.target.value; salvaBozza(); });
+  $('pazienteScheda').addEventListener('change', e => { bozza.pazienteId = e.target.value; salvaBozza(); });
+  $('testoScheda').addEventListener('input', e => { bozza.testo = e.target.value; salvaBozza(); });
+  disegnaAnteprima();
+}
+
+function salvaBozza() { try { localStorage.setItem(CHIAVE_BOZZA, JSON.stringify(bozza)); } catch {} }
+function leggiBozza() { try { return JSON.parse(localStorage.getItem(CHIAVE_BOZZA)); } catch { return null; } }
+function svuotaBozza() {
+  if (bozza.righe.length && !confirm('Svuotare la scheda in corso?')) return;
+  const p = bozza.pazienteId;
+  bozza = { nome: '', indicazioni: '', testo: '', pazienteId: p, righe: [] };
+  salvaBozza(); vistaNuova();
+}
+
+// ---------------------------------------------------------------------
+// Lettore del testo libero
+// ---------------------------------------------------------------------
+function leggiSchedaDaTesto(testo) {
+  const ris = { indicazioni: [], righe: [] };
+  let giorno = null, ultima = null;
+
+  testo.split(/\r?\n/).forEach(grezza => {
+    let riga = grezza.trim();
+    if (!riga) return;
+
+    // "Giorno 2", "G2", "Day 2", "GIORNO 2 - gambe"
+    const g = riga.match(/^(?:giorno|day|g)\s*(\d{1,2})\b/i);
+    if (g) { giorno = Number(g[1]); ultima = null; return; }
+
+    // Indicazioni generali (prima del primo giorno o con "Indicazioni:")
+    const ind = riga.match(/^indicazioni(?:\s+generali)?\s*:\s*(.*)$/i);
+    if (ind) { ris.indicazioni.push(ind[1]); return; }
+
+    // "> testo" o "→ testo": indicazioni dell'esercizio sopra
+    if (/^[>→]/.test(riga) && ultima) { ultima.indicazioni = [ultima.indicazioni, riga.replace(/^[>→]\s*/, '')].filter(Boolean).join(' '); return; }
+    // "nota: …" da sola: nota dell'esercizio sopra
+    const notaSola = riga.match(/^not[ae]\s*:\s*(.+)$/i);
+    if (notaSola && ultima) { ultima.note = [ultima.note, notaSola[1]].filter(Boolean).join(' '); return; }
+
+    // toglie punti elenco e numerazione: "- ", "• ", "1. ", "1) "
+    riga = riga.replace(/^(?:[-•*·]\s+|\d{1,2}[.)]\s+)/, '');
+
+    let es = leggiRigaEsercizio(riga);
+    if (!es && giorno === null) { ris.indicazioni.push(riga); return; }
+    // dentro un giorno, una riga non riconosciuta diventa comunque un esercizio (si corregge in tabella)
+    if (!es) es = { nome: riga.charAt(0).toUpperCase() + riga.slice(1), serie: null, ripetizioni: '', rpe: '', recupero: '', indicazioni: '', note: '' };
+    if (giorno === null) giorno = 1;
+    es.giorno = giorno;
+    ris.righe.push(es);
+    ultima = es;
+  });
+  ris.indicazioni = ris.indicazioni.join('\n');
+  return ris;
+}
+
+// "Squat bulgaro 3x8-10 RPE 7 rec 90" - scendi lento nota: occhio al ginocchio"
+function leggiRigaEsercizio(riga) {
+  let resto = riga, note = '', rpe = '', recupero = '', serie = null, ripetizioni = '';
+
+  const n = resto.match(/\bnot[ae]\s*:\s*(.+)$/i);
+  if (n) { note = n[1].trim(); resto = resto.slice(0, n.index); }
+
+  const r = resto.match(/\brpe\s*:?\s*(\d+(?:[.,]\d)?(?:\s*[-–\/]\s*\d+(?:[.,]\d)?)?)/i);
+  if (r) { rpe = r[1].replace(/\s+/g, '').replace('–', '-'); resto = resto.replace(r[0], ' '); }
+
+  const rec = resto.match(/\b(?:rec(?:upero)?|riposo|pausa)\s*:?\s*(\d+(?:[.,]\d+)?\s*(?:['’]\s*\d*\s*["”]?|["”]|sec(?:ondi)?\b|s\b|min(?:uti)?\b|m\b)?)/i);
+  if (rec) { recupero = rec[1].trim(); resto = resto.replace(rec[0], ' '); }
+
+  // 3x10 · 3 x 8-10 · 3x30 sec · 3xmax · 3 serie da 10
+  const sr = resto.match(/(\d{1,2})\s*(?:[x×*]|serie\s*(?:da|x)?)\s*(max|\d+(?:\s*[-–]\s*\d+)?(?:\s*(?:sec(?:ondi)?|s|["”]|min(?:uti)?|['’]|rip(?:etizioni)?|per\s+lato|x\s*lato))?)\b["”'’]?/i);
+  let nome = resto, dopo = '';
+  if (sr) {
+    serie = Number(sr[1]);
+    ripetizioni = sr[2].replace(/\s*rip(?:etizioni)?$/i, '').replace(/\s+/g, ' ').replace('–', '-').trim();
+    if (/["”]$/.test(sr[0]) && !/sec|["”]/.test(ripetizioni)) ripetizioni += ' sec';
+    ripetizioni = ripetizioni.replace(/\s*["”]$/, ' sec').replace(/\bs$/, 'sec');
+    nome = resto.slice(0, sr.index);
+    dopo = resto.slice(sr.index + sr[0].length);
+  } else {
+    // senza serie×rip: è un esercizio solo se ha RPE o recupero, oppure un separatore " - "
+    const sep = resto.match(/\s[-–:]\s/);
+    if (!rpe && !recupero && !sep) return null;
+    if (sep) { nome = resto.slice(0, sep.index); dopo = resto.slice(sep.index + sep[0].length); }
+  }
+  nome = nome.replace(/[\s\-–:,|]+$/, '').trim();
+  const indicazioni = dopo.replace(/^[\s\-–:,|]+/, '').replace(/\s{2,}/g, ' ').trim();
+  if (!nome) return null;
+  return { nome: nome.charAt(0).toUpperCase() + nome.slice(1), serie, ripetizioni, rpe, recupero, indicazioni, note };
+}
+
+function leggiTesto() {
+  bozza.testo = $('testoScheda').value;
+  const ris = leggiSchedaDaTesto(bozza.testo);
+  if (!ris.righe.length) return toast('Non ho trovato esercizi. Controlla l\'esempio: es. "Squat 3x10 RPE 7"');
+  bozza.righe = ris.righe;
+  bozza.indicazioni = ris.indicazioni;
+  salvaBozza(); disegnaAnteprima();
+  $('anteprima').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ---------------------------------------------------------------------
+// Tabella modificabile
+// ---------------------------------------------------------------------
+function disegnaAnteprima() {
+  if (!bozza.righe.length) { $('anteprima').innerHTML = ''; return; }
+  bozza.righe.sort((a, b) => a.giorno - b.giorno);
+  const nomiLib = new Set(esercizi.map(e => e.nome.toLowerCase()));
+  const nuovi = [...new Set(bozza.righe.map(r => r.nome.trim()).filter(n => n && !nomiLib.has(n.toLowerCase())))];
+
+  let corpo = '', g = null;
+  bozza.righe.forEach((r, i) => {
+    if (r.giorno !== g) { g = r.giorno; corpo += `<tr class="giorno-testa"><td colspan="9">Giorno ${g}</td></tr>`; }
+    corpo += `
+      <tr class="riga-es" data-i="${i}">
+        <td data-label="G"><input class="stretto" data-c="giorno" inputmode="numeric" value="${r.giorno}"></td>
+        <td class="largo" data-label="Esercizio"><input data-c="nome" list="nomiEsercizi" value="${esc(r.nome)}"></td>
+        <td data-label="Serie"><input class="stretto" data-c="serie" inputmode="numeric" value="${r.serie ?? ''}"></td>
+        <td data-label="Rip"><input class="medio" data-c="ripetizioni" value="${esc(r.ripetizioni)}"></td>
+        <td data-label="RPE"><input class="stretto" data-c="rpe" value="${esc(r.rpe)}"></td>
+        <td data-label="Recupero"><input class="medio" data-c="recupero" value="${esc(r.recupero)}"></td>
+        <td class="largo" data-label="Indicazioni"><textarea data-c="indicazioni" rows="${righeTesto(r.indicazioni)}">${esc(r.indicazioni)}</textarea></td>
+        <td class="largo" data-label="Note"><textarea data-c="note" rows="${righeTesto(r.note)}">${esc(r.note)}</textarea></td>
+        <td><div class="riga-tools">
+          <button type="button" title="Su" data-az="su">↑</button>
+          <button type="button" title="Giù" data-az="giu">↓</button>
+          <button type="button" title="Elimina" data-az="via">✕</button>
+        </div></td>
+      </tr>`;
+  });
+
+  const giorni = new Set(bozza.righe.map(r => r.giorno)).size;
+  $('anteprima').innerHTML = `
+    <h2>Controlla e correggi</h2>
+    <div class="card">
+      <label class="etichetta" for="indicazioniScheda">Indicazioni generali</label>
+      <textarea id="indicazioniScheda" rows="2" placeholder="Valgono per tutta la scheda">${esc(bozza.indicazioni)}</textarea>
+    </div>
+    <div class="card scorri">
+      <table class="tabella-righe">
+        <thead><tr><th>G</th><th>Esercizio</th><th>Serie</th><th>Rip</th><th>RPE</th><th>Recupero</th><th>Indicazioni</th><th>Note</th><th></th></tr></thead>
+        <tbody id="corpoRighe">${corpo}</tbody>
+      </table>
+      <button type="button" class="link" onclick="aggiungiRiga()">+ Aggiungi esercizio</button>
+    </div>
+    ${nuovi.length ? `<div class="avviso avviso-info"><b>Esercizi nuovi</b> (verranno aggiunti alla libreria): ${nuovi.map(esc).join(', ')}.
+      Se uno è già in libreria con un nome diverso, correggilo scegliendolo dal suggerimento.</div>` : ''}
+    <div class="avviso avviso-info" id="riepilogoSalva">${bozza.righe.length} esercizi su ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'}.</div>
+    <button class="btn btn-largo" id="btnSalvaScheda" onclick="salvaScheda(this)">Salva scheda${bozza.pazienteId ? ' e assegna' : ''}</button>`;
+
+  $('indicazioniScheda').addEventListener('input', e => { bozza.indicazioni = e.target.value; salvaBozza(); });
+  $('corpoRighe').addEventListener('input', e => {
+    const c = e.target.dataset.c; if (!c) return;
+    const r = bozza.righe[Number(e.target.closest('tr').dataset.i)];
+    r[c] = (c === 'giorno' || c === 'serie') ? (parseInt(e.target.value, 10) || (c === 'giorno' ? 1 : null)) : e.target.value;
+    salvaBozza();
+  });
+  $('corpoRighe').addEventListener('change', e => { if (e.target.dataset.c === 'giorno') disegnaAnteprima(); });
+  $('corpoRighe').addEventListener('click', e => {
+    const az = e.target.dataset.az; if (!az) return;
+    const i = Number(e.target.closest('tr').dataset.i);
+    if (az === 'via') bozza.righe.splice(i, 1);
+    if (az === 'su' && i > 0 && bozza.righe[i - 1].giorno === bozza.righe[i].giorno) [bozza.righe[i - 1], bozza.righe[i]] = [bozza.righe[i], bozza.righe[i - 1]];
+    if (az === 'giu' && i < bozza.righe.length - 1 && bozza.righe[i + 1].giorno === bozza.righe[i].giorno) [bozza.righe[i + 1], bozza.righe[i]] = [bozza.righe[i], bozza.righe[i + 1]];
+    salvaBozza(); disegnaAnteprima();
+  });
+}
+
+function righeTesto(t) { return Math.min(4, Math.max(1, Math.ceil(String(t || '').length / 24))); }
+
+function aggiungiRiga() {
+  const g = bozza.righe.length ? bozza.righe[bozza.righe.length - 1].giorno : 1;
+  bozza.righe.push({ giorno: g, nome: '', serie: 3, ripetizioni: '10', rpe: '', recupero: '', indicazioni: '', note: '' });
+  salvaBozza(); disegnaAnteprima();
+}
+
+// ---------------------------------------------------------------------
+// Salvataggio: libreria esercizi → scheda → righe → assegnazione
+// ---------------------------------------------------------------------
+async function salvaScheda(btn) {
+  const nome = ($('nomeScheda').value || '').trim();
+  const pazienteId = $('pazienteScheda').value;
+  const righe = bozza.righe.filter(r => r.nome.trim());
+  if (!nome) { $('nomeScheda').focus(); return toast('Dai un nome alla scheda'); }
+  if (!righe.length) return toast('La scheda non ha esercizi');
+  const paz = pazienti.find(p => p.id === pazienteId);
+
+  attesa(btn, true, 'Salvo…');
+  try {
+    // 1. esercizi: usa quelli in libreria (senza badare a maiuscole), crea i mancanti
+    await caricaEsercizi();
+    const perNome = new Map(esercizi.map(e => [e.nome.toLowerCase(), e.id]));
+    const mancanti = [...new Map(righe.map(r => r.nome.trim()).filter(n => !perNome.has(n.toLowerCase())).map(n => [n.toLowerCase(), n])).values()];
+    if (mancanti.length) {
+      const { data, error } = await sb.from('esercizi').insert(mancanti.map(n => ({ nome: n }))).select('id, nome');
+      if (error) throw error;
+      data.forEach(e => perNome.set(e.nome.toLowerCase(), e.id));
+    }
+
+    // 2. scheda
+    const { data: scheda, error: e2 } = await sb.from('schede')
+      .insert({ nome, indicazioni: (bozza.indicazioni || '').trim() || null, creata_da: mioId }).select('id').single();
+    if (e2) throw e2;
+
+    // 3. righe, con l'ordine dentro ogni giorno
+    const contatore = {};
+    const daInserire = righe.map(r => ({
+      scheda_id: scheda.id,
+      esercizio_id: perNome.get(r.nome.trim().toLowerCase()),
+      giorno: Math.min(7, Math.max(1, Number(r.giorno) || 1)),
+      ordine: (contatore[r.giorno] = (contatore[r.giorno] || 0) + 1),
+      serie: r.serie ? Math.min(20, Math.max(1, Number(r.serie))) : null,
+      ripetizioni: (r.ripetizioni || '').trim() || null,
+      rpe: (r.rpe || '').trim() || null,
+      recupero: (r.recupero || '').trim() || null,
+      indicazioni: (r.indicazioni || '').trim() || null,
+      note: (r.note || '').trim() || null
+    }));
+    const { error: e3 } = await sb.from('scheda_esercizi').insert(daInserire);
+    if (e3) throw e3;
+
+    // 4. assegnazione: la nuova sostituisce quella attiva del paziente
+    if (pazienteId) {
+      const { error: e4 } = await sb.from('assegnazioni')
+        .update({ stato: 'conclusa', data_fine: oggiRoma() }).eq('paziente_id', pazienteId).eq('stato', 'attiva');
+      if (e4) throw e4;
+      const { error: e5 } = await sb.from('assegnazioni').insert({ paziente_id: pazienteId, scheda_id: scheda.id });
+      if (e5) throw e5;
+      if (paz && !paz.attivo) await sb.from('profili').update({ attivo: true }).eq('id', pazienteId);
+    }
+
+    try { localStorage.removeItem(CHIAVE_BOZZA); } catch {}
+    bozza = null;
+    toast(pazienteId ? `Scheda salvata e assegnata a ${paz ? nomeCompleto(paz) : 'paziente'}` : 'Scheda salvata come modello');
+    location.hash = pazienteId ? '#paziente/' + pazienteId : '#schede';
+  } catch (err) {
+    attesa(btn, false);
+    errore(err, 'Scheda non salvata');
+  }
+}
+
+// Carica una scheda esistente nell'editor (per modificarla o riusarla come modello)
+async function modelloDaScheda(schedaId, pazienteId) {
+  const { data, error } = await sb.from('schede')
+    .select('nome, indicazioni, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
+    .eq('id', schedaId).single();
+  if (error) return errore(error);
+  bozza = {
+    nome: data.nome, indicazioni: data.indicazioni || '', testo: '', pazienteId: pazienteId || '',
+    righe: data.scheda_esercizi.sort((a, b) => a.giorno - b.giorno || a.ordine - b.ordine).map(r => ({
+      giorno: r.giorno, nome: r.esercizi?.nome || '', serie: r.serie, ripetizioni: r.ripetizioni || '',
+      rpe: r.rpe || '', recupero: r.recupero || '', indicazioni: r.indicazioni || '', note: r.note || ''
+    }))
+  };
+  salvaBozza();
+  if (location.hash === '#nuova' + (pazienteId ? '/' + pazienteId : '')) instrada();
+  else location.hash = '#nuova' + (pazienteId ? '/' + pazienteId : '');
+}
+
+// =====================================================================
+// SCHEDE
+// =====================================================================
+async function vistaSchede() {
+  const { data, error } = await sb.from('schede')
+    .select('id, nome, creato_il, scheda_esercizi ( giorno ), assegnazioni ( stato, paziente_id, profili ( nome, cognome ) )')
+    .order('creato_il', { ascending: false });
+  if (error) return errore(error, 'Schede non caricate');
+
+  let html = `<h1>Schede</h1><p class="sotto">Tutte le schede create. "Usa come modello" la copia in una nuova scheda da modificare e assegnare.</p>`;
+  if (!data.length) html += `<div class="card vuoto">Nessuna scheda. <a href="#nuova">Creane una</a>.</div>`;
+  data.forEach(s => {
+    const giorni = new Set(s.scheda_esercizi.map(r => r.giorno)).size;
+    const attive = s.assegnazioni.filter(a => a.stato === 'attiva');
+    html += `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <div><b>${esc(s.nome)}</b>
+            <div style="color:var(--ink-muted);font-size:13px">${s.scheda_esercizi.length} esercizi · ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'} · creata ${dataBreve(s.creato_il)}</div>
+            ${attive.length ? `<div style="font-size:13px;margin-top:4px">Attiva per: ${attive.map(a => `<a href="#paziente/${a.paziente_id}">${esc(`${a.profili?.nome || ''} ${a.profili?.cognome || ''}`.trim())}</a>`).join(', ')}</div>` : ''}
+          </div>
+          ${attive.length ? '<span class="badge ok">In uso</span>' : s.assegnazioni.length ? '<span class="badge spento">Usata</span>' : '<span class="badge spento">Modello</span>'}
+        </div>
+        <div class="azioni" style="margin-top:10px">
+          <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${s.id}')">Usa come modello</button>
+          ${s.assegnazioni.length ? '' : `<button class="btn btn-pericolo btn-piccolo" onclick="eliminaScheda('${s.id}', this)">Elimina</button>`}
+        </div>
+      </div>`;
+  });
+  $('pagina').innerHTML = html;
+}
+
+async function eliminaScheda(id, btn) {
+  if (!confirm('Eliminare questa scheda? Non è assegnata a nessuno.')) return;
+  attesa(btn, true);
+  const { error } = await sb.from('schede').delete().eq('id', id);
+  if (error) { attesa(btn, false); return errore(error); }
+  toast('Scheda eliminata'); vistaSchede();
+}
+
+// =====================================================================
+// ESERCIZI (libreria)
+// =====================================================================
+async function caricaEsercizi() {
+  const { data, error } = await sb.from('esercizi').select('*').order('nome');
+  if (error) throw error;
+  esercizi = data;
+}
+
+async function vistaEsercizi() {
+  try { await caricaEsercizi(); } catch (err) { return errore(err, 'Esercizi non caricati'); }
+  $('pagina').innerHTML = `
+    <h1>Esercizi</h1>
+    <p class="sotto">${esercizi.length} esercizi in libreria. Si aggiungono da soli quando salvi una scheda. Qui puoi aggiungere descrizione, video e immagine: il paziente li vede durante l'allenamento.</p>
+    <input class="cerca" id="cercaEs" placeholder="Cerca esercizio…" oninput="filtraEsercizi()">
+    <div id="elencoEs"></div>`;
+  filtraEsercizi();
+}
+
+function filtraEsercizi() {
+  const q = ($('cercaEs')?.value || '').toLowerCase().trim();
+  const lista = esercizi.filter(e => !q || e.nome.toLowerCase().includes(q));
+  if (!lista.length) { $('elencoEs').innerHTML = `<div class="card vuoto">${esercizi.length ? 'Nessun risultato.' : 'La libreria è vuota: si riempie quando salvi la prima scheda.'}</div>`; return; }
+  $('elencoEs').innerHTML = lista.map(e => `
+    <details class="esercizio">
+      <summary><b>${esc(e.nome)}</b>
+        <span>${e.link_video ? '<span class="badge ok">Video</span> ' : ''}${e.link_immagine ? '<span class="badge ok">Immagine</span>' : ''}</span></summary>
+      <form class="corpo" onsubmit="salvaEsercizio(event, '${e.id}')">
+        <div class="campo"><label class="etichetta">Nome</label><input name="nome" value="${esc(e.nome)}" required></div>
+        <div class="campo"><label class="etichetta">Descrizione (come si esegue)</label><textarea name="descrizione" rows="3">${esc(e.descrizione)}</textarea></div>
+        <div class="griglia2">
+          <div class="campo"><label class="etichetta">Link video</label><input name="link_video" type="url" placeholder="https://youtube.com/…" value="${esc(e.link_video)}"></div>
+          <div class="campo"><label class="etichetta">Link immagine</label><input name="link_immagine" type="url" placeholder="https://…" value="${esc(e.link_immagine)}"></div>
+        </div>
+        <div class="campo"><label class="etichetta">Note interne</label><input name="note" value="${esc(e.note)}"></div>
+        <div class="azioni">
+          <button class="btn btn-sec btn-piccolo">Salva</button>
+          <button type="button" class="btn btn-pericolo btn-piccolo" onclick="eliminaEsercizio('${e.id}')">Elimina</button>
+        </div>
+      </form>
+    </details>`).join('');
+}
+
+async function salvaEsercizio(ev, id) {
+  ev.preventDefault();
+  const f = new FormData(ev.target);
+  const dati = {};
+  ['nome', 'descrizione', 'link_video', 'link_immagine', 'note'].forEach(k => dati[k] = (f.get(k) || '').trim() || null);
+  if (!dati.nome) return toast('Il nome è obbligatorio');
+  const { error } = await sb.from('esercizi').update(dati).eq('id', id);
+  if (error) return errore(error, error.code === '23505' ? 'Esiste già un esercizio con questo nome' : 'Non salvato');
+  Object.assign(esercizi.find(e => e.id === id), dati);
+  toast('Esercizio salvato');
+}
+
+async function eliminaEsercizio(id) {
+  if (!confirm('Eliminare questo esercizio dalla libreria?')) return;
+  const { error } = await sb.from('esercizi').delete().eq('id', id);
+  if (error) return toast(error.code === '23503' ? 'Non si può eliminare: è usato in una scheda' : 'Errore: ' + error.message);
+  esercizi = esercizi.filter(e => e.id !== id);
+  filtraEsercizi(); toast('Esercizio eliminato');
+}
+
+avvio();
+</script>
+</body>
+</html>

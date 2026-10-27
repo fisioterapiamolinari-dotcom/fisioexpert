@@ -576,7 +576,7 @@ async function vistaNuova(pazienteId) {
 
   $('pagina').innerHTML = `
     <h1>Nuova scheda</h1>
-    <p class="sotto">Scrivila come la scriveresti a me. La trasformo in tabella: controlli, correggi e salvi.</p>
+    <p class="sotto">Incolla il blocco <b>VERSIONE APP</b> preparato da Claude, oppure scrivila a mano. La trasformo in tabella: controlli, correggi e salvi.</p>
 
     <div class="card">
       <div class="griglia2">
@@ -585,7 +585,7 @@ async function vistaNuova(pazienteId) {
         <div class="campo"><label class="etichetta" for="pazienteScheda">Assegna a</label>
           <select id="pazienteScheda"><option value="">— Solo modello, non assegnare —</option>${opzioni}</select></div>
       </div>
-      <label class="etichetta" for="testoScheda">Scheda in testo libero</label>
+      <label class="etichetta" for="testoScheda">Scheda da Claude o in testo libero</label>
       <details style="margin-bottom:8px"><summary class="link" style="list-style:none;cursor:pointer">Come scriverla (esempio)</summary>
         <div class="esempio">${esc(ESEMPIO)}</div>
         <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">
@@ -695,9 +695,36 @@ function leggiRigaEsercizio(riga) {
   return { nome: nome.charAt(0).toUpperCase() + nome.slice(1), serie, ripetizioni, rpe, recupero, indicazioni, note };
 }
 
+// Formato preciso preparato da Claude in chat: { nome, indicazioni, giorni: [{ giorno, esercizi: [...] }] }
+function leggiSchedaDaJson(testo) {
+  const inizio = testo.indexOf('{'), fine = testo.lastIndexOf('}');
+  if (inizio < 0 || fine < inizio) return null;
+  let dati;
+  try { dati = JSON.parse(testo.slice(inizio, fine + 1)); } catch { return null; }
+  if (!Array.isArray(dati.giorni)) return null;
+  const testoDi = v => v == null ? '' : String(v).trim();
+  const righe = [];
+  dati.giorni.forEach((g, gi) => (g.esercizi || []).forEach(e => {
+    if (!testoDi(e.nome)) return;
+    righe.push({
+      giorno: Number(g.giorno) || gi + 1,
+      nome: testoDi(e.nome),
+      serie: parseInt(e.serie, 10) || null,
+      ripetizioni: testoDi(e.ripetizioni),
+      rpe: testoDi(e.rpe),
+      recupero: testoDi(e.recupero),
+      indicazioni: testoDi(e.indicazioni),
+      note: testoDi(e.note)
+    });
+  }));
+  return { nome: testoDi(dati.nome), indicazioni: testoDi(dati.indicazioni), righe };
+}
+
 function leggiTesto() {
   bozza.testo = $('testoScheda').value;
-  const ris = leggiSchedaDaTesto(bozza.testo);
+  const json = leggiSchedaDaJson(bozza.testo);
+  if (json && json.nome && !$('nomeScheda').value.trim()) { $('nomeScheda').value = json.nome; bozza.nome = json.nome; }
+  const ris = json || leggiSchedaDaTesto(bozza.testo);
   if (!ris.righe.length) return toast('Non ho trovato esercizi. Controlla l\'esempio: es. "Squat 3x10 RPE 7"');
   bozza.righe = ris.righe;
   bozza.indicazioni = ris.indicazioni;

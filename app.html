@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f4ef">
+<title>I miei allenamenti | Fisio Expert</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+}
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.55; min-height:100vh; }
+.wrap { max-width:560px; margin:0 auto; padding:0 16px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; position:sticky; top:0; z-index:10; }
+header .wrap { display:flex; align-items:center; justify-content:space-between; }
+.logo { display:inline-flex; align-items:center; text-decoration:none; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; color:var(--ink); }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.btn-esci { font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-muted); background:none; border:0; cursor:pointer; padding:8px 0 8px 12px; }
+
+.saluto { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin-top:24px; }
+h1 { font-family:var(--serif); font-weight:400; font-size:30px; line-height:1.15; margin:6px 0 16px; }
+h2 { font-family:var(--serif); font-weight:400; font-size:22px; line-height:1.2; margin:28px 0 12px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); }
+
+.card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:12px; }
+
+/* Prossimo allenamento: l'unica azione principale */
+.prossimo { background:var(--ink); color:var(--white); border:0; padding:22px 20px; }
+.prossimo .etichetta { color:rgba(255,255,255,.6); }
+.prossimo .titolo { font-family:var(--serif); font-size:28px; line-height:1.15; margin:6px 0 4px; }
+.prossimo .dettaglio { color:rgba(255,255,255,.75); font-size:14px; margin-bottom:16px; }
+.prossimo ol { color:rgba(255,255,255,.85); font-size:15px; padding-left:20px; margin-bottom:18px; }
+.prossimo li { margin-bottom:3px; }
+.btn { display:block; width:100%; text-align:center; text-decoration:none; font-family:var(--mono); font-weight:700; font-size:16px; letter-spacing:.3px;
+  border:0; border-radius:12px; padding:17px; cursor:pointer; background:var(--accent); color:var(--white); }
+.btn:hover { background:var(--accent-dark); }
+.fatto-oggi { background:rgba(46,158,91,.18); color:#bfeccf; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:14px; }
+
+.indicazioni { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); border-radius:14px; padding:14px 16px; font-size:15px; color:var(--ink-soft); margin-bottom:12px; white-space:pre-line; }
+
+/* Elenco giorni */
+.giorno { display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit; }
+.giorno .num { flex:0 0 48px; height:48px; border-radius:12px; background:var(--warm-dark); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:18px; }
+.giorno.suggerito .num { background:var(--accent); color:var(--white); }
+.giorno .testo { flex:1; min-width:0; }
+.giorno .nome { font-weight:700; display:block; }
+.giorno .eserc { display:block; color:var(--ink-muted); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.giorno .freccia { color:var(--ink-muted); font-size:20px; }
+
+/* Riepilogo */
+.stat { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.stat .card { margin:0; text-align:center; padding:14px; }
+.stat .valore { font-family:var(--serif); font-size:30px; line-height:1.1; }
+
+/* Storico */
+details.sessione { background:var(--white); border:1px solid var(--border); border-radius:14px; margin-bottom:10px; }
+details.sessione summary { list-style:none; cursor:pointer; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+details.sessione summary::-webkit-details-marker { display:none; }
+details.sessione summary .data { font-weight:700; }
+details.sessione summary .info { color:var(--ink-muted); font-size:13px; }
+details.sessione summary .stato { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.4px; text-transform:uppercase; border-radius:20px; padding:4px 9px; white-space:nowrap; }
+.stato.ok { background:rgba(46,158,91,.12); color:var(--green); }
+.stato.incompleta { background:var(--warm-dark); color:var(--ink-soft); }
+details.sessione[open] summary { border-bottom:1px solid var(--border); }
+.dettaglio-sessione { padding:12px 16px 14px; font-size:14px; }
+.dettaglio-sessione .es { margin-bottom:10px; }
+.dettaglio-sessione .es b { display:block; }
+.dettaglio-sessione .serie { color:var(--ink-soft); }
+.dettaglio-sessione .nota { color:var(--ink-soft); font-style:italic; border-top:1px solid var(--border); padding-top:10px; }
+
+.avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin-top:16px; }
+.avviso-info { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); }
+.avviso-errore { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); color:var(--rosso); }
+.vuoto { color:var(--ink-muted); font-size:15px; text-align:center; padding:24px 12px; }
+.caricamento { text-align:center; color:var(--ink-muted); padding:60px 0; }
+.link { color:var(--accent-dark); }
+footer { text-align:center; color:var(--ink-muted); font-size:12px; padding:28px 16px 40px; }
+footer a { color:inherit; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="/app.html" class="logo">
+      <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <button class="btn-esci" onclick="esci()">Esci</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="avvisi"></div>
+  <div id="contenuto"><div class="caricamento">Carico i tuoi allenamenti…</div></div>
+</main>
+
+<footer>
+  Fisio Expert · <a href="/informativa-app.html">Privacy</a> · <a href="https://wa.me/393282738164" target="_blank" rel="noopener">Scrivi a Gianmarco</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script>
+<script>
+// ---------------------------------------------------------------------
+// Configurazione
+// ---------------------------------------------------------------------
+const SUPABASE_URL = 'https://gaymgwkjpmrysuiltvvu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vHYG8XJx6bRHuN0zu_Zejw_IQrfZ9fl';
+const VERSIONE_CONSENSO = 'v1-2026-10';
+const CHIAVE_CACHE = 'fx_cache_home';      // copia locale per aprire la home anche senza rete
+const CHIAVE_CODA  = 'fx_da_sincronizzare'; // sessioni registrate offline (scritte da allenamento.html)
+const FUSO = 'Europe/Rome';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+
+// ---------------------------------------------------------------------
+// Utilità
+// ---------------------------------------------------------------------
+function esc(t) {
+  return String(t ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function oggiRoma() { return new Intl.DateTimeFormat('en-CA', { timeZone: FUSO }).format(new Date()); } // AAAA-MM-GG
+function dataLeggibile(iso) {
+  const [a, m, g] = iso.split('-').map(Number);
+  const d = new Date(Date.UTC(a, m - 1, g, 12));
+  const testo = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(d);
+  if (iso === oggiRoma()) return 'Oggi';
+  return testo.charAt(0).toUpperCase() + testo.slice(1);
+}
+function numero(n) { return Number(n).toLocaleString('it-IT', { maximumFractionDigits: 2 }); }
+function leggiLocale(chiave, predefinito) {
+  try { return JSON.parse(localStorage.getItem(chiave)) ?? predefinito; } catch { return predefinito; }
+}
+function scriviLocale(chiave, valore) {
+  try { localStorage.setItem(chiave, JSON.stringify(valore)); } catch {}
+}
+function avviso(testo, tipo = 'info') {
+  const div = document.createElement('div');
+  div.className = 'avviso avviso-' + tipo;
+  div.textContent = testo;
+  $('avvisi').appendChild(div);
+}
+
+// ---------------------------------------------------------------------
+// Caricamento dati
+// ---------------------------------------------------------------------
+async function carica() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return location.replace('/login.html');
+  const uid = session.user.id;
+  try { localStorage.setItem('fx_uid', JSON.stringify(uid)); } catch {}
+
+  await inviaCoda(); // prima invia gli allenamenti fatti offline, così compaiono nello storico
+
+  try {
+    const { data: profilo, error: e1 } = await sb.from('profili')
+      .select('nome, ruolo, attivo, consenso_versione').eq('id', uid).single();
+    if (e1) throw e1;
+    // Stati non ancora pronti (in attesa, consenso mancante, admin): li gestisce il login
+    if (profilo.ruolo === 'admin' || !profilo.attivo || profilo.consenso_versione !== VERSIONE_CONSENSO)
+      return location.replace('/login.html');
+
+    const { data: assegnazioni, error: e2 } = await sb.from('assegnazioni')
+      .select(`id, data_inizio, data_fine, stato,
+               schede ( id, nome, indicazioni,
+                 scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note,
+                   esercizi ( nome, descrizione, link_video, link_immagine ) ) )`)
+      .eq('paziente_id', uid).eq('stato', 'attiva')
+      .order('data_inizio', { ascending: false });
+    if (e2) throw e2;
+
+    const { data: sessioni, error: e3 } = await sb.from('sessioni')
+      .select(`id, assegnazione_id, giorno, data, completata, completata_il, note, creato_il,
+               serie_registrate ( numero_serie, ripetizioni, carico_kg, rpe, fatta,
+                 scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
+      .eq('paziente_id', uid)
+      .order('data', { ascending: false }).order('creato_il', { ascending: false })
+      .limit(40);
+    if (e3) throw e3;
+
+    const dati = { profilo, assegnazioni, sessioni, aggiornato_il: new Date().toISOString() };
+    scriviLocale(CHIAVE_CACHE, dati);
+    disegna(dati);
+  } catch (err) {
+    const cache = leggiLocale(CHIAVE_CACHE, null);
+    if (cache) {
+      avviso('Sei offline: vedi i dati dell\'ultimo collegamento. Puoi comunque allenarti, i dati si sincronizzano quando torna la rete.');
+      disegna(cache);
+    } else {
+      $('contenuto').innerHTML = '';
+      avviso('Non riesco a caricare i tuoi allenamenti. Controlla la connessione e riprova.', 'errore');
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
+// Logica: quale giorno tocca adesso
+// ---------------------------------------------------------------------
+function giorniDi(assegnazione) {
+  const righe = (assegnazione.schede?.scheda_esercizi || []).slice()
+    .sort((a, b) => a.giorno - b.giorno || a.ordine - b.ordine);
+  const giorni = new Map();
+  righe.forEach(r => {
+    if (!giorni.has(r.giorno)) giorni.set(r.giorno, []);
+    giorni.get(r.giorno).push(r);
+  });
+  return giorni; // Map giorno → righe in ordine
+}
+
+// Sessione lasciata a metà → si riprende quella. Altrimenti il giorno dopo l'ultimo completato.
+function prossimo(assegnazione, sessioni) {
+  const giorni = [...giorniDi(assegnazione).keys()];
+  if (!giorni.length) return null;
+  const mie = sessioni.filter(s => s.assegnazione_id === assegnazione.id); // già ordinate dalla più recente
+  const aMeta = mie.find(s => !s.completata && s.data === oggiRoma());
+  if (aMeta) return { giorno: aMeta.giorno, sessioneId: aMeta.id, riprendi: true };
+  const ultima = mie.find(s => s.completata);
+  if (!ultima) return { giorno: giorni[0] };
+  const i = giorni.indexOf(ultima.giorno);
+  return { giorno: giorni[(i + 1) % giorni.length] };
+}
+
+// ---------------------------------------------------------------------
+// Disegno della pagina
+// ---------------------------------------------------------------------
+function disegna({ profilo, assegnazioni, sessioni }) {
+  const locali = leggiLocale(CHIAVE_LOCALI, {});
+  const coda = leggiLocale(CHIAVE_CODA, []).filter(id => locali[id]?.completata);
+  if (coda.length) avviso(`${coda.length === 1 ? 'Un allenamento' : coda.length + ' allenamenti'} in attesa di sincronizzazione: verranno inviati appena torna la rete.`);
+
+  let html = `<p class="saluto">Ciao ${esc(profilo.nome)}</p>`;
+
+  if (!assegnazioni.length) {
+    html += `<h1>Nessuna scheda attiva</h1>
+      <div class="card vuoto">Non hai ancora una scheda di allenamento attiva.<br>
+      Appena te la assegno la trovi qui.</div>`;
+  }
+
+  assegnazioni.forEach((a, indice) => {
+    const scheda = a.schede || {};
+    const giorni = giorniDi(a);
+    const p = prossimo(a, sessioni);
+    if (indice === 0) html += `<h1>${esc(scheda.nome || 'La tua scheda')}</h1>`;
+    else html += `<h2>${esc(scheda.nome || 'Altra scheda')}</h2>`;
+
+    if (p) {
+      const righe = giorni.get(p.giorno) || [];
+      const fattaOggi = sessioni.some(s => s.assegnazione_id === a.id && s.completata && s.data === oggiRoma());
+      const url = `/allenamento.html?a=${a.id}&g=${p.giorno}` + (p.sessioneId ? `&s=${p.sessioneId}` : '');
+      html += `
+        <div class="card prossimo">
+          ${fattaOggi ? '<div class="fatto-oggi">✓ Allenamento di oggi completato. Ottimo lavoro!</div>' : ''}
+          <span class="etichetta">${p.riprendi ? 'Allenamento in corso' : 'Prossimo allenamento'}</span>
+          <div class="titolo">Giorno ${p.giorno}</div>
+          <div class="dettaglio">${righe.length} ${righe.length === 1 ? 'esercizio' : 'esercizi'}</div>
+          <ol>${righe.map(r => `<li>${esc(r.esercizi?.nome)}${r.serie ? ` · ${r.serie}×${esc(r.ripetizioni || '')}` : ''}</li>`).join('')}</ol>
+          <a class="btn" href="${url}">${p.riprendi ? 'Riprendi' : 'Inizia'} Giorno ${p.giorno}</a>
+        </div>`;
+    }
+
+    if (scheda.indicazioni) html += `<div class="indicazioni">${esc(scheda.indicazioni)}</div>`;
+
+    if (giorni.size > 1) {
+      html += `<h2>Tutti i giorni</h2>`;
+      giorni.forEach((righe, g) => {
+        html += `
+          <a class="card giorno${p && p.giorno === g ? ' suggerito' : ''}" href="/allenamento.html?a=${a.id}&g=${g}">
+            <span class="num">${g}</span>
+            <span class="testo">
+              <span class="nome">Giorno ${g}</span>
+              <span class="eserc">${righe.map(r => esc(r.esercizi?.nome)).join(' · ')}</span>
+            </span>
+            <span class="freccia">›</span>
+          </a>`;
+      });
+    }
+  });
+
+  html += disegnaRiepilogo(sessioni) + disegnaStorico(sessioni);
+  $('contenuto').innerHTML = html;
+}
+
+function disegnaRiepilogo(sessioni) {
+  const completate = sessioni.filter(s => s.completata);
+  if (!completate.length) return '';
+  // Lunedì della settimana corrente (ora di Roma)
+  const oggi = oggiRoma();
+  const [a, m, g] = oggi.split('-').map(Number);
+  const d = new Date(Date.UTC(a, m - 1, g));
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  const lunedi = d.toISOString().slice(0, 10);
+  const settimana = completate.filter(s => s.data >= lunedi).length;
+  return `
+    <h2>I tuoi progressi</h2>
+    <div class="stat">
+      <div class="card"><div class="valore">${settimana}</div><span class="etichetta">Questa settimana</span></div>
+      <div class="card"><div class="valore">${completate.length}${sessioni.length >= 40 ? '+' : ''}</div><span class="etichetta">Allenamenti fatti</span></div>
+    </div>`;
+}
+
+function disegnaStorico(sessioni) {
+  let html = `<h2>Storico</h2>`;
+  if (!sessioni.length) return html + `<div class="card vuoto">Qui troverai gli allenamenti che registri.</div>`;
+
+  sessioni.slice(0, 20).forEach(s => {
+    // Raggruppa le serie per esercizio, nell'ordine della scheda
+    const perEsercizio = new Map();
+    (s.serie_registrate || [])
+      .slice().sort((x, y) => (x.scheda_esercizi?.ordine ?? 0) - (y.scheda_esercizi?.ordine ?? 0) || x.numero_serie - y.numero_serie)
+      .forEach(r => {
+        const nome = r.scheda_esercizi?.esercizi?.nome || 'Esercizio';
+        if (!perEsercizio.has(nome)) perEsercizio.set(nome, []);
+        perEsercizio.get(nome).push(r);
+      });
+    const nSerie = (s.serie_registrate || []).filter(r => r.fatta).length;
+
+    let dettaglio = '';
+    perEsercizio.forEach((serie, nome) => {
+      const testo = serie.map(r => {
+        let t = r.ripetizioni != null ? `${r.ripetizioni}` : '–';
+        if (r.carico_kg != null && Number(r.carico_kg) > 0) t += ` × ${numero(r.carico_kg)} kg`;
+        if (r.rpe != null) t += ` (RPE ${numero(r.rpe)})`;
+        return t;
+      }).join(' · ');
+      dettaglio += `<div class="es"><b>${esc(nome)}</b><span class="serie">${esc(testo)}</span></div>`;
+    });
+    if (s.note) dettaglio += `<div class="nota">${esc(s.note)}</div>`;
+    if (!dettaglio) dettaglio = `<div class="serie">Nessuna serie registrata.</div>`;
+
+    html += `
+      <details class="sessione">
+        <summary>
+          <span><span class="data">${esc(dataLeggibile(s.data))}</span><br>
+            <span class="info">Giorno ${s.giorno} · ${nSerie} serie</span></span>
+          <span class="stato ${s.completata ? 'ok' : 'incompleta'}">${s.completata ? 'Completato' : 'Non finito'}</span>
+        </summary>
+        <div class="dettaglio-sessione">${dettaglio}</div>
+      </details>`;
+  });
+  return html;
+}
+
+// ---------------------------------------------------------------------
+// Invio degli allenamenti salvati offline (stessa logica di allenamento.html)
+// ---------------------------------------------------------------------
+const CHIAVE_LOCALI = 'fx_sessioni_locali';
+
+async function inviaCoda() {
+  const locali = leggiLocale(CHIAVE_LOCALI, {});
+  for (const id of leggiLocale(CHIAVE_CODA, [])) {
+    const s = locali[id];
+    // si inviano solo gli allenamenti finiti: quello in corso lo gestisce allenamento.html
+    if (!s || !s.completata) continue;
+    try {
+      const { error: e1 } = await sb.from('sessioni').upsert({
+        id: s.id, paziente_id: s.paziente_id, assegnazione_id: s.assegnazione_id,
+        giorno: s.giorno, data: s.data, completata: true,
+        completata_il: s.completata_il || null, note: s.note || null
+      }, { onConflict: 'id' });
+      if (e1) throw e1;
+      const righe = [];
+      for (const [rigaId, elenco] of Object.entries(s.serie)) {
+        const fatte = [];
+        elenco.forEach((x, i) => {
+          if (!x.fatta) return;
+          fatte.push(i + 1);
+          righe.push({ sessione_id: s.id, scheda_esercizio_id: rigaId, numero_serie: i + 1,
+                       ripetizioni: x.ripetizioni, carico_kg: x.carico_kg, rpe: x.rpe, fatta: true });
+        });
+        let canc = sb.from('serie_registrate').delete().eq('sessione_id', s.id).eq('scheda_esercizio_id', rigaId);
+        if (fatte.length) canc = canc.not('numero_serie', 'in', `(${fatte.join(',')})`);
+        const { error: e2 } = await canc;
+        if (e2) throw e2;
+      }
+      if (righe.length) {
+        const { error: e3 } = await sb.from('serie_registrate')
+          .upsert(righe, { onConflict: 'sessione_id,scheda_esercizio_id,numero_serie' });
+        if (e3) throw e3;
+      }
+      scriviLocale(CHIAVE_CODA, leggiLocale(CHIAVE_CODA, []).filter(x => x !== id));
+      const l = leggiLocale(CHIAVE_LOCALI, {}); delete l[id]; scriviLocale(CHIAVE_LOCALI, l);
+    } catch { return; } // offline: si riprova al prossimo caricamento
+  }
+}
+
+// ---------------------------------------------------------------------
+// Uscita: cancella anche la copia locale (telefono condiviso)
+// ---------------------------------------------------------------------
+async function esci() {
+  if (leggiLocale(CHIAVE_CODA, []).length &&
+      !confirm('Hai allenamenti non ancora sincronizzati. Se esci ora andranno persi. Uscire comunque?')) return;
+  try { [CHIAVE_CACHE, CHIAVE_CODA, CHIAVE_LOCALI, 'fx_uid'].forEach(k => localStorage.removeItem(k)); } catch {}
+  await sb.auth.signOut();
+  location.replace('/login.html');
+}
+
+carica();
+</script>
+</body>
+</html>

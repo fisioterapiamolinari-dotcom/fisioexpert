@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f4ef">
+<title>Accedi | Fisio Expert Allenamenti</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+}
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.55; min-height:100vh; }
+.wrap { max-width:460px; margin:0 auto; padding:0 16px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; }
+header .wrap { display:flex; align-items:center; justify-content:space-between; max-width:860px; }
+.logo { display:inline-flex; align-items:center; text-decoration:none; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; color:var(--ink); }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.tag { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
+
+h1 { font-family:var(--serif); font-weight:400; font-size:30px; line-height:1.15; margin:28px 0 6px; }
+.sotto { color:var(--ink-soft); font-size:15px; margin-bottom:20px; }
+
+.card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:6px; display:block; }
+.campo { margin-bottom:14px; }
+.campo small { display:block; color:var(--ink-muted); font-size:13px; margin-top:4px; }
+.riga2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+input {
+  width:100%; font-family:var(--sans); font-size:16px; color:var(--ink);
+  padding:13px 14px; border:1px solid var(--border); border-radius:10px;
+  background:var(--white); outline:none;
+}
+input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+
+/* Schede Accedi / Registrati */
+.schede { display:grid; grid-template-columns:1fr 1fr; background:var(--warm-dark); border-radius:12px; padding:4px; margin-bottom:16px; }
+.schede button { font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:.3px; border:0; background:transparent; color:var(--ink-soft); padding:11px; border-radius:9px; cursor:pointer; }
+.schede button.attiva { background:var(--white); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+
+.btn { display:block; width:100%; font-family:var(--mono); font-weight:700; font-size:15px; letter-spacing:.3px;
+  border:0; border-radius:12px; padding:16px; cursor:pointer; background:var(--accent); color:var(--white); }
+.btn:hover { background:var(--accent-dark); }
+.btn:disabled { opacity:.6; cursor:wait; }
+.btn-sec { background:var(--white); color:var(--ink); border:1px solid var(--border); }
+.btn-sec:hover { background:var(--warm-dark); }
+.link { background:none; border:0; color:var(--accent-dark); font:inherit; font-size:14px; text-decoration:underline; cursor:pointer; padding:0; }
+.centro { text-align:center; margin-top:14px; }
+
+.consenso { display:flex; gap:12px; align-items:flex-start; font-size:14px; color:var(--ink-soft); margin:6px 0 18px; }
+.consenso input { width:22px; height:22px; flex:0 0 22px; margin-top:1px; accent-color:var(--accent); }
+.consenso a { color:var(--accent-dark); }
+
+#messaggio:not(:empty) { padding-top:16px; }
+.avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin-bottom:16px; }
+.avviso-info { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); }
+.avviso-errore { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); color:var(--rosso); }
+.avviso-ok { background:rgba(46,158,91,0.1); border:1px solid rgba(46,158,91,0.3); color:#1f6e3f; }
+
+.nascosto { display:none !important; }
+.attesa-icona { font-size:40px; text-align:center; margin-bottom:8px; }
+footer { text-align:center; color:var(--ink-muted); font-size:12px; padding:24px 16px 40px; }
+footer a { color:inherit; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="https://fisioexpert.it" class="logo">
+      <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <span class="tag">Allenamenti</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div id="messaggio"></div>
+
+  <!-- ============ ACCEDI / REGISTRATI ============ -->
+  <section id="vistaAccesso">
+    <h1>Il tuo allenamento</h1>
+    <p class="sotto">Accedi per vedere la scheda che ti ho preparato e registrare i tuoi progressi.</p>
+
+    <div class="schede" role="tablist">
+      <button type="button" id="tabAccedi" class="attiva" onclick="mostraTab('accedi')">Accedi</button>
+      <button type="button" id="tabRegistrati" onclick="mostraTab('registrati')">Registrati</button>
+    </div>
+
+    <form id="formAccedi" class="card" onsubmit="accedi(event)">
+      <div class="campo">
+        <label class="etichetta" for="loginUtente">Nome utente</label>
+        <input id="loginUtente" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" id="btnAccedi">Accedi</button>
+      <div class="centro"><button type="button" class="link" onclick="mostraVista('vistaRecupero')">Password dimenticata?</button></div>
+    </form>
+
+    <form id="formRegistrati" class="card nascosto" onsubmit="registrati(event)">
+      <div class="riga2">
+        <div class="campo">
+          <label class="etichetta" for="regNome">Nome</label>
+          <input id="regNome" autocomplete="given-name" required>
+        </div>
+        <div class="campo">
+          <label class="etichetta" for="regCognome">Cognome</label>
+          <input id="regCognome" autocomplete="family-name" required>
+        </div>
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="regUtente">Nome utente</label>
+        <input id="regUtente" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        <small>3–30 caratteri: lettere minuscole, numeri, punto, trattino. Es. <b>mario.rossi</b></small>
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="regEmail">Email</label>
+        <input id="regEmail" type="email" autocomplete="email" inputmode="email" required>
+        <small>La stessa che hai dato allo studio: serve a collegarti alla tua scheda paziente.</small>
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="regTelefono">Telefono</label>
+        <input id="regTelefono" type="tel" autocomplete="tel" inputmode="tel">
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="regPassword">Password</label>
+        <input id="regPassword" type="password" autocomplete="new-password" minlength="8" required>
+        <small>Almeno 8 caratteri.</small>
+      </div>
+      <div class="campo">
+        <label class="etichetta" for="regPassword2">Ripeti password</label>
+        <input id="regPassword2" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+      <label class="consenso">
+        <input type="checkbox" id="regConsenso" required>
+        <span>Ho letto l'<a href="/informativa-app.html" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati relativi alla salute (allenamenti, carichi, note) per la gestione del mio programma di esercizi.</span>
+      </label>
+      <button class="btn" id="btnRegistrati">Crea il mio account</button>
+    </form>
+  </section>
+
+  <!-- ============ RECUPERO PASSWORD ============ -->
+  <section id="vistaRecupero" class="nascosto">
+    <h1>Password dimenticata</h1>
+    <div class="card">
+      <p class="sotto">Se accedi con il <b>nome utente</b>, scrivimi su WhatsApp e ti imposto una nuova password.</p>
+      <a class="btn" style="text-align:center;text-decoration:none" href="https://wa.me/393282738164?text=Ciao%20Gianmarco%2C%20ho%20dimenticato%20la%20password%20dell'app%20allenamenti" target="_blank" rel="noopener">Scrivi su WhatsApp</a>
+    </div>
+    <form class="card" onsubmit="recuperaViaEmail(event)">
+      <p class="sotto">Se accedi con un indirizzo <b>email</b>, ricevi il link per reimpostarla.</p>
+      <div class="campo">
+        <label class="etichetta" for="recEmail">Email</label>
+        <input id="recEmail" type="email" inputmode="email" autocomplete="email" required>
+      </div>
+      <button class="btn btn-sec" id="btnRecupero">Invia link</button>
+    </form>
+    <div class="centro"><button type="button" class="link" onclick="mostraVista('vistaAccesso')">← Torna all'accesso</button></div>
+  </section>
+
+  <!-- ============ NUOVA PASSWORD (dal link email) ============ -->
+  <section id="vistaNuovaPassword" class="nascosto">
+    <h1>Nuova password</h1>
+    <form class="card" onsubmit="salvaNuovaPassword(event)">
+      <div class="campo">
+        <label class="etichetta" for="nuovaPassword">Nuova password</label>
+        <input id="nuovaPassword" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button class="btn" id="btnNuovaPassword">Salva</button>
+    </form>
+  </section>
+
+  <!-- ============ CONSENSO (se manca) ============ -->
+  <section id="vistaConsenso" class="nascosto">
+    <h1>Prima di iniziare</h1>
+    <form class="card" onsubmit="salvaConsenso(event)">
+      <p class="sotto">Per usare l'app ho bisogno del tuo consenso al trattamento dei dati relativi alla salute.</p>
+      <label class="consenso">
+        <input type="checkbox" required>
+        <span>Ho letto l'<a href="/informativa-app.html" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati relativi alla salute (allenamenti, carichi, note) per la gestione del mio programma di esercizi.</span>
+      </label>
+      <button class="btn" id="btnConsenso">Accetto e continuo</button>
+    </form>
+    <div class="centro"><button type="button" class="link" onclick="esci()">Esci</button></div>
+  </section>
+
+  <!-- ============ IN ATTESA DI ATTIVAZIONE ============ -->
+  <section id="vistaAttesa" class="nascosto">
+    <h1>Account creato</h1>
+    <div class="card">
+      <div class="attesa-icona">⏳</div>
+      <p class="sotto" id="testoAttesa">Il tuo account è in attesa di attivazione. Appena lo attivo trovi qui la tua scheda di allenamento.</p>
+      <button class="btn btn-sec" type="button" onclick="vaiAvanti()">Controlla di nuovo</button>
+    </div>
+    <div class="centro"><button type="button" class="link" onclick="esci()">Esci</button></div>
+  </section>
+
+</main>
+
+<footer>
+  Fisio Expert · Gianmarco Molinari · <a href="/informativa-app.html">Privacy</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script>
+<script>
+// ---------------------------------------------------------------------
+// Configurazione (chiave pubblica per design: la sicurezza è nelle regole RLS)
+// ---------------------------------------------------------------------
+const SUPABASE_URL = 'https://gaymgwkjpmrysuiltvvu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vHYG8XJx6bRHuN0zu_Zejw_IQrfZ9fl';
+const DOMINIO_UTENTI = 'utenti.fisioexpert.it';   // email interna: nomeutente@utenti.fisioexpert.it
+const VERSIONE_CONSENSO = 'v1-2026-10';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const VISTE = ['vistaAccesso', 'vistaRecupero', 'vistaNuovaPassword', 'vistaConsenso', 'vistaAttesa'];
+let inRecupero = false;
+
+// ---------------------------------------------------------------------
+// Interfaccia
+// ---------------------------------------------------------------------
+function mostraVista(id) {
+  VISTE.forEach(v => $(v).classList.toggle('nascosto', v !== id));
+  pulisciMessaggio();
+  window.scrollTo(0, 0);
+}
+
+function mostraTab(quale) {
+  const accedi = quale === 'accedi';
+  $('formAccedi').classList.toggle('nascosto', !accedi);
+  $('formRegistrati').classList.toggle('nascosto', accedi);
+  $('tabAccedi').classList.toggle('attiva', accedi);
+  $('tabRegistrati').classList.toggle('attiva', !accedi);
+  pulisciMessaggio();
+}
+
+function messaggio(testo, tipo = 'errore') {
+  $('messaggio').innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'avviso avviso-' + tipo;
+  div.textContent = testo;
+  $('messaggio').appendChild(div);
+  window.scrollTo(0, 0);
+}
+function pulisciMessaggio() { $('messaggio').innerHTML = ''; }
+
+function attesa(btnId, attivo, testo) {
+  const b = $(btnId);
+  if (attivo) { b.dataset.testo = b.textContent; b.textContent = testo || 'Attendi…'; b.disabled = true; }
+  else { b.textContent = b.dataset.testo || b.textContent; b.disabled = false; }
+}
+
+// Traduce gli errori di Supabase in italiano
+function erroreItaliano(err) {
+  const m = (err && err.message || '').toLowerCase();
+  if (m.includes('invalid login credentials')) return 'Nome utente o password non corretti.';
+  if (m.includes('already registered') || m.includes('already been registered')) return 'Questo nome utente è già in uso. Scegline un altro.';
+  if (m.includes('password should be') || m.includes('weak password')) return 'Password troppo debole: usa almeno 8 caratteri.';
+  if (m.includes('rate limit') || m.includes('too many')) return 'Troppi tentativi. Riprova tra qualche minuto.';
+  if (m.includes('failed to fetch') || m.includes('network')) return 'Connessione assente. Controlla la rete e riprova.';
+  if (m.includes('email not confirmed')) return 'Account non ancora confermato. Contatta Gianmarco.';
+  return 'Qualcosa è andato storto. Riprova o scrivi a Gianmarco.';
+}
+
+// "mario.rossi" → mario.rossi@utenti.fisioexpert.it ; un'email resta com'è (accesso admin)
+function emailDaUtente(valore) {
+  const v = valore.trim().toLowerCase();
+  return v.includes('@') ? v : v + '@' + DOMINIO_UTENTI;
+}
+
+// ---------------------------------------------------------------------
+// Accesso
+// ---------------------------------------------------------------------
+async function accedi(e) {
+  e.preventDefault();
+  attesa('btnAccedi', true, 'Accesso…');
+  const { error } = await sb.auth.signInWithPassword({
+    email: emailDaUtente($('loginUtente').value),
+    password: $('loginPassword').value
+  });
+  attesa('btnAccedi', false);
+  if (error) return messaggio(erroreItaliano(error));
+  vaiAvanti();
+}
+
+// ---------------------------------------------------------------------
+// Registrazione
+// ---------------------------------------------------------------------
+async function registrati(e) {
+  e.preventDefault();
+  const utente = $('regUtente').value.trim().toLowerCase();
+  if (!/^[a-z0-9._-]{3,30}$/.test(utente))
+    return messaggio('Nome utente non valido: 3–30 caratteri, solo lettere minuscole, numeri, punto o trattino.');
+  if ($('regPassword').value !== $('regPassword2').value)
+    return messaggio('Le due password non coincidono.');
+  if (!$('regConsenso').checked)
+    return messaggio('Per creare l\'account serve il consenso al trattamento dei dati.');
+
+  attesa('btnRegistrati', true, 'Creo l\'account…');
+  const { data, error } = await sb.auth.signUp({
+    email: emailDaUtente(utente),
+    password: $('regPassword').value,
+    options: { data: {
+      nome_utente: utente,
+      nome: $('regNome').value.trim(),
+      cognome: $('regCognome').value.trim(),
+      email_contatto: $('regEmail').value.trim().toLowerCase(),
+      telefono: $('regTelefono').value.trim()
+    } }
+  });
+  if (error) { attesa('btnRegistrati', false); return messaggio(erroreItaliano(error)); }
+  // Supabase non segnala il nome utente già preso con un errore: restituisce un utente senza identità
+  if (data.user && data.user.identities && data.user.identities.length === 0) {
+    attesa('btnRegistrati', false);
+    return messaggio('Questo nome utente è già in uso. Scegline un altro.');
+  }
+  if (!data.session) {
+    attesa('btnRegistrati', false);
+    return messaggio('Account creato, ma l\'accesso automatico non è riuscito. Prova ad accedere dalla scheda "Accedi".', 'info');
+  }
+  await registraConsenso();
+  attesa('btnRegistrati', false);
+  vaiAvanti();
+}
+
+// ---------------------------------------------------------------------
+// Consenso privacy (registro + data sul profilo)
+// ---------------------------------------------------------------------
+async function registraConsenso() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return false;
+  const ora = new Date().toISOString();
+  const r1 = await sb.from('consensi').insert({ paziente_id: user.id, versione: VERSIONE_CONSENSO, user_agent: navigator.userAgent.slice(0, 300) });
+  const r2 = await sb.from('profili').update({ consenso_privacy_il: ora, consenso_versione: VERSIONE_CONSENSO }).eq('id', user.id);
+  return !r1.error && !r2.error;
+}
+
+async function salvaConsenso(e) {
+  e.preventDefault();
+  attesa('btnConsenso', true, 'Salvo…');
+  const ok = await registraConsenso();
+  attesa('btnConsenso', false);
+  if (!ok) return messaggio('Non sono riuscito a salvare il consenso. Riprova.');
+  vaiAvanti();
+}
+
+// ---------------------------------------------------------------------
+// Dopo il login: dove va l'utente?
+// ---------------------------------------------------------------------
+async function vaiAvanti() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return mostraVista('vistaAccesso');
+
+  const { data: profilo, error } = await sb.from('profili')
+    .select('nome, ruolo, attivo, consenso_versione').eq('id', session.user.id).single();
+  if (error || !profilo) { mostraVista('vistaAccesso'); return messaggio('Profilo non trovato. Contatta Gianmarco.'); }
+
+  if (profilo.ruolo === 'admin') return location.replace('/admin.html');
+  if (profilo.consenso_versione !== VERSIONE_CONSENSO) return mostraVista('vistaConsenso');
+  if (!profilo.attivo) {
+    $('testoAttesa').textContent = `Ciao ${profilo.nome || ''}, il tuo account è in attesa di attivazione. Appena lo attivo trovi qui la tua scheda di allenamento.`;
+    return mostraVista('vistaAttesa');
+  }
+  location.replace('/app.html');
+}
+
+async function esci() {
+  await sb.auth.signOut();
+  mostraVista('vistaAccesso');
+}
+
+// ---------------------------------------------------------------------
+// Recupero password (solo per chi accede con email, es. l'admin)
+// ---------------------------------------------------------------------
+async function recuperaViaEmail(e) {
+  e.preventDefault();
+  attesa('btnRecupero', true, 'Invio…');
+  const { error } = await sb.auth.resetPasswordForEmail($('recEmail').value.trim(), {
+    redirectTo: location.origin + '/login.html'
+  });
+  attesa('btnRecupero', false);
+  if (error) return messaggio(erroreItaliano(error));
+  messaggio('Se l\'indirizzo è registrato, riceverai a breve un\'email con il link.', 'ok');
+}
+
+async function salvaNuovaPassword(e) {
+  e.preventDefault();
+  attesa('btnNuovaPassword', true, 'Salvo…');
+  const { error } = await sb.auth.updateUser({ password: $('nuovaPassword').value });
+  attesa('btnNuovaPassword', false);
+  if (error) return messaggio(erroreItaliano(error));
+  inRecupero = false;
+  messaggio('Password aggiornata.', 'ok');
+  setTimeout(vaiAvanti, 800);
+}
+
+// ---------------------------------------------------------------------
+// Avvio
+// ---------------------------------------------------------------------
+sb.auth.onAuthStateChange(evento => {
+  if (evento === 'PASSWORD_RECOVERY') { inRecupero = true; mostraVista('vistaNuovaPassword'); }
+});
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session && !inRecupero && !location.hash.includes('type=recovery')) vaiAvanti();
+})();
+</script>
+</body>
+</html>

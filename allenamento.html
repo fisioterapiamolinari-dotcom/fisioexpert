@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f4ef">
+<title>Allenamento | Fisio Expert</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#8a8a8a;
+  --accent:#f47920; --accent-light:rgba(244,121,32,0.12); --accent-dark:#d4660e;
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --border:rgba(26,26,26,0.1);
+  --green:#2e9e5b; --green-light:rgba(46,158,91,0.12); --rosso:#c0392b;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+}
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.5; min-height:100vh; padding-bottom:110px; }
+.wrap { max-width:560px; margin:0 auto; padding:0 16px; }
+
+header { background:var(--white); border-bottom:1px solid var(--border); padding:16px 0; position:sticky; top:0; z-index:20; }
+header .wrap { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.logo { display:inline-flex; align-items:center; text-decoration:none; }
+.header-logo { height:36px; width:auto; display:block; }
+.logo-fallback { display:none; font-family:var(--mono); font-weight:800; font-size:20px; letter-spacing:-.5px; color:var(--ink); }
+.logo-fallback b { color:var(--accent); font-weight:inherit; }
+.stato-sync { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.3px; color:var(--ink-muted); text-align:right; }
+.stato-sync.ok { color:var(--green); }
+.stato-sync.offline { color:var(--accent-dark); }
+
+.indietro { display:inline-block; font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:var(--ink-muted); text-decoration:none; margin-top:18px; }
+.sopra { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin-top:10px; }
+h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1; margin:4px 0 6px; }
+.avanzamento { height:6px; background:var(--warm-dark); border-radius:3px; overflow:hidden; margin:10px 0 18px; }
+.avanzamento div { height:100%; background:var(--accent); width:0; transition:width .3s; }
+
+/* Esercizio */
+.esercizio { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:18px 16px; margin-bottom:14px; }
+.esercizio.completo { border-color:rgba(46,158,91,.45); }
+.es-testa { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.es-nome { font-family:var(--serif); font-size:22px; line-height:1.2; }
+.es-conta { font-family:var(--mono); font-weight:800; font-size:13px; color:var(--ink-muted); white-space:nowrap; padding-top:5px; }
+.esercizio.completo .es-conta { color:var(--green); }
+.prescr { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.chip { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.3px; background:var(--warm); border-radius:20px; padding:5px 10px; }
+.chip.rpe { background:var(--accent-light); color:var(--accent-dark); }
+.es-testo { font-size:14px; color:var(--ink-soft); margin-bottom:8px; white-space:pre-line; }
+.es-nota { font-size:14px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; white-space:pre-line; }
+.es-img { width:100%; border-radius:12px; margin:6px 0 10px; display:block; }
+.es-video { display:inline-block; font-family:var(--mono); font-weight:700; font-size:12px; color:var(--accent-dark); text-decoration:none; border:1px solid rgba(244,121,32,.4); border-radius:20px; padding:6px 12px; margin-bottom:10px; }
+.ultima { font-size:13px; color:var(--ink-muted); margin-bottom:10px; }
+.ultima b { color:var(--ink-soft); font-weight:500; }
+
+/* Righe serie */
+.serie-testa, .serie-riga { display:grid; grid-template-columns:28px 1fr 1fr 1fr 52px; gap:8px; align-items:center; }
+.serie-testa { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); padding:0 0 6px; }
+.serie-testa span:not(:first-child) { text-align:center; }
+.serie-riga { margin-bottom:8px; }
+.serie-riga .n { font-family:var(--mono); font-weight:800; font-size:14px; color:var(--ink-muted); text-align:center; }
+.serie-riga input { width:100%; min-width:0; font-family:var(--sans); font-size:18px; font-weight:500; text-align:center; color:var(--ink);
+  padding:11px 4px; border:1px solid var(--border); border-radius:10px; background:var(--white); outline:none; }
+.serie-riga input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+.serie-riga input::placeholder { color:#c4bdb3; }
+.spunta { width:52px; height:48px; border-radius:12px; border:2px solid var(--border); background:var(--white); font-size:22px; color:transparent; cursor:pointer; }
+.serie-riga.fatta .spunta { background:var(--green); border-color:var(--green); color:var(--white); }
+.serie-riga.fatta input { background:var(--green-light); border-color:transparent; }
+.serie-riga.fatta .n { color:var(--green); }
+.azioni-serie { display:flex; justify-content:space-between; margin-top:4px; }
+.link { background:none; border:0; color:var(--accent-dark); font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.3px; cursor:pointer; padding:8px 0; }
+.link.grigio { color:var(--ink-muted); }
+
+/* Fine */
+.fine { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:18px 16px; margin:24px 0 14px; }
+.etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:8px; display:block; }
+textarea { width:100%; font-family:var(--sans); font-size:16px; color:var(--ink); padding:12px 13px; border:1px solid var(--border); border-radius:10px; background:var(--white); outline:none; resize:vertical; min-height:90px; }
+textarea:focus { border-color:var(--accent); }
+.btn { display:block; width:100%; text-align:center; text-decoration:none; font-family:var(--mono); font-weight:700; font-size:16px; letter-spacing:.3px;
+  border:0; border-radius:12px; padding:17px; cursor:pointer; background:var(--accent); color:var(--white); }
+.btn:hover { background:var(--accent-dark); }
+.btn:disabled { opacity:.6; cursor:wait; }
+.btn-sec { background:var(--white); color:var(--ink); border:1px solid var(--border); }
+
+/* Timer di recupero */
+.timer { position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--ink); color:var(--white); padding:14px 0 calc(14px + env(safe-area-inset-bottom)); transform:translateY(110%); transition:transform .25s; }
+.timer.visibile { transform:none; }
+.timer .wrap { display:flex; align-items:center; gap:14px; }
+.timer .tempo { font-family:var(--mono); font-weight:800; font-size:30px; min-width:92px; }
+.timer .testo { flex:1; font-size:13px; color:rgba(255,255,255,.7); }
+.timer button { font-family:var(--mono); font-weight:700; font-size:12px; border:1px solid rgba(255,255,255,.3); background:transparent; color:var(--white); border-radius:10px; padding:10px 12px; cursor:pointer; }
+.timer.finito .tempo { color:var(--accent); }
+
+/* Schermata finale */
+.completato { text-align:center; padding:40px 0 20px; }
+.completato .icona { width:72px; height:72px; border-radius:50%; background:var(--green); color:var(--white); font-size:38px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.riepilogo { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:20px 0; }
+.riepilogo div { text-align:center; background:var(--white); border:1px solid var(--border); border-radius:14px; padding:12px 6px; }
+.riepilogo b { display:block; font-family:var(--serif); font-weight:400; font-size:26px; }
+.riepilogo span { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); }
+
+.avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin-top:16px; }
+.avviso-info { background:var(--accent-light); border:1px solid rgba(244,121,32,0.3); }
+.avviso-errore { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); color:var(--rosso); }
+.caricamento { text-align:center; color:var(--ink-muted); padding:60px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="/app.html" class="logo">
+      <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <span id="statoSync" class="stato-sync"></span>
+  </div>
+</header>
+
+<main class="wrap" id="pagina">
+  <div class="caricamento">Preparo l'allenamento…</div>
+</main>
+
+<div class="timer" id="timer">
+  <div class="wrap">
+    <span class="tempo" id="timerTempo">0:00</span>
+    <span class="testo" id="timerTesto">Recupero</span>
+    <button type="button" onclick="aggiungiTempo(15)">+15s</button>
+    <button type="button" onclick="fermaTimer()">Salta</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script>
+<script>
+// ---------------------------------------------------------------------
+// Configurazione
+// ---------------------------------------------------------------------
+const SUPABASE_URL = 'https://gaymgwkjpmrysuiltvvu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vHYG8XJx6bRHuN0zu_Zejw_IQrfZ9fl';
+const CHIAVE_CACHE   = 'fx_cache_home';         // scritta da app.html: serve se apri offline
+const CHIAVE_CODA    = 'fx_da_sincronizzare';   // id delle sessioni da inviare
+const CHIAVE_LOCALI  = 'fx_sessioni_locali';    // id → sessione completa salvata sul telefono
+const CHIAVE_UID     = 'fx_uid';
+const FUSO = 'Europe/Rome';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const parametri = new URLSearchParams(location.search);
+const ASSEGNAZIONE = parametri.get('a');
+const GIORNO = Number(parametri.get('g'));
+
+let righe = [];       // esercizi del giorno, in ordine
+let ultimeVolte = {}; // riga id → serie dell'ultima sessione
+let sessione = null;  // la sessione in corso (sempre salvata anche sul telefono)
+let timerSync = null;
+
+// ---------------------------------------------------------------------
+// Utilità
+// ---------------------------------------------------------------------
+function esc(t) {
+  return String(t ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function oggiRoma() { return new Intl.DateTimeFormat('en-CA', { timeZone: FUSO }).format(new Date()); }
+function leggiLocale(chiave, predefinito) {
+  try { return JSON.parse(localStorage.getItem(chiave)) ?? predefinito; } catch { return predefinito; }
+}
+function scriviLocale(chiave, valore) {
+  try { localStorage.setItem(chiave, JSON.stringify(valore)); } catch {}
+}
+function numero(n) { return Number(n).toLocaleString('it-IT', { maximumFractionDigits: 2 }); }
+// "12,5" → 12.5 ; vuoto o non valido → null
+function leggiNumero(testo) {
+  const v = parseFloat(String(testo ?? '').replace(',', '.').trim());
+  return Number.isFinite(v) ? v : null;
+}
+// "8-10" → 8 ; "12" → 12 ; "30 sec" → null (non è un numero di ripetizioni)
+function ripetizioniPrescritte(testo) {
+  const t = String(testo || '').toLowerCase();
+  if (/sec|min|"|'/.test(t)) return null;
+  const m = t.match(/\d+/);
+  return m ? Number(m[0]) : null;
+}
+// "90 sec" → 90 ; "1'30" → 90 ; "2 min" → 120
+function secondiRecupero(testo) {
+  if (!testo) return 0;
+  const t = String(testo).toLowerCase();
+  let m = t.match(/(\d+)\s*['’]\s*(\d+)?/);
+  if (m) return Number(m[1]) * 60 + (Number(m[2]) || 0);
+  m = t.match(/(\d+(?:[.,]\d+)?)\s*(min|m\b)/);
+  if (m) return Math.round(parseFloat(m[1].replace(',', '.')) * 60);
+  m = t.match(/\d+/);
+  return m ? Number(m[0]) : 0;
+}
+function linkVideo(url) {
+  try { const u = new URL(url); return /^https?:$/.test(u.protocol) ? u.href : null; } catch { return null; }
+}
+function avviso(testo, tipo = 'info') {
+  const div = document.createElement('div');
+  div.className = 'avviso avviso-' + tipo;
+  div.textContent = testo;
+  $('pagina').prepend(div);
+}
+function statoSync(testo, classe = '') {
+  $('statoSync').textContent = testo;
+  $('statoSync').className = 'stato-sync ' + classe;
+}
+
+// ---------------------------------------------------------------------
+// Salvataggio locale e sincronizzazione
+// ---------------------------------------------------------------------
+function salvaLocale() {
+  sessione.modificata_il = new Date().toISOString();
+  const locali = leggiLocale(CHIAVE_LOCALI, {});
+  locali[sessione.id] = sessione;
+  scriviLocale(CHIAVE_LOCALI, locali);
+  const coda = leggiLocale(CHIAVE_CODA, []);
+  if (!coda.includes(sessione.id)) { coda.push(sessione.id); scriviLocale(CHIAVE_CODA, coda); }
+}
+
+// Una sessione vuota (nessuna serie, nessuna nota, non completata) non va sul server
+function vuota(s) {
+  return !s.completata && !s.note && !Object.values(s.serie).some(arr => arr.some(x => x.fatta));
+}
+
+// Invia una sessione: crea/aggiorna la sessione, scrive le serie fatte, toglie quelle annullate
+async function inviaSessione(s) {
+  const { error: e1 } = await sb.from('sessioni').upsert({
+    id: s.id, paziente_id: s.paziente_id, assegnazione_id: s.assegnazione_id,
+    giorno: s.giorno, data: s.data, completata: s.completata,
+    completata_il: s.completata_il || null, note: s.note || null
+  }, { onConflict: 'id' });
+  if (e1) throw e1;
+
+  const daScrivere = [];
+  for (const [rigaId, elenco] of Object.entries(s.serie)) {
+    const fatte = [];
+    elenco.forEach((x, i) => {
+      if (!x.fatta) return;
+      fatte.push(i + 1);
+      daScrivere.push({
+        sessione_id: s.id, scheda_esercizio_id: rigaId, numero_serie: i + 1,
+        ripetizioni: x.ripetizioni, carico_kg: x.carico_kg, rpe: x.rpe, fatta: true
+      });
+    });
+    let canc = sb.from('serie_registrate').delete().eq('sessione_id', s.id).eq('scheda_esercizio_id', rigaId);
+    if (fatte.length) canc = canc.not('numero_serie', 'in', `(${fatte.join(',')})`);
+    const { error: e2 } = await canc;
+    if (e2) throw e2;
+  }
+  if (daScrivere.length) {
+    const { error: e3 } = await sb.from('serie_registrate')
+      .upsert(daScrivere, { onConflict: 'sessione_id,scheda_esercizio_id,numero_serie' });
+    if (e3) throw e3;
+  }
+}
+
+// Prova a inviare tutto quello che è in coda (anche allenamenti di giorni precedenti)
+let invioInCorso = false;
+async function sincronizzaCoda() {
+  if (invioInCorso) return;
+  invioInCorso = true;
+  try {
+    const coda = leggiLocale(CHIAVE_CODA, []);
+    const locali = leggiLocale(CHIAVE_LOCALI, {});
+    for (const id of coda) {
+      const s = locali[id];
+      const rimuovi = () => {
+        const c = leggiLocale(CHIAVE_CODA, []).filter(x => x !== id);
+        scriviLocale(CHIAVE_CODA, c);
+        // la sessione in corso resta sul telefono finché non è completata
+        if (!sessione || sessione.id !== id || s.completata) {
+          const l = leggiLocale(CHIAVE_LOCALI, {}); delete l[id]; scriviLocale(CHIAVE_LOCALI, l);
+        }
+      };
+      if (!s) { rimuovi(); continue; }
+      if (vuota(s)) {                      // niente da inviare: la sessione appena aperta resta sul telefono
+        if (!sessione || sessione.id !== id) rimuovi();
+        continue;
+      }
+      const versione = s.modificata_il;
+      await inviaSessione(s);
+      // se nel frattempo è cambiata, resta in coda per il prossimo giro
+      const ora = leggiLocale(CHIAVE_LOCALI, {})[id];
+      if (!ora || ora.modificata_il === versione) rimuovi();
+    }
+    const locali2 = leggiLocale(CHIAVE_LOCALI, {});
+    const resta = leggiLocale(CHIAVE_CODA, []).filter(id => locali2[id] && !vuota(locali2[id]));
+    if (resta.length) statoSync('Salvataggio…');
+    else if (sessione && !vuota(sessione)) statoSync('✓ Salvato', 'ok');
+  } catch (err) {
+    statoSync(navigator.onLine ? 'Non salvato online · riprovo' : 'Offline · salvato sul telefono', 'offline');
+    clearTimeout(timerSync);
+    timerSync = setTimeout(sincronizzaCoda, 20000);
+  } finally {
+    invioInCorso = false;
+  }
+}
+
+function modificato() {
+  salvaLocale();
+  statoSync('Salvataggio…');
+  clearTimeout(timerSync);
+  timerSync = setTimeout(sincronizzaCoda, 1200);
+}
+
+window.addEventListener('online', sincronizzaCoda);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && sessione) salvaLocale(); });
+
+// ---------------------------------------------------------------------
+// Caricamento
+// ---------------------------------------------------------------------
+async function carica() {
+  if (!ASSEGNAZIONE || !GIORNO) return location.replace('/app.html');
+
+  const { data: { session } } = await sb.auth.getSession();
+  const uid = session?.user?.id || leggiLocale(CHIAVE_UID, null);
+  if (!uid) return location.replace('/login.html');
+  scriviLocale(CHIAVE_UID, uid);
+
+  // 1. Esercizi del giorno: dal server, oppure dalla copia salvata dalla home
+  let assegnazione = null;
+  try {
+    const { data, error } = await sb.from('assegnazioni')
+      .select(`id, stato, schede ( nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note,
+                 esercizi ( nome, descrizione, link_video, link_immagine ) ) )`)
+      .eq('id', ASSEGNAZIONE).single();
+    if (error) throw error;
+    assegnazione = data;
+  } catch {
+    const cache = leggiLocale(CHIAVE_CACHE, null);
+    assegnazione = cache?.assegnazioni?.find(a => a.id === ASSEGNAZIONE) || null;
+    if (assegnazione) statoSync('Offline · salvato sul telefono', 'offline');
+  }
+  if (!assegnazione) {
+    $('pagina').innerHTML = '';
+    return avviso('Non riesco a caricare questo allenamento. Controlla la connessione e riprova dalla home.', 'errore');
+  }
+
+  righe = (assegnazione.schede?.scheda_esercizi || [])
+    .filter(r => r.giorno === GIORNO).sort((a, b) => a.ordine - b.ordine);
+
+  // 2. Sessione: quella in corso sul telefono, quella indicata nel link, oppure una nuova
+  sessione = await trovaSessione(uid);
+
+  // 3. Ultima volta che ha fatto questi esercizi (solo online, non blocca)
+  disegna(assegnazione.schede?.nome);
+  caricaUltimeVolte().then(() => disegnaUltimeVolte());
+  sincronizzaCoda();
+}
+
+async function trovaSessione(uid) {
+  const locali = leggiLocale(CHIAVE_LOCALI, {});
+  const idRichiesto = parametri.get('s');
+  if (idRichiesto && locali[idRichiesto]) return locali[idRichiesto];
+
+  const inCorso = Object.values(locali).find(s =>
+    s.assegnazione_id === ASSEGNAZIONE && s.giorno === GIORNO && !s.completata && s.data === oggiRoma());
+  if (inCorso) return inCorso;
+
+  if (idRichiesto) {
+    try {
+      const { data } = await sb.from('sessioni')
+        .select('id, paziente_id, assegnazione_id, giorno, data, completata, completata_il, note, serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, fatta )')
+        .eq('id', idRichiesto).single();
+      if (data && !data.completata) {
+        const s = { ...data, serie: {} };
+        delete s.serie_registrate;
+        (data.serie_registrate || []).forEach(r => {
+          (s.serie[r.scheda_esercizio_id] ||= [])[r.numero_serie - 1] =
+            { ripetizioni: r.ripetizioni, carico_kg: r.carico_kg, rpe: r.rpe, fatta: r.fatta };
+        });
+        Object.keys(s.serie).forEach(k => { s.serie[k] = Array.from(s.serie[k], x => x || { fatta: false }); });
+        return s;
+      }
+    } catch {}
+  }
+
+  return {
+    id: crypto.randomUUID(), paziente_id: uid, assegnazione_id: ASSEGNAZIONE,
+    giorno: GIORNO, data: oggiRoma(), completata: false, note: '', serie: {}
+  };
+}
+
+async function caricaUltimeVolte() {
+  if (!righe.length) return;
+  try {
+    const { data, error } = await sb.from('serie_registrate')
+      .select('scheda_esercizio_id, sessione_id, numero_serie, ripetizioni, carico_kg, rpe, creato_il')
+      .in('scheda_esercizio_id', righe.map(r => r.id))
+      .neq('sessione_id', sessione.id)
+      .order('creato_il', { ascending: false }).limit(300);
+    if (error) throw error;
+    // per ogni esercizio tiene solo le serie della sessione più recente
+    const sessioneDi = {};
+    data.forEach(r => {
+      sessioneDi[r.scheda_esercizio_id] ||= r.sessione_id;
+      if (r.sessione_id === sessioneDi[r.scheda_esercizio_id])
+        (ultimeVolte[r.scheda_esercizio_id] ||= []).push(r);
+    });
+    Object.values(ultimeVolte).forEach(arr => arr.sort((a, b) => a.numero_serie - b.numero_serie));
+  } catch {}
+}
+
+// ---------------------------------------------------------------------
+// Disegno
+// ---------------------------------------------------------------------
+function serieDi(riga) {
+  if (!sessione.serie[riga.id]) {
+    const n = Math.max(1, Number(riga.serie) || 1);
+    sessione.serie[riga.id] = Array.from({ length: n }, () => ({ ripetizioni: null, carico_kg: null, rpe: null, fatta: false }));
+  }
+  return sessione.serie[riga.id];
+}
+
+function disegna(nomeScheda) {
+  if (!righe.length) {
+    $('pagina').innerHTML = `<a class="indietro" href="/app.html">← Home</a>`;
+    return avviso('Questo giorno non ha esercizi. Torna alla home e scegli un altro giorno.', 'errore');
+  }
+  let html = `
+    <a class="indietro" href="/app.html">← Home</a>
+    <p class="sopra">${esc(nomeScheda || 'La tua scheda')}</p>
+    <h1>Giorno ${GIORNO}</h1>
+    <div class="avanzamento"><div id="barra"></div></div>`;
+  righe.forEach(r => { html += `<section class="esercizio" id="es-${r.id}"></section>`; });
+  html += `
+    <div class="fine">
+      <label class="etichetta" for="note">Com'è andata? (facoltativo)</label>
+      <textarea id="note" placeholder="Dolore, fastidi, sensazioni, cosa vuoi dirmi…">${esc(sessione.note)}</textarea>
+    </div>
+    <button class="btn" id="btnTermina" onclick="termina()">Termina allenamento</button>`;
+  $('pagina').innerHTML = html;
+  righe.forEach(disegnaEsercizio);
+  $('note').addEventListener('input', e => { sessione.note = e.target.value; modificato(); });
+  aggiornaAvanzamento();
+}
+
+function disegnaEsercizio(r) {
+  const e = r.esercizi || {};
+  const elenco = serieDi(r);
+  const fatte = elenco.filter(x => x.fatta).length;
+  const ripPresc = ripetizioniPrescritte(r.ripetizioni);
+  const ultima = ultimeVolte[r.id] || [];
+  const video = e.link_video && linkVideo(e.link_video);
+  const immagine = e.link_immagine && linkVideo(e.link_immagine);
+
+  let html = `
+    <div class="es-testa">
+      <div class="es-nome">${esc(e.nome || 'Esercizio')}</div>
+      <div class="es-conta">${fatte}/${elenco.length}</div>
+    </div>
+    <div class="prescr">
+      ${r.serie ? `<span class="chip">${r.serie} serie</span>` : ''}
+      ${r.ripetizioni ? `<span class="chip">${esc(r.ripetizioni)}${ripPresc != null ? ' rip' : ''}</span>` : ''}
+      ${r.rpe ? `<span class="chip rpe">RPE ${esc(r.rpe)}</span>` : ''}
+      ${r.recupero ? `<span class="chip">Recupero ${esc(r.recupero)}</span>` : ''}
+    </div>
+    ${immagine ? `<img class="es-img" src="${esc(immagine)}" alt="${esc(e.nome)}" loading="lazy">` : ''}
+    ${video ? `<a class="es-video" href="${esc(video)}" target="_blank" rel="noopener">▶ Guarda il video</a>` : ''}
+    ${r.indicazioni || e.descrizione ? `<div class="es-testo">${esc(r.indicazioni || e.descrizione)}</div>` : ''}
+    ${r.note ? `<div class="es-nota">${esc(r.note)}</div>` : ''}
+    <div class="ultima" data-ultima="${r.id}">${testoUltima(ultima)}</div>
+    <div class="serie-testa"><span></span><span>Rip</span><span>Kg</span><span>RPE</span><span></span></div>`;
+
+  elenco.forEach((x, i) => {
+    // suggerimento in grigio: la serie prima di oggi, se no l'ultima volta, se no la prescrizione
+    const oggiPrima = i > 0 && elenco[i - 1].fatta ? elenco[i - 1] : null;
+    const prec = ultima[i] || ultima[ultima.length - 1];
+    const phRip = oggiPrima?.ripetizioni ?? prec?.ripetizioni ?? ripPresc ?? '';
+    const kg = oggiPrima?.carico_kg ?? prec?.carico_kg;
+    const phKg  = kg != null ? numero(kg) : '';
+    const phRpe = oggiPrima?.rpe ?? leggiNumero(r.rpe) ?? '';
+    html += `
+      <div class="serie-riga${x.fatta ? ' fatta' : ''}" data-riga="${r.id}" data-i="${i}">
+        <span class="n">${i + 1}</span>
+        <input data-campo="ripetizioni" inputmode="numeric" pattern="[0-9]*" placeholder="${esc(phRip)}" value="${x.ripetizioni ?? ''}" aria-label="Ripetizioni serie ${i + 1}">
+        <input data-campo="carico_kg" inputmode="decimal" placeholder="${esc(phKg || '–')}" value="${x.carico_kg != null ? numero(x.carico_kg) : ''}" aria-label="Carico in kg serie ${i + 1}">
+        <input data-campo="rpe" inputmode="decimal" placeholder="${esc(phRpe)}" value="${x.rpe != null ? numero(x.rpe) : ''}" aria-label="RPE serie ${i + 1}">
+        <button type="button" class="spunta" aria-label="Serie ${i + 1} fatta">✓</button>
+      </div>`;
+  });
+  html += `
+    <div class="azioni-serie">
+      <button type="button" class="link" data-azione="aggiungi" data-riga="${r.id}">+ Aggiungi serie</button>
+      ${elenco.length > 1 && !elenco[elenco.length - 1].fatta ? `<button type="button" class="link grigio" data-azione="togli" data-riga="${r.id}">Togli ultima</button>` : ''}
+    </div>`;
+
+  const box = $('es-' + r.id);
+  box.innerHTML = html;
+  box.classList.toggle('completo', fatte === elenco.length);
+}
+
+function testoUltima(ultima) {
+  if (!ultima.length) return '';
+  const testo = ultima.map(r => {
+    let t = r.ripetizioni != null ? String(r.ripetizioni) : '–';
+    if (r.carico_kg != null && Number(r.carico_kg) > 0) t += '×' + numero(r.carico_kg);
+    return t;
+  }).join(' · ');
+  return `Ultima volta: <b>${esc(testo)}</b>${ultima.some(r => Number(r.carico_kg) > 0) ? ' kg' : ''}`;
+}
+
+function disegnaUltimeVolte() {
+  // ridisegna solo gli esercizi non ancora iniziati, per avere i suggerimenti dell'ultima volta
+  righe.forEach(r => {
+    if (!ultimeVolte[r.id]) return;
+    const toccato = serieDi(r).some(x => x.fatta || x.ripetizioni != null || x.carico_kg != null);
+    if (toccato) { const el = document.querySelector(`[data-ultima="${r.id}"]`); if (el) el.innerHTML = testoUltima(ultimeVolte[r.id]); }
+    else disegnaEsercizio(r);
+  });
+}
+
+function aggiornaAvanzamento() {
+  let tot = 0, fatte = 0;
+  righe.forEach(r => { const el = serieDi(r); tot += el.length; fatte += el.filter(x => x.fatta).length; });
+  const barra = $('barra');
+  if (barra) barra.style.width = (tot ? Math.round(fatte / tot * 100) : 0) + '%';
+}
+
+// ---------------------------------------------------------------------
+// Interazioni
+// ---------------------------------------------------------------------
+document.addEventListener('input', e => {
+  const campo = e.target.dataset?.campo;
+  if (!campo) return;
+  const rigaEl = e.target.closest('.serie-riga');
+  const x = sessione.serie[rigaEl.dataset.riga][Number(rigaEl.dataset.i)];
+  x[campo] = campo === 'ripetizioni' ? (leggiNumero(e.target.value) != null ? Math.round(leggiNumero(e.target.value)) : null) : leggiNumero(e.target.value);
+  modificato();
+});
+
+document.addEventListener('click', e => {
+  const spunta = e.target.closest('.spunta');
+  if (spunta) return segnaSerie(spunta.closest('.serie-riga'));
+  const azione = e.target.closest('[data-azione]');
+  if (!azione) return;
+  const r = righe.find(x => x.id === azione.dataset.riga);
+  const elenco = serieDi(r);
+  if (azione.dataset.azione === 'aggiungi') elenco.push({ ripetizioni: null, carico_kg: null, rpe: null, fatta: false });
+  if (azione.dataset.azione === 'togli' && elenco.length > 1 && !elenco[elenco.length - 1].fatta) elenco.pop();
+  disegnaEsercizio(r); aggiornaAvanzamento(); modificato();
+});
+
+function segnaSerie(rigaEl) {
+  const r = righe.find(x => x.id === rigaEl.dataset.riga);
+  const i = Number(rigaEl.dataset.i);
+  const x = serieDi(r)[i];
+  if (x.fatta) {
+    x.fatta = false;
+  } else {
+    // campi vuoti → usa i valori suggeriti (quelli in grigio)
+    rigaEl.querySelectorAll('input').forEach(inp => {
+      const campo = inp.dataset.campo;
+      if (x[campo] == null && inp.placeholder && inp.placeholder !== '–') {
+        const v = leggiNumero(inp.placeholder);
+        x[campo] = campo === 'ripetizioni' && v != null ? Math.round(v) : v;
+      }
+    });
+    x.fatta = true;
+    if (navigator.vibrate) navigator.vibrate(30);
+    const restano = serieDi(r).some(s => !s.fatta);
+    const sec = secondiRecupero(r.recupero);
+    if (sec > 0 && (restano || righe.indexOf(r) < righe.length - 1)) avviaTimer(sec, r.esercizi?.nome);
+  }
+  disegnaEsercizio(r); aggiornaAvanzamento(); modificato();
+}
+
+// ---------------------------------------------------------------------
+// Timer di recupero
+// ---------------------------------------------------------------------
+let fineTimer = 0, intervallo = null;
+function avviaTimer(secondi, nome) {
+  fineTimer = Date.now() + secondi * 1000;
+  $('timerTesto').textContent = 'Recupero' + (nome ? ' · ' + nome : '');
+  $('timer').classList.add('visibile');
+  $('timer').classList.remove('finito');
+  clearInterval(intervallo);
+  intervallo = setInterval(aggiornaTimer, 250);
+  aggiornaTimer();
+}
+function aggiornaTimer() {
+  const resto = Math.max(0, Math.round((fineTimer - Date.now()) / 1000));
+  $('timerTempo').textContent = Math.floor(resto / 60) + ':' + String(resto % 60).padStart(2, '0');
+  if (resto === 0) {
+    clearInterval(intervallo);
+    $('timer').classList.add('finito');
+    $('timerTesto').textContent = 'Recupero finito: prossima serie!';
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    setTimeout(fermaTimer, 4000);
+  }
+}
+function aggiungiTempo(s) { fineTimer = Math.max(fineTimer, Date.now()) + s * 1000; $('timer').classList.remove('finito'); clearInterval(intervallo); intervallo = setInterval(aggiornaTimer, 250); aggiornaTimer(); }
+function fermaTimer() { clearInterval(intervallo); $('timer').classList.remove('visibile'); }
+
+// ---------------------------------------------------------------------
+// Fine allenamento
+// ---------------------------------------------------------------------
+async function termina() {
+  const tot = righe.reduce((n, r) => n + serieDi(r).length, 0);
+  const fatte = righe.reduce((n, r) => n + serieDi(r).filter(x => x.fatta).length, 0);
+  if (fatte === 0 && !confirm('Non hai segnato nessuna serie. Terminare comunque?')) return;
+  if (fatte > 0 && fatte < tot && !confirm(`Hai fatto ${fatte} serie su ${tot}. Terminare l'allenamento?`)) return;
+
+  fermaTimer();
+  $('btnTermina').disabled = true;
+  sessione.completata = true;
+  sessione.completata_il = new Date().toISOString();
+  sessione.note = $('note').value.trim();
+  salvaLocale();
+  await sincronizzaCoda();
+  const inviato = !leggiLocale(CHIAVE_CODA, []).includes(sessione.id);
+
+  // volume = somma ripetizioni × kg delle serie fatte
+  let volume = 0;
+  righe.forEach(r => serieDi(r).forEach(x => { if (x.fatta && x.ripetizioni && x.carico_kg) volume += x.ripetizioni * x.carico_kg; }));
+  const esFatti = righe.filter(r => serieDi(r).some(x => x.fatta)).length;
+
+  window.scrollTo(0, 0);
+  $('pagina').innerHTML = `
+    <div class="completato">
+      <div class="icona">✓</div>
+      <h1>Allenamento completato</h1>
+      <p style="color:var(--ink-soft)">Giorno ${GIORNO} · ${new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', timeZone: FUSO }).format(new Date())}</p>
+    </div>
+    <div class="riepilogo">
+      <div><b>${esFatti}</b><span>Esercizi</span></div>
+      <div><b>${fatte}</b><span>Serie</span></div>
+      <div><b>${volume ? numero(Math.round(volume)) : '–'}</b><span>Kg totali</span></div>
+    </div>
+    ${inviato ? '' : '<div class="avviso avviso-info">Sei offline: l\'allenamento è salvato sul telefono e verrà inviato appena torna la rete. Non uscire dall\'account prima.</div>'}
+    <a class="btn" href="/app.html" style="margin-top:20px">Torna alla home</a>`;
+}
+
+carica();
+</script>
+</body>
+</html>

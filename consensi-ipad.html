@@ -275,6 +275,7 @@
           <div class="sig-bar"><span id="sigDate"></span><button class="btn-clear" id="btnClear" type="button">Cancella</button></div>
         </div>
         <div class="err" id="err4">Aggiungi la tua firma per proseguire.</div>
+        <button class="btn btn-ghost btn-block" id="btnPenna" type="button" style="margin-top:14px">Firmerò a penna sul foglio stampato</button>
         <p class="hint" style="margin-top:14px" id="firmaHint">Firmando dichiari di aver letto e compreso i moduli precedenti e di confermare i consensi indicati.</p>
       </div>
     </section>
@@ -312,7 +313,7 @@
   var CHIAVE = 'fisioexpert_consensi';   // letta da anamnesi.html: solo esiti si/no, mai la firma
   var STEP_LABELS = ['Dati', 'Consenso', 'Privacy', 'Preferenze', 'Firma', 'Stampa'];
   var TOTAL = STEP_LABELS.length;
-  var VERSIONE = '2026-10-v3';
+  var VERSIONE = '2026-10-v4';
 
   /* ===== TESTI: unica fonte per schermo e foglio stampato. **grassetto** __corsivo__ ===== */
   var MODULI = {
@@ -336,15 +337,17 @@
     privacy: {
       titolo: 'Informativa privacy (art. 13 GDPR)',
       sezioni: [
-        { h: 'Titolare del trattamento', p: 'Gianmarco Molinari, fisioterapista libero professionista · P.IVA 14315091000 · Roma. Contatti: info@fisioexpert.it · WhatsApp +39 328 273 8164.' },
-        { h: 'Dati trattati e finalità', p: 'Dati anagrafici e di contatto, **dati relativi alla salute** (categoria particolare, art. 9 GDPR) e dati amministrativi e fiscali. Sono trattati per la valutazione, prevenzione, cura e riabilitazione fisioterapica (art. 9, par. 2, lett. h GDPR, nell\'ambito del segreto professionale), per la gestione di appuntamenti e promemoria e per gli adempimenti fiscali e contabili previsti dalla legge.' },
-        { h: 'Modalità e conservazione', p: 'Il trattamento avviene con strumenti cartacei ed elettronici, con misure idonee a garantire sicurezza e riservatezza. Questo modulo è stampato e conservato in formato cartaceo nella cartella del paziente. Conservazione: dati di contatto e prenotazione fino a 24 mesi dall\'ultima interazione; dati sanitari e questo modulo per 2-3 anni dalla conclusione del percorso terapeutico; dati fiscali per 10 anni.' },
-        { h: 'Comunicazione dei dati', p: 'I dati non sono diffusi né ceduti a fini commerciali. Possono essere comunicati solo a: fornitori di servizi tecnici (Google per agenda e moduli, Meta per i messaggi WhatsApp, inclusi i promemoria degli appuntamenti), consulente fiscale (solo per i dati contabili), altri professionisti sanitari coinvolti nella cura, autorità nei casi previsti dalla legge. Informazioni a familiari sono fornite solo su mia espressa indicazione.' },
+        { h: 'Titolare del trattamento', p: 'Gianmarco Molinari, fisioterapista libero professionista · P.IVA 14315091000 · Studio: Viale Pasteur 56, 00144 Roma. Contatti: info@fisioexpert.it · WhatsApp +39 328 273 8164. Informativa completa: fisioexpert.it/privacy-policy.html' },
+        { h: 'Dati trattati e finalità', p: 'Dati anagrafici e di contatto, **dati relativi alla salute** (categoria particolare, art. 9 GDPR) e dati amministrativi e fiscali. Sono trattati per la valutazione, prevenzione, cura e riabilitazione fisioterapica (art. 9, par. 2, lett. h GDPR, nell\'ambito del segreto professionale), per la gestione di appuntamenti e promemoria e per gli adempimenti fiscali e contabili previsti dalla legge. In agenda compaiono solo nome e cognome, **mai informazioni cliniche**.' },
+        { h: 'Modalità e conservazione', p: 'Il trattamento avviene con strumenti cartacei ed elettronici, con misure idonee a garantire sicurezza e riservatezza. Questo modulo è stampato e conservato in formato cartaceo nella cartella del paziente. Conservazione: dati di contatto e prenotazione fino a 24 mesi dall\'ultima interazione; dati sanitari e questo modulo per 10 anni dalla conclusione del percorso terapeutico; dati fiscali per 10 anni.' },
+        { h: 'Comunicazione dei dati', p: 'I dati non sono diffusi né ceduti a fini commerciali. Possono essere comunicati solo a: fornitori di servizi tecnici (Google per agenda e prenotazioni online, Meta per i messaggi WhatsApp, inclusi i promemoria, SumUp per i pagamenti con carta), consulente fiscale (solo per i dati contabili), Agenzia delle Entrate tramite il Sistema Tessera Sanitaria (vedi sotto), altri professionisti sanitari coinvolti nella cura, autorità nei casi previsti dalla legge. Informazioni a familiari sono fornite solo su mia espressa indicazione.' },
+        { h: 'Sistema Tessera Sanitaria', p: 'Per legge i dati delle mie spese sanitarie (codice fiscale, importo, data; **mai informazioni cliniche**) sono trasmessi al Sistema Tessera Sanitaria per la dichiarazione dei redditi precompilata. **Posso oppormi** spuntando la casella qui sotto, chiedendolo in seguito al fisioterapista o rivolgendomi all\'Agenzia delle Entrate nei tempi indicati sul sito del Sistema Tessera Sanitaria.' },
         { h: 'I miei diritti', p: 'Posso esercitare in ogni momento i diritti di accesso, rettifica, cancellazione, limitazione, opposizione e portabilità scrivendo a info@fisioexpert.it (risposta entro 30 giorni), revocare i consensi facoltativi e proporre reclamo al Garante per la protezione dei dati personali (garanteprivacy.it).' }
       ],
       spunte: [
         { k: 'privacy_letta', req: true, errore: 'Conferma di aver letto l\'informativa per proseguire.', txt: 'Dichiaro di aver letto l\'informativa sul trattamento dei miei dati personali e sanitari.' },
-        { k: 'p_email', req: false, txt: '**Acconsento** all\'invio via email di referti, schede di esercizi e certificati che mi riguardano. __(facoltativo)__' }
+        { k: 'p_email', req: false, txt: '**Acconsento** all\'invio via email e/o WhatsApp di schede di esercizi, referti, certificati e fatture che mi riguardano, ai recapiti indicati. __(facoltativo: in alternativa li ricevo a mano)__' },
+        { k: 'opp_ts', req: false, txt: '**Mi oppongo** alla trasmissione delle mie spese sanitarie al Sistema Tessera Sanitaria. __(facoltativo: se non spunto, i dati vengono trasmessi)__' }
       ]
     },
     preferenze: [
@@ -363,7 +366,8 @@
     recensione: 'Richiesta di recensione via WhatsApp',
     foto_clinico: 'Foto e video a scopo clinico-documentale',
     foto_social: 'Foto e video a scopo divulgativo / social',
-    p_email: 'Invio di referti, schede e certificati via email'
+    p_email: 'Invio di schede, referti, certificati e fatture via email e/o WhatsApp',
+    opp_ts: 'Opposizione alla trasmissione al Sistema Tessera Sanitaria'
   };
 
   /* ===== UTILITÀ ===== */
@@ -489,7 +493,7 @@
 
   /* ===== FIRMA ===== */
   var canvas = $('sig'), ctx = canvas.getContext('2d'), segnaposto = $('sigPlaceholder');
-  var disegnando = false, firmata = false, ultimo = null;
+  var disegnando = false, firmata = false, ultimo = null, firmaPenna = false;
 
   function resizeCanvas() {
     var ratio = window.devicePixelRatio || 1, rect = canvas.getBoundingClientRect();
@@ -547,7 +551,7 @@
         v: 1, ts: new Date().toISOString(),
         nome: val('nome'), cognome: val('cognome'), nascita: nascitaIso(), tel: val('tel'), email: val('email'),
         consensi: {
-          informato: chk('ci'), privacy_cura: chk('privacy_letta'), privacy_email: chk('p_email'),
+          informato: chk('ci'), privacy_cura: chk('privacy_letta'), privacy_email: chk('p_email'), opposizione_ts: chk('opp_ts'),
           mk: consensi.mk === 'yes', foto_clinico: consensi.foto_clinico === 'yes', foto_social: consensi.foto_social === 'yes'
         }
       }));
@@ -587,7 +591,8 @@
         if (s.req) {
           h += '<div class="f-row"><span class="bx">X</span><span class="t">' + fmtStampa(s.txt) + '</span></div>';
         } else {
-          h += '<div class="f-row"><span class="t">' + esc(ETICHETTA_STAMPA[s.k]) + '</span><span class="sn">' + (chk(s.k) ? 'CONSENSO: SÌ' : 'CONSENSO: NO') + '</span></div>';
+          var esito = s.k === 'opp_ts' ? (chk(s.k) ? 'MI OPPONGO' : 'NESSUNA OPPOSIZIONE') : (chk(s.k) ? 'CONSENSO: SÌ' : 'CONSENSO: NO');
+          h += '<div class="f-row"><span class="t">' + esc(ETICHETTA_STAMPA[s.k]) + '</span><span class="sn">' + esito + '</span></div>';
         }
       });
     });
@@ -598,10 +603,10 @@
     });
     h += '</div></div>';
 
-    h += '<div class="f-firma"><div><div class="sig"><img src="' + firmaRitagliata() + '" alt="Firma"></div>' +
+    h += '<div class="f-firma"><div><div class="sig">' + (firmaPenna ? '<div style="height:16mm"></div>' : '<img src="' + firmaRitagliata() + '" alt="Firma">') + '</div>' +
       '<div class="cap">' + (m ? 'Firma del genitore / tutore' : 'Firma del paziente') + '</div></div>' +
       '<div class="dt">Roma, ' + at.data + ' · ore ' + at.ora + '</div></div>';
-    h += '<div class="f-foot">Modulo compilato e firmato su tablet · v. ' + VERSIONE + '</div>';
+    h += '<div class="f-foot">' + (firmaPenna ? 'Modulo compilato su tablet e firmato a penna' : 'Modulo compilato e firmato su tablet') + ' · v. ' + VERSIONE + '</div>';
     $('foglio').innerHTML = h;
     adattaFoglio();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(adattaFoglio);
@@ -632,7 +637,8 @@
       ['Paziente', esc(val('nome') + ' ' + val('cognome'))],
       ['Consenso informato', '✓ Firmato'],
       ['Privacy', '✓ Letta'],
-      ['Referti via email', chk('p_email') ? 'Sì' : 'No'],
+      ['Documenti via email/WhatsApp', chk('p_email') ? 'Sì' : 'No'],
+      ['Opposizione Sistema TS', chk('opp_ts') ? 'Sì' : 'No'],
       ['Marketing', yn(consensi.mk)], ['Recensione WhatsApp', yn(consensi.recensione)],
       ['Foto cliniche', yn(consensi.foto_clinico)], ['Foto social', yn(consensi.foto_social)],
       ['Data', at.data + ' ' + at.ora]
@@ -695,15 +701,15 @@
     if (step === 1 || step === 2) {
       var key = step === 1 ? 'consenso' : 'privacy', sp = MODULI[key].spunte;
       for (var i = 0; i < sp.length; i++) if (sp[i].req && !chk(sp[i].k)) return fail('err' + step, sp[i].errore);
-      if (step === 2 && chk('p_email') && !val('email')) return fail('err2', 'Per ricevere i documenti via email inserisci la tua email nel primo passaggio (tasto Indietro).');
     }
     if (step === 3) { for (var k in consensi) if (!consensi[k]) return fail('err3'); }
-    if (step === 4 && !firmata) return fail('err4');
+    if (step === 4 && !firmata && !firmaPenna) return fail('err4');
     return true;
   }
 
   btnNext.addEventListener('click', function () { if (validate(current)) goTo(current + 1); });
   btnBack.addEventListener('click', function () { if (current > 0) goTo(current - 1); });
+  $('btnPenna').addEventListener('click', function () { firmaPenna = true; clearErr(); goTo(5); });
 
   $('btnStampa').addEventListener('click', function () { adattaFoglio(); window.print(); });
   $('btnRestart').addEventListener('click', function () {

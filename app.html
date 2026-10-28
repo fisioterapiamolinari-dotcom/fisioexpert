@@ -179,7 +179,7 @@ async function carica() {
     const { data: assegnazioni, error: e2 } = await sb.from('assegnazioni')
       .select(`id, data_inizio, data_fine, stato,
                schede ( id, nome, indicazioni,
-                 scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note,
+                 scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note,
                    esercizi ( nome, descrizione, link_video, link_immagine ) ) )`)
       .eq('paziente_id', uid).eq('stato', 'attiva')
       .order('data_inizio', { ascending: false });
@@ -269,7 +269,7 @@ function disegna({ profilo, assegnazioni, sessioni }) {
           <span class="etichetta">${p.riprendi ? 'Allenamento in corso' : 'Prossimo allenamento'}</span>
           <div class="titolo">Giorno ${p.giorno}</div>
           <div class="dettaglio">${righe.length} ${righe.length === 1 ? 'esercizio' : 'esercizi'}</div>
-          <ol>${righe.map(r => `<li>${esc(r.esercizi?.nome)}${r.serie ? ` · ${r.serie}×${esc(r.ripetizioni || '')}` : ''}</li>`).join('')}</ol>
+          <ol>${righe.map(r => `<li>${esc(r.esercizi?.nome)}${r.serie ? ` · ${r.serie}×${esc(r.ripetizioni || '')}` : ''}${r.carico ? ` · ${esc(r.carico)}` : ''}</li>`).join('')}</ol>
           <a class="btn" href="${url}">${p.riprendi ? 'Riprendi' : 'Inizia'} Giorno ${p.giorno}</a>
         </div>`;
     }

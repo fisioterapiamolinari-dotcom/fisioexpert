@@ -49,6 +49,9 @@ h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1;
 .prescr { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
 .chip { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.3px; background:var(--warm); border-radius:20px; padding:5px 10px; }
 .chip.rpe { background:var(--accent-light); color:var(--accent-dark); }
+.sezione { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:22px 2px 10px; display:flex; align-items:center; gap:10px; }
+.sezione::after { content:''; flex:1; height:1px; background:var(--border); }
+.chip.carico { background:var(--ink); color:var(--white); }
 .es-testo { font-size:14px; color:var(--ink-soft); margin-bottom:8px; white-space:pre-line; }
 .es-nota { font-size:14px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; white-space:pre-line; }
 .es-img { width:100%; border-radius:12px; margin:6px 0 10px; display:block; }
@@ -183,6 +186,11 @@ function ripetizioniPrescritte(testo) {
   if (/sec|min|"|'/.test(t)) return null;
   const m = t.match(/\d+/);
   return m ? Number(m[0]) : null;
+}
+// "60 kg" → 60 ; "max 123 kg" o "stesso peso del giorno 1" → null (non è un valore da proporre)
+function caricoPrescritto(testo) {
+  const m = String(testo || '').trim().match(/^(\d+(?:[.,]\d+)?)\s*(?:kg)?$/i);
+  return m ? Number(m[1].replace(',', '.')) : null;
 }
 // "90 sec" → 90 ; "1'30" → 90 ; "2 min" → 120
 function secondiRecupero(testo) {
@@ -325,7 +333,7 @@ async function carica() {
   let assegnazione = null;
   try {
     const { data, error } = await sb.from('assegnazioni')
-      .select(`id, stato, schede ( nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note,
+      .select(`id, stato, schede ( nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note,
                  esercizi ( nome, descrizione, link_video, link_immagine ) ) )`)
       .eq('id', ASSEGNAZIONE).single();
     if (error) throw error;
@@ -426,7 +434,11 @@ function disegna(nomeScheda) {
     <p class="sopra">${esc(nomeScheda || 'La tua scheda')}</p>
     <h1>Giorno ${GIORNO}</h1>
     <div class="avanzamento"><div id="barra"></div></div>`;
-  righe.forEach(r => { html += `<section class="esercizio" id="es-${r.id}"></section>`; });
+  let sezione = null;
+  righe.forEach(r => {
+    if ((r.sezione || '') !== sezione) { sezione = r.sezione || ''; if (sezione) html += `<div class="sezione">${esc(sezione)}</div>`; }
+    html += `<section class="esercizio" id="es-${r.id}"></section>`;
+  });
   html += `
     <div class="fine">
       <label class="etichetta" for="note">Com'è andata? (facoltativo)</label>
@@ -456,7 +468,8 @@ function disegnaEsercizio(r) {
     <div class="prescr">
       ${r.serie ? `<span class="chip">${r.serie} serie</span>` : ''}
       ${r.ripetizioni ? `<span class="chip">${esc(r.ripetizioni)}${ripPresc != null ? ' rip' : ''}</span>` : ''}
-      ${r.rpe ? `<span class="chip rpe">RPE ${esc(r.rpe)}</span>` : ''}
+      ${r.carico ? `<span class="chip carico">${esc(r.carico)}</span>` : ''}
+      ${r.rpe ? `<span class="chip rpe">${/^\d/.test(r.rpe) ? 'RPE ' : ''}${esc(r.rpe)}</span>` : ''}
       ${r.recupero ? `<span class="chip">Recupero ${esc(r.recupero)}</span>` : ''}
     </div>
     ${immagine ? `<img class="es-img" src="${esc(immagine)}" alt="${esc(e.nome)}" loading="lazy">` : ''}
@@ -471,7 +484,8 @@ function disegnaEsercizio(r) {
     const oggiPrima = i > 0 && elenco[i - 1].fatta ? elenco[i - 1] : null;
     const prec = ultima[i] || ultima[ultima.length - 1];
     const phRip = oggiPrima?.ripetizioni ?? prec?.ripetizioni ?? ripPresc ?? '';
-    const kg = oggiPrima?.carico_kg ?? prec?.carico_kg;
+    // il carico che hai scritto nella scheda ("60 kg") vale più dell'ultima volta
+    const kg = oggiPrima?.carico_kg ?? caricoPrescritto(r.carico) ?? prec?.carico_kg;
     const phKg  = kg != null ? numero(kg) : '';
     const phRpe = oggiPrima?.rpe ?? leggiNumero(r.rpe) ?? '';
     html += `

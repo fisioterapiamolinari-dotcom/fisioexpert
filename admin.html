@@ -718,17 +718,25 @@ function leggiRigaEsercizio(riga) {
 
 // Formato preciso preparato da Claude in chat: { nome, indicazioni, giorni: [{ giorno, esercizi: [...] }] }
 function leggiSchedaDaJson(testo) {
-  const inizio = testo.indexOf('{'), fine = testo.lastIndexOf('}');
+  // accetta la scheda intera { giorni: [...] }, un solo giorno { esercizi: [...] } o un elenco [ {esercizio}, … ]
+  const graffa = testo.indexOf('{'), quadra = testo.indexOf('[');
+  const elenco = quadra >= 0 && (graffa < 0 || quadra < graffa);
+  const inizio = elenco ? quadra : graffa, fine = testo.lastIndexOf(elenco ? ']' : '}');
   if (inizio < 0 || fine < inizio) return null;
   let dati;
   try { dati = JSON.parse(testo.slice(inizio, fine + 1)); } catch { return null; }
-  if (!Array.isArray(dati.giorni)) return null;
+  let giorni;
+  if (Array.isArray(dati)) giorni = dati.some(x => Array.isArray(x?.esercizi)) ? dati : [{ giorno: 1, esercizi: dati }];
+  else if (Array.isArray(dati?.giorni)) giorni = dati.giorni;
+  else if (Array.isArray(dati?.esercizi)) giorni = [{ giorno: dati.giorno || 1, esercizi: dati.esercizi }];
+  else return null;
+  dati = Array.isArray(dati) ? {} : dati;
   const testoDi = v => v == null ? '' : String(v).trim();
   const righe = [];
-  dati.giorni.forEach((g, gi) => (g.esercizi || []).forEach(e => {
+  giorni.forEach((g, gi) => (g.esercizi || []).forEach(e => {
     if (!testoDi(e.nome)) return;
     righe.push({
-      giorno: Number(g.giorno) || gi + 1,
+      giorno: Number(e.giorno) || Number(g.giorno) || gi + 1,
       nome: testoDi(e.nome),
       serie: parseInt(e.serie, 10) || null,
       ripetizioni: testoDi(e.ripetizioni),
@@ -747,7 +755,7 @@ function leggiTesto() {
   bozza.testo = $('testoScheda').value;
   const json = leggiSchedaDaJson(bozza.testo);
   // sembra il blocco di Claude ma non si legge: meglio fermarsi che creare righe sbagliate
-  if (!json && /"giorni"\s*:/.test(bozza.testo))
+  if (!json && /"(?:giorni|esercizi|serie|ripetizioni)"\s*:/.test(bozza.testo))
     return toast('Il blocco VERSIONE APP non è completo o è stato modificato. Ricopialo intero dalla risposta di Claude.');
   if (json && json.nome && !$('nomeScheda').value.trim()) { $('nomeScheda').value = json.nome; bozza.nome = json.nome; }
   const ris = json || leggiSchedaDaTesto(bozza.testo);

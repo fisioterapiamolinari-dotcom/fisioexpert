@@ -77,8 +77,8 @@ textarea { resize:vertical; }
 .paziente:hover { border-color:rgba(244,121,32,.4); }
 .paziente .iniziali { flex:0 0 44px; height:44px; border-radius:50%; background:var(--warm-dark); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:14px; }
 .paziente .testo { flex:1; min-width:0; }
-.paziente .nome { font-weight:700; }
-.paziente .info { color:var(--ink-muted); font-size:13px; }
+.paziente .nome { font-weight:700; display:block; }
+.paziente .info { color:var(--ink-muted); font-size:13px; display:block; }
 
 /* Editor scheda */
 .esempio { background:var(--warm); border-radius:10px; padding:10px 12px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); white-space:pre-wrap; margin-bottom:10px; }
@@ -300,7 +300,7 @@ async function vistaPaziente(id) {
   const [r1, r2, r3] = await Promise.all([
     sb.from('profili').select('*').eq('id', id).single(),
     sb.from('assegnazioni').select(`id, data_inizio, data_fine, stato, scheda_id,
-        schede ( id, nome, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, esercizi ( nome ) ) )`)
+        schede ( id, nome, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, carico, esercizi ( nome ) ) )`)
       .eq('paziente_id', id).order('data_inizio', { ascending: false }),
     sb.from('sessioni').select(`id, giorno, data, completata, note, assegnazione_id,
         serie_registrate ( numero_serie, ripetizioni, carico_kg, rpe, scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
@@ -330,7 +330,7 @@ async function vistaPaziente(id) {
     let perGiorno = '', g = null;
     righe.forEach(r => {
       if (r.giorno !== g) { g = r.giorno; perGiorno += `<div style="margin-top:6px"><b>Giorno ${g}</b></div>`; }
-      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}</div>`;
+      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.carico ? ' · ' + esc(r.carico) : ''}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}</div>`;
     });
     html += `
       <div class="card scheda-attiva">
@@ -548,17 +548,19 @@ async function eliminaPaziente(id, utente) {
 // =====================================================================
 // NUOVA SCHEDA: scrivi in testo libero → tabella modificabile → salva
 // =====================================================================
-let bozza = null; // { nome, indicazioni, testo, pazienteId, righe:[{giorno,nome,serie,ripetizioni,rpe,recupero,indicazioni,note}] }
+let bozza = null; // { nome, indicazioni, testo, pazienteId, righe:[{giorno,sezione,nome,serie,ripetizioni,carico,rpe,recupero,indicazioni,note}] }
 
 const ESEMPIO = `Indicazioni: se il dolore supera 4/10 fermati e scrivimi.
 
 Giorno 1
-Squat bulgaro 3x8-10 RPE 7 rec 90" - scendi lento in 3 secondi
-Ponte glutei 3x12 RPE 6 nota: stringi i glutei in alto
+Sezione: Riscaldamento
 Plank 3x30 sec rec 60"
+Sezione: Lavoro principale
+Squat bulgaro 3x8-10 16 kg RPE 7 rec 90" - scendi lento in 3 secondi
+Ponte glutei 3x12 RPE 6 nota: stringi i glutei in alto
 
 Giorno 2
-Stacco rumeno 4x6 RPE 7-8 rec 2 min
+Stacco rumeno 4x6 carico 60 kg RPE 7-8 rec 2 min
 > schiena neutra, spingi il bacino indietro
 Calf raise 3x15`;
 
@@ -590,7 +592,7 @@ async function vistaNuova(pazienteId) {
         <div class="esempio">${esc(ESEMPIO)}</div>
         <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">
           <b>Giorno N</b> su una riga apre il giorno · <b>3x10</b> = serie × ripetizioni (anche 3x8-10, 3x30 sec, 3xmax) ·
-          <b>RPE 7</b> · <b>rec 90"</b> / rec 2 min · dopo <b>-</b> le indicazioni · <b>nota:</b> la nota ·
+          <b>60 kg</b> o carico 60 kg · <b>RPE 7</b> · <b>rec 90"</b> / rec 2 min · <b>Sezione: Lavoro principale</b> apre una sezione · dopo <b>-</b> le indicazioni · <b>nota:</b> la nota ·
           una riga che inizia con <b>&gt;</b> aggiunge indicazioni all'esercizio sopra · <b>Indicazioni:</b> prima del Giorno 1 = indicazioni generali.</p>
         <button type="button" class="btn btn-sec btn-piccolo" onclick="$('testoScheda').value = ESEMPIO; leggiTesto()">Usa l'esempio</button>
       </details>
@@ -602,6 +604,7 @@ async function vistaNuova(pazienteId) {
     </div>
 
     <div id="anteprima"></div>
+    <datalist id="nomiSezioni">${['Riscaldamento', 'Attivazione', 'Lavoro principale', 'Accessori', 'Defaticamento'].map(n => `<option value="${n}">`).join('')}</datalist>
     <datalist id="nomiEsercizi">${esercizi.map(e => `<option value="${esc(e.nome)}">`).join('')}</datalist>`;
 
   $('nomeScheda').addEventListener('input', e => { bozza.nome = e.target.value; salvaBozza(); });
@@ -624,7 +627,7 @@ function svuotaBozza() {
 // ---------------------------------------------------------------------
 function leggiSchedaDaTesto(testo) {
   const ris = { indicazioni: [], righe: [] };
-  let giorno = null, ultima = null;
+  let giorno = null, ultima = null, sezione = '';
 
   testo.split(/\r?\n/).forEach(grezza => {
     let riga = grezza.trim();
@@ -632,7 +635,12 @@ function leggiSchedaDaTesto(testo) {
 
     // "Giorno 2", "G2", "Day 2", "GIORNO 2 - gambe"
     const g = riga.match(/^(?:giorno|day|g)\s*(\d{1,2})\b/i);
-    if (g) { giorno = Number(g[1]); ultima = null; return; }
+    if (g) { giorno = Number(g[1]); ultima = null; sezione = ''; return; }
+
+    // "Sezione: Lavoro principale", "## Accessori" o una riga tutta maiuscola: "RISCALDAMENTO"
+    const sez = riga.match(/^(?:sezione\s*:\s*|#{1,3}\s*)(.+)$/i) ||
+      (/^[A-ZÀ-Ý][A-ZÀ-Ý\s·+\-–()/]{3,}$/.test(riga) && !/\d/.test(riga) ? [riga, riga] : null);
+    if (sez) { const t = sez[1].trim().replace(/:$/, ''); sezione = t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); ultima = null; return; }
 
     // Indicazioni generali (prima del primo giorno o con "Indicazioni:")
     const ind = riga.match(/^indicazioni(?:\s+generali)?\s*:\s*(.*)$/i);
@@ -650,9 +658,10 @@ function leggiSchedaDaTesto(testo) {
     let es = leggiRigaEsercizio(riga);
     if (!es && giorno === null) { ris.indicazioni.push(riga); return; }
     // dentro un giorno, una riga non riconosciuta diventa comunque un esercizio (si corregge in tabella)
-    if (!es) es = { nome: riga.charAt(0).toUpperCase() + riga.slice(1), serie: null, ripetizioni: '', rpe: '', recupero: '', indicazioni: '', note: '' };
+    if (!es) es = { nome: riga.charAt(0).toUpperCase() + riga.slice(1), serie: null, ripetizioni: '', carico: '', rpe: '', recupero: '', indicazioni: '', note: '' };
     if (giorno === null) giorno = 1;
     es.giorno = giorno;
+    es.sezione = sezione;
     ris.righe.push(es);
     ultima = es;
   });
@@ -662,7 +671,7 @@ function leggiSchedaDaTesto(testo) {
 
 // "Squat bulgaro 3x8-10 RPE 7 rec 90" - scendi lento nota: occhio al ginocchio"
 function leggiRigaEsercizio(riga) {
-  let resto = riga, note = '', rpe = '', recupero = '', serie = null, ripetizioni = '';
+  let resto = riga, note = '', rpe = '', recupero = '', serie = null, ripetizioni = '', carico = '';
 
   const n = resto.match(/\bnot[ae]\s*:\s*(.+)$/i);
   if (n) { note = n[1].trim(); resto = resto.slice(0, n.index); }
@@ -672,6 +681,12 @@ function leggiRigaEsercizio(riga) {
 
   const rec = resto.match(/\b(?:rec(?:upero)?|riposo|pausa)\s*:?\s*(\d+(?:[.,]\d+)?\s*(?:['’]\s*\d*\s*["”]?|["”]|sec(?:ondi)?\b|s\b|min(?:uti)?\b|m\b)?)/i);
   if (rec) { recupero = rec[1].trim(); resto = resto.replace(rec[0], ' '); }
+
+  // "carico 60 kg" ovunque; un "60 kg" da solo solo prima delle indicazioni (" - …"), dove "manubrio da 8 kg" non c'entra
+  const car = resto.match(/\b(?:carico|peso)\s*:?\s*(\d+(?:[.,]\d+)?\s*kg)\b/i);
+  const testa = resto.split(/\s[-–]\s/)[0];
+  const kg = car || testa.match(/(\d+(?:[.,]\d+)?\s*kg)\b/i);
+  if (kg) { carico = kg[1].replace(/\s*kg$/i, ' kg'); resto = resto.replace(kg[0], ' '); }
 
   // 3x10 · 3 x 8-10 · 3x30 sec · 3xmax · 3 serie da 10
   const sr = resto.match(/(\d{1,2})\s*(?:[x×*]|serie\s*(?:da|x)?)\s*(max|\d+(?:\s*[-–]\s*\d+)?(?:\s*(?:sec(?:ondi)?|s|["”]|min(?:uti)?|['’]|rip(?:etizioni)?|per\s+lato|x\s*lato))?)\b["”'’]?/i);
@@ -686,13 +701,13 @@ function leggiRigaEsercizio(riga) {
   } else {
     // senza serie×rip: è un esercizio solo se ha RPE o recupero, oppure un separatore " - "
     const sep = resto.match(/\s[-–:]\s/);
-    if (!rpe && !recupero && !sep) return null;
+    if (!rpe && !recupero && !carico && !sep) return null;
     if (sep) { nome = resto.slice(0, sep.index); dopo = resto.slice(sep.index + sep[0].length); }
   }
   nome = nome.replace(/[\s\-–:,|]+$/, '').trim();
   const indicazioni = dopo.replace(/^[\s\-–:,|]+/, '').replace(/\s{2,}/g, ' ').trim();
   if (!nome) return null;
-  return { nome: nome.charAt(0).toUpperCase() + nome.slice(1), serie, ripetizioni, rpe, recupero, indicazioni, note };
+  return { nome: nome.charAt(0).toUpperCase() + nome.slice(1), serie, ripetizioni, carico, rpe, recupero, indicazioni, note };
 }
 
 // Formato preciso preparato da Claude in chat: { nome, indicazioni, giorni: [{ giorno, esercizi: [...] }] }
@@ -711,6 +726,8 @@ function leggiSchedaDaJson(testo) {
       nome: testoDi(e.nome),
       serie: parseInt(e.serie, 10) || null,
       ripetizioni: testoDi(e.ripetizioni),
+      carico: testoDi(e.carico),
+      sezione: testoDi(e.sezione),
       rpe: testoDi(e.rpe),
       recupero: testoDi(e.recupero),
       indicazioni: testoDi(e.indicazioni),
@@ -723,6 +740,9 @@ function leggiSchedaDaJson(testo) {
 function leggiTesto() {
   bozza.testo = $('testoScheda').value;
   const json = leggiSchedaDaJson(bozza.testo);
+  // sembra il blocco di Claude ma non si legge: meglio fermarsi che creare righe sbagliate
+  if (!json && /"giorni"\s*:/.test(bozza.testo))
+    return toast('Il blocco VERSIONE APP non è completo o è stato modificato. Ricopialo intero dalla risposta di Claude.');
   if (json && json.nome && !$('nomeScheda').value.trim()) { $('nomeScheda').value = json.nome; bozza.nome = json.nome; }
   const ris = json || leggiSchedaDaTesto(bozza.testo);
   if (!ris.righe.length) return toast('Non ho trovato esercizi. Controlla l\'esempio: es. "Squat 3x10 RPE 7"');
@@ -743,13 +763,15 @@ function disegnaAnteprima() {
 
   let corpo = '', g = null;
   bozza.righe.forEach((r, i) => {
-    if (r.giorno !== g) { g = r.giorno; corpo += `<tr class="giorno-testa"><td colspan="9">Giorno ${g}</td></tr>`; }
+    if (r.giorno !== g) { g = r.giorno; corpo += `<tr class="giorno-testa"><td colspan="11">Giorno ${g}</td></tr>`; }
     corpo += `
       <tr class="riga-es" data-i="${i}">
         <td data-label="G"><input class="stretto" data-c="giorno" inputmode="numeric" value="${r.giorno}"></td>
+        <td class="largo" data-label="Sezione"><input class="medio" data-c="sezione" list="nomiSezioni" value="${esc(r.sezione)}"></td>
         <td class="largo" data-label="Esercizio"><input data-c="nome" list="nomiEsercizi" value="${esc(r.nome)}"></td>
         <td data-label="Serie"><input class="stretto" data-c="serie" inputmode="numeric" value="${r.serie ?? ''}"></td>
         <td data-label="Rip"><input class="medio" data-c="ripetizioni" value="${esc(r.ripetizioni)}"></td>
+        <td data-label="Carico"><input class="medio" data-c="carico" value="${esc(r.carico)}"></td>
         <td data-label="RPE"><input class="stretto" data-c="rpe" value="${esc(r.rpe)}"></td>
         <td data-label="Recupero"><input class="medio" data-c="recupero" value="${esc(r.recupero)}"></td>
         <td class="largo" data-label="Indicazioni"><textarea data-c="indicazioni" rows="${righeTesto(r.indicazioni)}">${esc(r.indicazioni)}</textarea></td>
@@ -771,7 +793,7 @@ function disegnaAnteprima() {
     </div>
     <div class="card scorri">
       <table class="tabella-righe">
-        <thead><tr><th>G</th><th>Esercizio</th><th>Serie</th><th>Rip</th><th>RPE</th><th>Recupero</th><th>Indicazioni</th><th>Note</th><th></th></tr></thead>
+        <thead><tr><th>G</th><th>Sezione</th><th>Esercizio</th><th>Serie</th><th>Rip</th><th>Carico</th><th>RPE</th><th>Recupero</th><th>Indicazioni</th><th>Note</th><th></th></tr></thead>
         <tbody id="corpoRighe">${corpo}</tbody>
       </table>
       <button type="button" class="link" onclick="aggiungiRiga()">+ Aggiungi esercizio</button>
@@ -803,7 +825,8 @@ function righeTesto(t) { return Math.min(4, Math.max(1, Math.ceil(String(t || ''
 
 function aggiungiRiga() {
   const g = bozza.righe.length ? bozza.righe[bozza.righe.length - 1].giorno : 1;
-  bozza.righe.push({ giorno: g, nome: '', serie: 3, ripetizioni: '10', rpe: '', recupero: '', indicazioni: '', note: '' });
+  const ultima = bozza.righe[bozza.righe.length - 1];
+  bozza.righe.push({ giorno: g, sezione: ultima?.sezione || '', nome: '', serie: 3, ripetizioni: '10', carico: '', rpe: '', recupero: '', indicazioni: '', note: '' });
   salvaBozza(); disegnaAnteprima();
 }
 
@@ -844,6 +867,8 @@ async function salvaScheda(btn) {
       ordine: (contatore[r.giorno] = (contatore[r.giorno] || 0) + 1),
       serie: r.serie ? Math.min(20, Math.max(1, Number(r.serie))) : null,
       ripetizioni: (r.ripetizioni || '').trim() || null,
+      carico: (r.carico || '').trim() || null,
+      sezione: (r.sezione || '').trim() || null,
       rpe: (r.rpe || '').trim() || null,
       recupero: (r.recupero || '').trim() || null,
       indicazioni: (r.indicazioni || '').trim() || null,
@@ -875,13 +900,14 @@ async function salvaScheda(btn) {
 // Carica una scheda esistente nell'editor (per modificarla o riusarla come modello)
 async function modelloDaScheda(schedaId, pazienteId) {
   const { data, error } = await sb.from('schede')
-    .select('nome, indicazioni, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
+    .select('nome, indicazioni, scheda_esercizi ( giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
     .eq('id', schedaId).single();
   if (error) return errore(error);
   bozza = {
     nome: data.nome, indicazioni: data.indicazioni || '', testo: '', pazienteId: pazienteId || '',
     righe: data.scheda_esercizi.sort((a, b) => a.giorno - b.giorno || a.ordine - b.ordine).map(r => ({
       giorno: r.giorno, nome: r.esercizi?.nome || '', serie: r.serie, ripetizioni: r.ripetizioni || '',
+      carico: r.carico || '', sezione: r.sezione || '',
       rpe: r.rpe || '', recupero: r.recupero || '', indicazioni: r.indicazioni || '', note: r.note || ''
     }))
   };

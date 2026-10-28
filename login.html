@@ -7,6 +7,12 @@
 <meta name="theme-color" content="#f8f4ef">
 <title>Accedi | Fisio Expert Allenamenti</title>
 <link rel="icon" href="/favicon.ico">
+<link rel="manifest" href="/manifest-app.json">
+<link rel="apple-touch-icon" href="/icona-app-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Allenamenti">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -424,6 +430,10 @@ sb.auth.onAuthStateChange(evento => {
   const { data: { session } } = await sb.auth.getSession();
   if (session && !inRecupero && !location.hash.includes('type=recovery')) vaiAvanti();
 })();
+</script>
+<script>
+// App installabile sul telefono e utilizzabile con rete debole (vedi sw-app.js)
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw-app.js').catch(() => {});
 </script>
 </body>
 </html>

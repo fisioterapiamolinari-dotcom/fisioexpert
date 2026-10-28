@@ -7,6 +7,12 @@
 <meta name="theme-color" content="#f8f4ef">
 <title>Informativa privacy App Allenamenti | Fisio Expert</title>
 <link rel="icon" href="/favicon.ico">
+<link rel="manifest" href="/manifest-app.json">
+<link rel="apple-touch-icon" href="/icona-app-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Allenamenti">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -164,5 +170,9 @@ footer { text-align:center; color:var(--ink-muted); font-size:12px; padding:0 16
   © 2026 Fisio Expert Roma · P.IVA 14315091000
 </footer>
 
+<script>
+// App installabile sul telefono e utilizzabile con rete debole (vedi sw-app.js)
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw-app.js').catch(() => {});
+</script>
 </body>
 </html>

@@ -69,6 +69,7 @@ h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1;
 .serie-testa, .serie-riga { display:grid; grid-template-columns:28px 1fr 1fr 1fr 52px; gap:8px; align-items:center; }
 .serie-testa { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); padding:0 0 6px; }
 .serie-testa span:not(:first-child) { text-align:center; }
+.serie-testa span:last-child { color:var(--green); }
 .serie-riga { margin-bottom:8px; }
 .serie-riga .n { font-family:var(--mono); font-weight:800; font-size:14px; color:var(--ink-muted); text-align:center; }
 .serie-riga input { width:100%; min-width:0; font-family:var(--sans); font-size:18px; font-weight:500; text-align:center; color:var(--ink);
@@ -85,6 +86,8 @@ h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1;
 
 /* Fine */
 .fine { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:18px 16px; margin:24px 0 14px; }
+.fine.note-alto { margin:0 0 6px; padding:14px 16px; }
+.fine.note-alto textarea { min-height:64px; }
 .etichetta { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:8px; display:block; }
 textarea { width:100%; font-family:var(--sans); font-size:16px; color:var(--ink); padding:12px 13px; border:1px solid var(--border); border-radius:10px; background:var(--white); outline:none; resize:vertical; min-height:90px; }
 textarea:focus { border-color:var(--accent); }
@@ -340,7 +343,7 @@ async function carica() {
   let assegnazione = null;
   try {
     const { data, error } = await sb.from('assegnazioni')
-      .select(`id, stato, schede ( nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note,
+      .select(`id, stato, schede ( nome, scheda_esercizi ( id, esercizio_id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note,
                  esercizi ( nome, descrizione, link_video, link_immagine ) ) )`)
       .eq('id', ASSEGNAZIONE).single();
     if (error) throw error;
@@ -403,20 +406,25 @@ async function trovaSessione(uid) {
 async function caricaUltimeVolte() {
   if (!righe.length) return;
   try {
-    const { data, error } = await sb.from('serie_registrate')
-      .select('scheda_esercizio_id, sessione_id, numero_serie, ripetizioni, carico_kg, rpe, creato_il')
-      .in('scheda_esercizio_id', righe.map(r => r.id))
+    // si cerca per esercizio, non per riga: così vale anche dopo una nuova scheda (progressione)
+    const esercizi = [...new Set(righe.map(r => r.esercizio_id).filter(Boolean))];
+    const filtro = esercizi.length
+      ? q => q.in('scheda_esercizi.esercizio_id', esercizi)
+      : q => q.in('scheda_esercizio_id', righe.map(r => r.id)); // copia offline vecchia senza esercizio_id
+    const { data, error } = await filtro(sb.from('serie_registrate')
+      .select('scheda_esercizio_id, sessione_id, numero_serie, ripetizioni, carico_kg, rpe, creato_il, scheda_esercizi!inner ( esercizio_id )'))
       .neq('sessione_id', sessione.id)
-      .order('creato_il', { ascending: false }).limit(300);
+      .order('creato_il', { ascending: false }).limit(500);
     if (error) throw error;
     // per ogni esercizio tiene solo le serie della sessione più recente
-    const sessioneDi = {};
+    const sessioneDi = {}, perEsercizio = {};
     data.forEach(r => {
-      sessioneDi[r.scheda_esercizio_id] ||= r.sessione_id;
-      if (r.sessione_id === sessioneDi[r.scheda_esercizio_id])
-        (ultimeVolte[r.scheda_esercizio_id] ||= []).push(r);
+      const chiave = r.scheda_esercizi?.esercizio_id || r.scheda_esercizio_id;
+      sessioneDi[chiave] ||= r.sessione_id;
+      if (r.sessione_id === sessioneDi[chiave]) (perEsercizio[chiave] ||= []).push(r);
     });
-    Object.values(ultimeVolte).forEach(arr => arr.sort((a, b) => a.numero_serie - b.numero_serie));
+    Object.values(perEsercizio).forEach(arr => arr.sort((a, b) => a.numero_serie - b.numero_serie));
+    righe.forEach(r => { const u = perEsercizio[r.esercizio_id] || perEsercizio[r.id]; if (u) ultimeVolte[r.id] = u; });
   } catch {}
 }
 
@@ -440,18 +448,18 @@ function disegna(nomeScheda) {
     <a class="indietro" href="/app.html">← Home</a>
     <p class="sopra">${esc(nomeScheda || 'La tua scheda')}</p>
     <h1>Giorno ${GIORNO}</h1>
-    <div class="avanzamento"><div id="barra"></div></div>`;
+    <div class="avanzamento"><div id="barra"></div></div>
+    <div class="fine note-alto">
+      <label class="etichetta" for="note">Note per Gianmarco (facoltativo)</label>
+      <textarea id="note" placeholder="Dolore, fastidi, sensazioni, cosa vuoi dirmi…">${esc(sessione.note)}</textarea>
+    </div>`;
   let sezione = null;
   righe.forEach(r => {
     if ((r.sezione || '') !== sezione) { sezione = r.sezione || ''; if (sezione) html += `<div class="sezione">${esc(sezione)}</div>`; }
     html += `<section class="esercizio" id="es-${r.id}"></section>`;
   });
   html += `
-    <div class="fine">
-      <label class="etichetta" for="note">Com'è andata? (facoltativo)</label>
-      <textarea id="note" placeholder="Dolore, fastidi, sensazioni, cosa vuoi dirmi…">${esc(sessione.note)}</textarea>
-    </div>
-    <button class="btn" id="btnTermina" onclick="termina()">Termina allenamento</button>`;
+    <button class="btn" id="btnTermina" onclick="termina()" style="margin-top:24px">Termina allenamento</button>`;
   $('pagina').innerHTML = html;
   righe.forEach(disegnaEsercizio);
   $('note').addEventListener('input', e => { sessione.note = e.target.value; modificato(); });
@@ -484,7 +492,7 @@ function disegnaEsercizio(r) {
     ${r.indicazioni || e.descrizione ? `<div class="es-testo">${esc(r.indicazioni || e.descrizione)}</div>` : ''}
     ${r.note ? `<div class="es-nota">${esc(r.note)}</div>` : ''}
     <div class="ultima" data-ultima="${r.id}">${testoUltima(ultima)}</div>
-    <div class="serie-testa"><span></span><span>Rip</span><span>Kg</span><span>RPE</span><span></span></div>`;
+    <div class="serie-testa"><span></span><span>Rip</span><span>Kg</span><span>RPE</span><span>Fatto</span></div>`;
 
   elenco.forEach((x, i) => {
     // suggerimento in grigio: la serie prima di oggi, se no l'ultima volta, se no la prescrizione

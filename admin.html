@@ -100,6 +100,12 @@ textarea { resize:vertical; }
 .riga-tools { display:flex; gap:2px; }
 .riga-tools button { background:none; border:0; color:var(--ink-muted); font-size:16px; cursor:pointer; padding:6px 5px; }
 .riga-tools button:hover { color:var(--ink); }
+.ultimo { font-size:12px; color:var(--ink-muted); margin-top:3px; line-height:1.35; }
+.ultimo b { color:var(--green); font-weight:700; }
+.progressione { border-color:rgba(244,121,32,.45); }
+.progressione .comandi { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-top:10px; }
+.progressione .comandi > div { min-width:120px; }
+.progressione .comandi input { width:90px; }
 .scorri { overflow-x:auto; }
 @media (max-width:760px) {
   .tabella-righe, .tabella-righe tbody, .tabella-righe tr, .tabella-righe td { display:block; width:100%; }
@@ -346,7 +352,7 @@ async function vistaPaziente(id) {
         </div>
         <div class="righe">${perGiorno}</div>
         <div class="azioni" style="margin-top:12px">
-          <a class="btn btn-sec btn-piccolo" href="#nuova/${p.id}" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}'); return false;">Modifica (nuova versione)</a>
+          <a class="btn btn-sec btn-piccolo" href="#nuova/${p.id}" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}'); return false;">Progressione / modifica</a>
           <button class="btn btn-sec btn-piccolo" onclick="concludiAssegnazione('${a.id}', this)">Concludi</button>
         </div>
       </div>`;
@@ -782,7 +788,8 @@ function disegnaAnteprima() {
       <tr class="riga-es" data-i="${i}">
         <td data-label="G"><input class="stretto" data-c="giorno" inputmode="numeric" value="${r.giorno}"></td>
         <td class="largo" data-label="Sezione"><input class="medio" data-c="sezione" list="nomiSezioni" value="${esc(r.sezione)}"></td>
-        <td class="largo" data-label="Esercizio"><input data-c="nome" list="nomiEsercizi" value="${esc(r.nome)}"></td>
+        <td class="largo" data-label="Esercizio"><input data-c="nome" list="nomiEsercizi" value="${esc(r.nome)}">
+          ${r.ultimo ? `<div class="ultimo">Fatto: <b>${esc(r.ultimo.testo)}</b></div>` : ''}</td>
         <td data-label="Serie"><input class="stretto" data-c="serie" inputmode="numeric" value="${r.serie ?? ''}"></td>
         <td data-label="Rip"><input class="medio" data-c="ripetizioni" value="${esc(r.ripetizioni)}"></td>
         <td data-label="Carico"><input class="medio" data-c="carico" value="${esc(r.carico)}"></td>
@@ -805,6 +812,7 @@ function disegnaAnteprima() {
       <label class="etichetta" for="indicazioniScheda">Indicazioni generali</label>
       <textarea id="indicazioniScheda" rows="2" placeholder="Valgono per tutta la scheda">${esc(bozza.indicazioni)}</textarea>
     </div>
+    ${disegnaProgressione()}
     <div class="card scorri">
       <table class="tabella-righe">
         <thead><tr><th>G</th><th>Sezione</th><th>Esercizio</th><th>Serie</th><th>Rip</th><th>Carico</th><th>RPE</th><th>Recupero</th><th>Indicazioni</th><th>Note</th><th></th></tr></thead>
@@ -833,6 +841,85 @@ function disegnaAnteprima() {
     if (az === 'giu' && i < bozza.righe.length - 1 && bozza.righe[i + 1].giorno === bozza.righe[i].giorno) [bozza.righe[i + 1], bozza.righe[i]] = [bozza.righe[i], bozza.righe[i + 1]];
     salvaBozza(); disegnaAnteprima();
   });
+}
+
+// ---------------------------------------------------------------------
+// Progressione: riparte dalla scheda precedente e aumenta i carichi
+// ---------------------------------------------------------------------
+// "60 kg" → 60 ; "60" → 60 ; "max 123 kg" → null
+function caricoNumero(testo) {
+  const m = String(testo || '').trim().match(/^(\d+(?:[.,]\d+)?)\s*(?:kg)?$/i);
+  return m ? Number(m[1].replace(',', '.')) : null;
+}
+
+function disegnaProgressione() {
+  const conFatto = bozza.righe.filter(r => r.ultimo).length;
+  const numerici = bozza.righe.filter(r => caricoNumero(r.carico) != null).length;
+  if (!conFatto && !numerici) return '';
+  return `
+    <div class="card progressione">
+      <b>Progressione dei carichi</b>
+      <div style="font-size:14px;color:var(--ink-soft);margin-top:4px">
+        ${conFatto ? `Sotto ogni esercizio vedi in verde cosa ha fatto il paziente l'ultima volta (${conFatto} esercizi). ` : ''}
+        Scegli da dove partire e di quanto aumentare: cambia solo i carichi scritti come numero (es. "60 kg"). Poi correggi a mano quelli che vuoi.</div>
+      <div class="comandi">
+        <div><label class="etichetta" for="progBase">Parti da</label>
+          <select id="progBase">
+            <option value="scheda">carico della scheda</option>
+            ${conFatto ? '<option value="fatto">carico fatto l\'ultima volta</option>' : ''}
+          </select></div>
+        <div><label class="etichetta" for="progValore">Aumenta di</label>
+          <input id="progValore" inputmode="decimal" value="2,5"></div>
+        <div><label class="etichetta" for="progUnita">&nbsp;</label>
+          <select id="progUnita"><option value="kg">kg</option><option value="%">%</option></select></div>
+        <button type="button" class="btn btn-piccolo" onclick="applicaProgressione()">Applica</button>
+      </div>
+    </div>`;
+}
+
+function applicaProgressione() {
+  const base = $('progBase').value, unita = $('progUnita').value;
+  const valore = parseFloat(($('progValore').value || '').replace(',', '.'));
+  if (!Number.isFinite(valore)) return toast('Scrivi di quanto aumentare, es. 2,5');
+  let cambiati = 0;
+  bozza.righe.forEach(r => {
+    const partenza = base === 'fatto' ? (r.ultimo?.kg || null) : caricoNumero(r.caricoScheda ?? r.carico);
+    if (!partenza) return;
+    const nuovo = unita === '%' ? partenza * (1 + valore / 100) : partenza + valore;
+    r.carico = (Math.round(nuovo * 2) / 2).toLocaleString('it-IT', { maximumFractionDigits: 1 }) + ' kg'; // al mezzo kg
+    cambiati++;
+  });
+  salvaBozza(); disegnaAnteprima();
+  toast(cambiati ? `Aggiornati ${cambiati} carichi. Controlla la tabella prima di salvare.` : 'Nessun carico numerico da aumentare');
+}
+
+// Per ogni esercizio: le serie dell'ultimo allenamento in cui il paziente l'ha fatto (in qualsiasi scheda)
+async function ultimeEsecuzioni(eserciziIds, pazienteId) {
+  eserciziIds = [...new Set(eserciziIds.filter(Boolean))];
+  if (!eserciziIds.length || !pazienteId) return {};
+  const { data, error } = await sb.from('serie_registrate')
+    .select('sessione_id, numero_serie, ripetizioni, carico_kg, rpe, creato_il, sessioni!inner ( data, paziente_id ), scheda_esercizi!inner ( esercizio_id )')
+    .in('scheda_esercizi.esercizio_id', eserciziIds).eq('sessioni.paziente_id', pazienteId)
+    .order('creato_il', { ascending: false }).limit(1000);
+  if (error) { console.error(error); return {}; }
+  const perRiga = {}, sessioneDi = {};
+  data.forEach(r => {
+    const es = r.scheda_esercizi.esercizio_id;
+    sessioneDi[es] ||= r.sessione_id;
+    if (r.sessione_id === sessioneDi[es]) (perRiga[es] ||= []).push(r);
+  });
+  const ris = {};
+  Object.entries(perRiga).forEach(([id, serie]) => {
+    serie.sort((a, b) => a.numero_serie - b.numero_serie);
+    const kg = Math.max(0, ...serie.map(x => Number(x.carico_kg) || 0));
+    const rpe = serie.map(x => x.rpe).filter(x => x != null);
+    // "3×8 @ 60 kg · RPE 8 · 26 ott": ripetizioni uguali raggruppate, altrimenti elencate
+    const rip = serie.map(x => x.ripetizioni ?? '–');
+    const ripTesto = rip.every(x => x === rip[0]) ? `${serie.length}×${rip[0]}` : rip.join('/');
+    const testo = ripTesto + (kg ? ` @ ${numero(kg)} kg` : '') + (rpe.length ? ` · RPE ${numero(Math.max(...rpe))}` : '') + ` · ${dataBreve(serie[0].sessioni?.data)}`;
+    ris[id] = { testo, kg: kg || null };
+  });
+  return ris;
 }
 
 function righeTesto(t) { return Math.min(4, Math.max(1, Math.ceil(String(t || '').length / 24))); }
@@ -914,15 +1001,18 @@ async function salvaScheda(btn) {
 // Carica una scheda esistente nell'editor (per modificarla o riusarla come modello)
 async function modelloDaScheda(schedaId, pazienteId) {
   const { data, error } = await sb.from('schede')
-    .select('nome, indicazioni, scheda_esercizi ( giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
+    .select('nome, indicazioni, scheda_esercizi ( id, esercizio_id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
     .eq('id', schedaId).single();
   if (error) return errore(error);
+  const fatto = await ultimeEsecuzioni(data.scheda_esercizi.map(r => r.esercizio_id), pazienteId);
   bozza = {
     nome: data.nome, indicazioni: data.indicazioni || '', testo: '', pazienteId: pazienteId || '',
     righe: data.scheda_esercizi.sort((a, b) => a.giorno - b.giorno || a.ordine - b.ordine).map(r => ({
       giorno: r.giorno, nome: r.esercizi?.nome || '', serie: r.serie, ripetizioni: r.ripetizioni || '',
       carico: r.carico || '', sezione: r.sezione || '',
-      rpe: r.rpe || '', recupero: r.recupero || '', indicazioni: r.indicazioni || '', note: r.note || ''
+      rpe: r.rpe || '', recupero: r.recupero || '', indicazioni: r.indicazioni || '', note: r.note || '',
+      ultimo: fatto[r.esercizio_id] || null,
+      caricoScheda: r.carico || ''   // punto di partenza fisso: ripetere "Applica" non somma due volte
     }))
   };
   salvaBozza();

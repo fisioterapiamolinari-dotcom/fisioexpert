@@ -86,6 +86,7 @@ details.sessione[open] summary { border-bottom:1px solid var(--border); }
 .dettaglio-sessione .es { margin-bottom:10px; }
 .dettaglio-sessione .es b { display:block; }
 .dettaglio-sessione .serie { color:var(--ink-soft); }
+.dettaglio-sessione .nota-es { display:block; color:var(--ink-soft); font-style:italic; }
 .dettaglio-sessione .nota { color:var(--ink-soft); font-style:italic; border-top:1px solid var(--border); padding-top:10px; }
 
 .avviso { border-radius:12px; padding:12px 14px; font-size:14px; margin-top:16px; }
@@ -201,8 +202,8 @@ async function carica() {
     if (e2) throw e2;
 
     const { data: sessioni, error: e3 } = await sb.from('sessioni')
-      .select(`id, assegnazione_id, giorno, data, completata, completata_il, note, creato_il,
-               serie_registrate ( numero_serie, ripetizioni, carico_kg, rpe, fatta,
+      .select(`id, assegnazione_id, giorno, data, completata, completata_il, note, note_esercizi, creato_il,
+               serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, fatta,
                  scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
       .eq('paziente_id', uid)
       .order('data', { ascending: false }).order('creato_il', { ascending: false })
@@ -353,7 +354,8 @@ function disegnaStorico(sessioni) {
         if (r.rpe != null) t += ` (RPE ${numero(r.rpe)})`;
         return t;
       }).join(' · ');
-      dettaglio += `<div class="es"><b>${esc(nome)}</b><span class="serie">${esc(testo)}</span></div>`;
+      const nota = (s.note_esercizi || {})[serie[0].scheda_esercizio_id];
+      dettaglio += `<div class="es"><b>${esc(nome)}</b><span class="serie">${esc(testo)}</span>${nota ? `<span class="nota-es">“${esc(nota)}”</span>` : ''}</div>`;
     });
     if (s.note) dettaglio += `<div class="nota">${esc(s.note)}</div>`;
     if (!dettaglio) dettaglio = `<div class="serie">Nessuna serie registrata.</div>`;
@@ -386,7 +388,7 @@ async function inviaCoda() {
       const { error: e1 } = await sb.from('sessioni').upsert({
         id: s.id, paziente_id: s.paziente_id, assegnazione_id: s.assegnazione_id,
         giorno: s.giorno, data: s.data, completata: true,
-        completata_il: s.completata_il || null, note: s.note || null
+        completata_il: s.completata_il || null, note: s.note || null, note_esercizi: s.note_esercizi || {}
       }, { onConflict: 'id' });
       if (e1) throw e1;
       const righe = [];

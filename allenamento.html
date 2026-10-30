@@ -58,6 +58,9 @@ h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1;
 .sezione { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:22px 2px 10px; display:flex; align-items:center; gap:10px; }
 .sezione::after { content:''; flex:1; height:1px; background:var(--border); }
 .chip.carico { background:var(--ink); color:var(--white); }
+.nota-es { margin-top:10px; border-top:1px solid var(--border); padding-top:10px; }
+.nota-es textarea { min-height:56px; font-size:15px; }
+.nota-es .etichetta { margin-bottom:6px; }
 .es-testo { font-size:14px; color:var(--ink-soft); margin-bottom:8px; white-space:pre-line; }
 .es-nota { font-size:14px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; white-space:pre-line; }
 .es-img { width:100%; border-radius:12px; margin:6px 0 10px; display:block; }
@@ -189,10 +192,10 @@ function leggiNumero(testo) {
   const v = parseFloat(String(testo ?? '').replace(',', '.').trim());
   return Number.isFinite(v) ? v : null;
 }
-// "8-10" → 8 ; "12" → 12 ; "30 sec" → null (non è un numero di ripetizioni)
+// "8-10" → 8 ; "12" → 12 ; "30 sec", "2'", "2′", "40”" → null (è un tempo, non ripetizioni)
 function ripetizioniPrescritte(testo) {
   const t = String(testo || '').toLowerCase();
-  if (/sec|min|"|'/.test(t)) return null;
+  if (/sec|min|["'’′″”]|\d\s*s\b/.test(t)) return null;
   const m = t.match(/\d+/);
   return m ? Number(m[0]) : null;
 }
@@ -240,7 +243,8 @@ function salvaLocale() {
 
 // Una sessione vuota (nessuna serie, nessuna nota, non completata) non va sul server
 function vuota(s) {
-  return !s.completata && !s.note && !Object.values(s.serie).some(arr => arr.some(x => x.fatta));
+  return !s.completata && !s.note && !Object.values(s.note_esercizi || {}).some(Boolean) &&
+    !Object.values(s.serie).some(arr => arr.some(x => x.fatta));
 }
 
 // Invia una sessione: crea/aggiorna la sessione, scrive le serie fatte, toglie quelle annullate
@@ -248,7 +252,7 @@ async function inviaSessione(s) {
   const { error: e1 } = await sb.from('sessioni').upsert({
     id: s.id, paziente_id: s.paziente_id, assegnazione_id: s.assegnazione_id,
     giorno: s.giorno, data: s.data, completata: s.completata,
-    completata_il: s.completata_il || null, note: s.note || null
+    completata_il: s.completata_il || null, note: s.note || null, note_esercizi: s.note_esercizi || {}
   }, { onConflict: 'id' });
   if (e1) throw e1;
 
@@ -382,7 +386,7 @@ async function trovaSessione(uid) {
   if (idRichiesto) {
     try {
       const { data } = await sb.from('sessioni')
-        .select('id, paziente_id, assegnazione_id, giorno, data, completata, completata_il, note, serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, fatta )')
+        .select('id, paziente_id, assegnazione_id, giorno, data, completata, completata_il, note, note_esercizi, serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, fatta )')
         .eq('id', idRichiesto).single();
       if (data && !data.completata) {
         const s = { ...data, serie: {} };
@@ -399,7 +403,7 @@ async function trovaSessione(uid) {
 
   return {
     id: crypto.randomUUID(), paziente_id: uid, assegnazione_id: ASSEGNAZIONE,
-    giorno: GIORNO, data: oggiRoma(), completata: false, note: '', serie: {}
+    giorno: GIORNO, data: oggiRoma(), completata: false, note: '', note_esercizi: {}, serie: {}
   };
 }
 
@@ -501,7 +505,7 @@ function disegnaEsercizio(r) {
     const phRip = oggiPrima?.ripetizioni ?? prec?.ripetizioni ?? ripPresc ?? '';
     // il carico che hai scritto nella scheda ("60 kg") vale più dell'ultima volta
     const kg = oggiPrima?.carico_kg ?? caricoPrescritto(r.carico) ?? prec?.carico_kg;
-    const phKg  = kg != null ? numero(kg) : '';
+    const phKg  = kg ? numero(kg) : ''; // 0 kg (corpo libero) non si propone
     const phRpe = oggiPrima?.rpe ?? leggiNumero(r.rpe) ?? '';
     html += `
       <div class="serie-riga${x.fatta ? ' fatta' : ''}" data-riga="${r.id}" data-i="${i}">
@@ -516,6 +520,10 @@ function disegnaEsercizio(r) {
     <div class="azioni-serie">
       <button type="button" class="link" data-azione="aggiungi" data-riga="${r.id}">+ Aggiungi serie</button>
       ${elenco.length > 1 && !elenco[elenco.length - 1].fatta ? `<button type="button" class="link grigio" data-azione="togli" data-riga="${r.id}">Togli ultima</button>` : ''}
+    </div>
+    <div class="nota-es">
+      <label class="etichetta" for="nota-${r.id}">La tua nota su questo esercizio</label>
+      <textarea id="nota-${r.id}" data-nota="${r.id}" placeholder="Es. fastidio all'inguine alla terza serie">${esc((sessione.note_esercizi || {})[r.id] || '')}</textarea>
     </div>`;
 
   const box = $('es-' + r.id);
@@ -554,6 +562,13 @@ function aggiornaAvanzamento() {
 // Interazioni
 // ---------------------------------------------------------------------
 document.addEventListener('input', e => {
+  const rigaNota = e.target.dataset?.nota;
+  if (rigaNota) {
+    sessione.note_esercizi ||= {};
+    if (e.target.value.trim()) sessione.note_esercizi[rigaNota] = e.target.value;
+    else delete sessione.note_esercizi[rigaNota];
+    return modificato();
+  }
   const campo = e.target.dataset?.campo;
   if (!campo) return;
   const rigaEl = e.target.closest('.serie-riga');

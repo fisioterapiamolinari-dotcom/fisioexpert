@@ -312,10 +312,10 @@ async function vistaPaziente(id) {
   const [r1, r2, r3] = await Promise.all([
     sb.from('profili').select('*').eq('id', id).single(),
     sb.from('assegnazioni').select(`id, data_inizio, data_fine, stato, scheda_id,
-        schede ( id, nome, scheda_esercizi ( giorno, ordine, serie, ripetizioni, rpe, carico, esercizi ( nome ) ) )`)
+        schede ( id, nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, carico, esercizi ( nome ) ) )`)
       .eq('paziente_id', id).order('data_inizio', { ascending: false }),
-    sb.from('sessioni').select(`id, giorno, data, completata, note, assegnazione_id,
-        serie_registrate ( numero_serie, ripetizioni, carico_kg, rpe, scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
+    sb.from('sessioni').select(`id, giorno, data, completata, note, note_esercizi, assegnazione_id,
+        serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
       .eq('paziente_id', id).order('data', { ascending: false }).order('creato_il', { ascending: false }).limit(150)
   ]);
   if (r1.error) return errore(r1.error, 'Paziente non trovato');
@@ -361,7 +361,9 @@ async function vistaPaziente(id) {
 
   // Progressi e storico
   html += `<h2>Progressi</h2><div id="grafici"></div>`;
-  html += `<h2>Storico allenamenti</h2>` + storicoAdmin(sessioni);
+  const nomeRiga = {}; // id riga scheda → nome esercizio, per le note su esercizi senza serie
+  assegnazioni.forEach(a => (a.schede?.scheda_esercizi || []).forEach(r => { nomeRiga[r.id] = r.esercizi?.nome; }));
+  html += `<h2>Storico allenamenti</h2>` + storicoAdmin(sessioni, nomeRiga);
 
   // Dati
   html += `
@@ -390,7 +392,7 @@ async function vistaPaziente(id) {
   disegnaGrafici(sessioni);
 }
 
-function storicoAdmin(sessioni) {
+function storicoAdmin(sessioni, nomeRiga = {}) {
   if (!sessioni.length) return `<div class="card vuoto">Nessun allenamento registrato.</div>`;
   return sessioni.map(s => {
     const perEs = new Map();
@@ -401,18 +403,26 @@ function storicoAdmin(sessioni) {
         if (!perEs.has(n)) perEs.set(n, []);
         perEs.get(n).push(r);
       });
+    const noteEs = { ...(s.note_esercizi || {}) };
     let corpo = '';
     perEs.forEach((serie, nome) => {
+      const riga = serie[0].scheda_esercizio_id;
       corpo += `<div class="es"><b>${esc(nome)}</b>: ${serie.map(r =>
-        `${r.ripetizioni ?? '–'}${Number(r.carico_kg) > 0 ? '×' + numero(r.carico_kg) + 'kg' : ''}${r.rpe != null ? ' @' + numero(r.rpe) : ''}`).join(' · ')}</div>`;
+        `${r.ripetizioni ?? '–'}${Number(r.carico_kg) > 0 ? '×' + numero(r.carico_kg) + 'kg' : ''}${r.rpe != null ? ' @' + numero(r.rpe) : ''}`).join(' · ')}
+        ${noteEs[riga] ? `<div class="nota">💬 ${esc(noteEs[riga])}</div>` : ''}</div>`;
+      delete noteEs[riga];
+    });
+    // note su esercizi di cui non ha segnato serie
+    Object.entries(noteEs).forEach(([riga, testo]) => {
+      if (testo) corpo += `<div class="es"><b>${esc(nomeRiga[riga] || 'Esercizio')}</b><div class="nota">💬 ${esc(testo)}</div></div>`;
     });
     if (!corpo) corpo = '<div class="es">Nessuna serie registrata.</div>';
-    if (s.note) corpo += `<div class="nota">💬 ${esc(s.note)}</div>`;
+    if (s.note) corpo += `<div class="nota"><b>Nota generale:</b> ${esc(s.note)}</div>`;
     return `
       <details class="sessione">
         <summary>
           <span><b>${dataBreve(s.data)}</b> · Giorno ${s.giorno} · ${(s.serie_registrate || []).length} serie
-            ${s.note ? '<span class="nota-flag">· nota</span>' : ''}</span>
+            ${s.note || Object.values(s.note_esercizi || {}).some(Boolean) ? '<span class="nota-flag">· nota</span>' : ''}</span>
           ${s.completata ? '<span class="badge ok">Completato</span>' : '<span class="badge spento">Non finito</span>'}
         </summary>
         <div class="corpo">${corpo}</div>

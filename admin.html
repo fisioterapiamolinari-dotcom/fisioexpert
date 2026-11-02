@@ -320,6 +320,9 @@ async function vistaPaziente(id) {
   ]);
   if (r1.error) return errore(r1.error, 'Paziente non trovato');
   const p = r1.data, assegnazioni = r2.data || [], sessioni = r3.data || [];
+  if (r2.error || r3.error) console.error(r2.error || r3.error);
+  const nomeScheda = {}; // assegnazione → nome scheda, per dire a quale scheda appartiene ogni allenamento
+  assegnazioni.forEach(a => { nomeScheda[a.id] = a.schede?.nome || 'Scheda'; });
   const attive = assegnazioni.filter(a => a.stato === 'attiva');
 
   let html = `
@@ -359,11 +362,41 @@ async function vistaPaziente(id) {
   });
   html += `<a class="btn" href="#nuova/${p.id}">+ Nuova scheda per ${esc(p.nome || 'il paziente')}</a>`;
 
+  // Schede concluse: restano con tutti i loro allenamenti
+  const precedenti = assegnazioni.filter(a => a.stato !== 'attiva');
+  if (precedenti.length) {
+    html += `<h2>Schede precedenti</h2>`;
+    precedenti.forEach(a => {
+      const fatte = sessioni.filter(s => s.assegnazione_id === a.id && s.completata).length;
+      html += `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+            <div><b>${esc(a.schede?.nome)}</b>
+              <div style="color:var(--ink-muted);font-size:13px">dal ${dataBreve(a.data_inizio)}${a.data_fine ? ' al ' + dataBreve(a.data_fine) : ''} · ${fatte} ${fatte === 1 ? 'allenamento' : 'allenamenti'}</div></div>
+            <span class="badge spento">${a.stato === 'sospesa' ? 'Sospesa' : 'Conclusa'}</span>
+          </div>
+          <div class="azioni" style="margin-top:10px">
+            ${fatte ? `<a class="btn btn-sec btn-piccolo" href="#storico-${a.id}" onclick="filtraStorico('${a.id}'); return false;">Vedi i suoi allenamenti</a>` : ''}
+            <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}')">Usa come modello</button>
+            <button class="btn btn-sec btn-piccolo" onclick="riattivaAssegnazione('${a.id}', '${p.id}', this)">Riattiva</button>
+          </div>
+        </div>`;
+    });
+  }
+
   // Progressi e storico
   html += `<h2>Progressi</h2><div id="grafici"></div>`;
   const nomeRiga = {}; // id riga scheda → nome esercizio, per le note su esercizi senza serie
   assegnazioni.forEach(a => (a.schede?.scheda_esercizi || []).forEach(r => { nomeRiga[r.id] = r.esercizi?.nome; }));
-  html += `<h2>Storico allenamenti</h2>` + storicoAdmin(sessioni, nomeRiga);
+  const schedeConAllenamenti = assegnazioni.filter(a => sessioni.some(s => s.assegnazione_id === a.id));
+  html += `<h2 id="titoloStorico">Storico allenamenti</h2>`;
+  if (r3.error) html += `<div class="avviso avviso-errore">Non riesco a caricare gli allenamenti: ${esc(r3.error.message)}</div>`;
+  if (schedeConAllenamenti.length > 1) html += `
+    <select id="filtroStorico" onchange="filtraStorico(this.value)" style="margin-bottom:10px">
+      <option value="">Tutte le schede (${sessioni.length} allenamenti)</option>
+      ${schedeConAllenamenti.map(a => `<option value="${a.id}">${esc(a.schede?.nome)}${a.stato === 'attiva' ? ' (attiva)' : ''}</option>`).join('')}
+    </select>`;
+  html += `<div id="storicoAdmin">${storicoAdmin(sessioni, nomeRiga, nomeScheda)}</div>`;
 
   // Dati
   html += `
@@ -392,7 +425,7 @@ async function vistaPaziente(id) {
   disegnaGrafici(sessioni);
 }
 
-function storicoAdmin(sessioni, nomeRiga = {}) {
+function storicoAdmin(sessioni, nomeRiga = {}, nomeScheda = {}) {
   if (!sessioni.length) return `<div class="card vuoto">Nessun allenamento registrato.</div>`;
   return sessioni.map(s => {
     const perEs = new Map();
@@ -419,9 +452,10 @@ function storicoAdmin(sessioni, nomeRiga = {}) {
     if (!corpo) corpo = '<div class="es">Nessuna serie registrata.</div>';
     if (s.note) corpo += `<div class="nota"><b>Nota generale:</b> ${esc(s.note)}</div>`;
     return `
-      <details class="sessione">
+      <details class="sessione" data-assegnazione="${s.assegnazione_id}">
         <summary>
           <span><b>${dataBreve(s.data)}</b> · Giorno ${s.giorno} · ${(s.serie_registrate || []).length} serie
+            ${nomeScheda[s.assegnazione_id] ? `<span style="color:var(--ink-muted);font-size:13px;display:block">${esc(nomeScheda[s.assegnazione_id])}</span>` : ''}
             ${s.note || Object.values(s.note_esercizi || {}).some(Boolean) ? '<span class="nota-flag">· nota</span>' : ''}</span>
           ${s.completata ? '<span class="badge ok">Completato</span>' : '<span class="badge spento">Non finito</span>'}
         </summary>
@@ -517,6 +551,26 @@ async function salvaDatiPaziente(e, id) {
   const { error } = await sb.from('profili').update(dati).eq('id', id);
   if (error) return errore(error);
   toast('Dati salvati');
+}
+
+// Mostra nello storico solo gli allenamenti di una scheda (vuoto = tutte)
+function filtraStorico(assegnazioneId) {
+  document.querySelectorAll('#storicoAdmin details.sessione').forEach(d => {
+    d.style.display = !assegnazioneId || d.dataset.assegnazione === assegnazioneId ? '' : 'none';
+  });
+  if ($('filtroStorico')) $('filtroStorico').value = assegnazioneId;
+  $('titoloStorico').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Rimette attiva una scheda conclusa: quella attiva adesso viene conclusa
+async function riattivaAssegnazione(id, pazienteId, btn) {
+  if (!confirm('Riattivare questa scheda? Quella attiva adesso verrà conclusa (lo storico resta).')) return;
+  attesa(btn, true);
+  const { error: e1 } = await sb.from('assegnazioni').update({ stato: 'conclusa', data_fine: oggiRoma() }).eq('paziente_id', pazienteId).eq('stato', 'attiva');
+  const { error: e2 } = e1 ? { error: e1 } : await sb.from('assegnazioni').update({ stato: 'attiva', data_fine: null }).eq('id', id);
+  attesa(btn, false);
+  if (e2) return errore(e2);
+  toast('Scheda riattivata'); vistaPaziente(pazienteId);
 }
 
 async function concludiAssegnazione(id, btn) {

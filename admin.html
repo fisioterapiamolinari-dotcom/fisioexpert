@@ -121,7 +121,7 @@ textarea { resize:vertical; }
 .dati-paziente { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 18px; font-size:14px; }
 .dati-paziente b { display:block; font-family:var(--mono); font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
 .scheda-attiva .righe { font-size:14px; color:var(--ink-soft); margin-top:8px; }
-.scheda-attiva .righe div { margin-bottom:2px; }
+.scheda-attiva .righe > div { margin-bottom:6px; }
 details.sessione { background:var(--white); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
 details.sessione summary { list-style:none; cursor:pointer; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
 details.sessione summary::-webkit-details-marker { display:none; }
@@ -131,6 +131,16 @@ details.sessione .nota { background:var(--accent-light); border-radius:10px; pad
 .nota-flag { color:var(--accent-dark); font-weight:700; }
 
 /* Grafici progressi: una linea per esercizio (small multiples) */
+.ris-giorno { font-family:var(--serif); font-size:22px; margin:26px 0 8px; }
+.ris-sezione { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:14px 2px 8px; }
+.ris-es .presc { font-size:13px; color:var(--ink-muted); margin:2px 0 8px; }
+.ris-es table { width:100%; border-collapse:collapse; font-size:14px; }
+.ris-es td { padding:6px 4px; border-top:1px solid var(--border); vertical-align:top; }
+.ris-es td.data { white-space:nowrap; color:var(--ink-soft); width:1%; padding-right:12px; }
+.ris-es .serie-chip { display:inline-block; background:var(--warm); border-radius:8px; padding:2px 7px; margin:0 4px 4px 0; font-size:13px; }
+.ris-es .meglio { background:var(--green-light); color:var(--green); font-weight:700; }
+.ris-es .nota { background:var(--accent-light); border-radius:8px; padding:5px 8px; margin-top:2px; font-size:13px; }
+.ris-es .mai { color:var(--ink-muted); font-size:13px; }
 .grafici { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
 .grafico { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:14px 14px 10px; position:relative; }
 .grafico .titolo { font-weight:700; font-size:14px; }
@@ -248,11 +258,11 @@ async function avvio() {
 
 function instrada() {
   const [tab, id] = (location.hash.slice(1) || 'pazienti').split('/');
-  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('attiva', a.dataset.tab === (tab === 'paziente' ? 'pazienti' : tab)));
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('attiva', a.dataset.tab === (tab === 'paziente' || tab === 'risultati' ? 'pazienti' : tab)));
   window.scrollTo(0, 0);
   $('pagina').innerHTML = '<div class="caricamento">Carico…</div>';
   ({ pazienti: vistaPazienti, paziente: () => vistaPaziente(id), nuova: () => vistaNuova(id),
-     schede: vistaSchede, esercizi: vistaEsercizi }[tab] || vistaPazienti)();
+     risultati: () => vistaRisultati(id), schede: vistaSchede, esercizi: vistaEsercizi }[tab] || vistaPazienti)();
 }
 
 async function aggiornaContaAttesa() {
@@ -345,7 +355,8 @@ async function vistaPaziente(id) {
     let perGiorno = '', g = null;
     righe.forEach(r => {
       if (r.giorno !== g) { g = r.giorno; perGiorno += `<div style="margin-top:6px"><b>Giorno ${g}</b></div>`; }
-      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.carico ? ' · ' + esc(r.carico) : ''}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}</div>`;
+      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.carico ? ' · ' + esc(r.carico) : ''}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}
+        ${ultimoFatto(r.id, sessioni)}</div>`;
     });
     html += `
       <div class="card scheda-attiva">
@@ -355,6 +366,7 @@ async function vistaPaziente(id) {
         </div>
         <div class="righe">${perGiorno}</div>
         <div class="azioni" style="margin-top:12px">
+          <a class="btn btn-sec btn-piccolo" href="#risultati/${a.id}">Scheda e risultati</a>
           <a class="btn btn-sec btn-piccolo" href="#nuova/${p.id}" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}'); return false;">Progressione / modifica</a>
           <button class="btn btn-sec btn-piccolo" onclick="concludiAssegnazione('${a.id}', this)">Concludi</button>
         </div>
@@ -376,7 +388,7 @@ async function vistaPaziente(id) {
             <span class="badge spento">${a.stato === 'sospesa' ? 'Sospesa' : 'Conclusa'}</span>
           </div>
           <div class="azioni" style="margin-top:10px">
-            ${fatte ? `<a class="btn btn-sec btn-piccolo" href="#storico-${a.id}" onclick="filtraStorico('${a.id}'); return false;">Vedi i suoi allenamenti</a>` : ''}
+            <a class="btn btn-piccolo" href="#risultati/${a.id}">Scheda e risultati</a>
             <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}')">Usa come modello</button>
             <button class="btn btn-sec btn-piccolo" onclick="riattivaAssegnazione('${a.id}', '${p.id}', this)">Riattiva</button>
           </div>
@@ -551,6 +563,95 @@ async function salvaDatiPaziente(e, id) {
   const { error } = await sb.from('profili').update(dati).eq('id', id);
   if (error) return errore(error);
   toast('Dati salvati');
+}
+
+// ---------------------------------------------------------------------
+// Una scheda con, sotto ogni esercizio, quello che il paziente ha fatto in ogni allenamento
+// ---------------------------------------------------------------------
+async function vistaRisultati(assegnazioneId) {
+  const [r1, r2] = await Promise.all([
+    sb.from('assegnazioni').select(`id, stato, data_inizio, data_fine, paziente_id, scheda_id,
+        profili ( nome, cognome ),
+        schede ( nome, indicazioni, scheda_esercizi ( id, giorno, ordine, sezione, serie, ripetizioni, carico, rpe, recupero, esercizi ( nome ) ) )`)
+      .eq('id', assegnazioneId).single(),
+    sb.from('sessioni').select(`id, giorno, data, completata, note, note_esercizi,
+        serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe )`)
+      .eq('assegnazione_id', assegnazioneId).order('data').order('creato_il')
+  ]);
+  if (r1.error) return errore(r1.error, 'Scheda non trovata');
+  if (r2.error) return errore(r2.error, 'Allenamenti non caricati');
+  const a = r1.data, sessioni = r2.data || [];
+  const righe = (a.schede?.scheda_esercizi || []).sort((x, y) => x.giorno - y.giorno || x.ordine - y.ordine);
+  const paziente = `${a.profili?.nome || ''} ${a.profili?.cognome || ''}`.trim();
+  const completate = sessioni.filter(s => s.completata).length;
+
+  let html = `
+    <a class="indietro" href="#paziente/${a.paziente_id}">← ${esc(paziente || 'Paziente')}</a>
+    <h1>${esc(a.schede?.nome)}</h1>
+    <p class="sotto">${esc(paziente)} · dal ${dataBreve(a.data_inizio)}${a.data_fine ? ' al ' + dataBreve(a.data_fine) : ''} ·
+      ${completate} ${completate === 1 ? 'allenamento completato' : 'allenamenti completati'}
+      ${a.stato === 'attiva' ? '<span class="badge ok">Attiva</span>' : '<span class="badge spento">Conclusa</span>'}</p>
+    ${a.schede?.indicazioni ? `<div class="avviso avviso-info" style="white-space:pre-line">${esc(a.schede.indicazioni)}</div>` : ''}
+    <div class="azioni" style="margin-bottom:6px">
+      <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${a.scheda_id}', '${a.paziente_id}')">Usa come modello per la progressione</button>
+    </div>`;
+
+  let giorno = null, sezione = null;
+  righe.forEach(r => {
+    if (r.giorno !== giorno) {
+      giorno = r.giorno; sezione = null;
+      const n = sessioni.filter(s => s.giorno === giorno && s.completata).length;
+      html += `<div class="ris-giorno">Giorno ${giorno} <span style="font-family:var(--sans);font-size:14px;color:var(--ink-muted)">· fatto ${n} ${n === 1 ? 'volta' : 'volte'}</span></div>`;
+    }
+    if ((r.sezione || '') !== sezione) { sezione = r.sezione || ''; if (sezione) html += `<div class="ris-sezione">${esc(sezione)}</div>`; }
+
+    const presc = [r.serie ? `${r.serie} × ${r.ripetizioni || '–'}` : r.ripetizioni, r.carico, r.rpe ? (/^\d/.test(r.rpe) ? 'RPE ' : '') + r.rpe : '', r.recupero ? 'rec ' + r.recupero : '']
+      .filter(Boolean).map(esc).join(' · ');
+
+    // una riga per ogni allenamento in cui ha fatto questo esercizio (o ci ha scritto una nota)
+    const volte = sessioni.map(s => ({
+      s, serie: (s.serie_registrate || []).filter(x => x.scheda_esercizio_id === r.id).sort((x, y) => x.numero_serie - y.numero_serie),
+      nota: (s.note_esercizi || {})[r.id]
+    })).filter(v => v.serie.length || v.nota);
+    const maxKg = Math.max(0, ...volte.flatMap(v => v.serie.map(x => Number(x.carico_kg) || 0)));
+
+    html += `
+      <div class="card ris-es">
+        <b>${esc(r.esercizi?.nome)}</b>
+        <div class="presc">Prescritto: ${presc || '–'}</div>
+        ${volte.length ? `<table>${volte.map(v => `
+          <tr><td class="data">${dataBreve(v.s.data)}${v.s.completata ? '' : '<br><span class="mai">non finito</span>'}</td>
+            <td>${v.serie.map(x => {
+              const kg = Number(x.carico_kg) || 0;
+              const t = `${x.ripetizioni ?? '–'}${kg ? ' × ' + numero(kg) + ' kg' : ''}${x.rpe != null ? ' @' + numero(x.rpe) : ''}`;
+              return `<span class="serie-chip${kg && kg === maxKg && volte.length > 1 ? ' meglio' : ''}">${esc(t)}</span>`;
+            }).join('')}
+            ${v.nota ? `<div class="nota">💬 ${esc(v.nota)}</div>` : ''}</td></tr>`).join('')}</table>`
+          : '<div class="mai">Nessuna serie segnata.</div>'}
+      </div>`;
+  });
+
+  // note generali degli allenamenti di questa scheda
+  const noteGen = sessioni.filter(s => s.note);
+  if (noteGen.length) html += `<h2>Note generali</h2>` + noteGen.map(s =>
+    `<div class="card" style="font-size:14px"><b>${dataBreve(s.data)} · Giorno ${s.giorno}</b><br>${esc(s.note)}</div>`).join('');
+
+  $('pagina').innerHTML = html;
+}
+
+// Sotto ogni esercizio della scheda attiva: l'ultima volta che il paziente l'ha fatto (le sessioni arrivano dalla più recente)
+function ultimoFatto(rigaId, sessioni) {
+  for (const s of sessioni) {
+    const serie = (s.serie_registrate || []).filter(x => x.scheda_esercizio_id === rigaId).sort((x, y) => x.numero_serie - y.numero_serie);
+    const nota = (s.note_esercizi || {})[rigaId];
+    if (!serie.length && !nota) continue;
+    const testo = serie.map(x => {
+      const kg = Number(x.carico_kg) || 0;
+      return `${x.ripetizioni ?? '–'}${kg ? '×' + numero(kg) + 'kg' : ''}${x.rpe != null ? ' @' + numero(x.rpe) : ''}`;
+    }).join(' · ');
+    return `<div class="ultimo">${dataBreve(s.data)}: <b>${esc(testo || '–')}</b>${nota ? ` · 💬 ${esc(nota)}` : ''}</div>`;
+  }
+  return '';
 }
 
 // Mostra nello storico solo gli allenamenti di una scheda (vuoto = tutte)

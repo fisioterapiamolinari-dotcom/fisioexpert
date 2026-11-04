@@ -67,6 +67,35 @@ h2 { font-family:var(--serif); font-weight:400; font-size:22px; line-height:1.2;
 .giorno .eserc { display:block; color:var(--ink-muted); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .giorno .freccia { color:var(--ink-muted); font-size:20px; }
 
+/* I tuoi giorni: risultati e commenti di Gianmarco */
+.tabs-giorni { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.tab-g { font-family:var(--mono); font-weight:700; font-size:13px; border:1px solid var(--border); background:var(--white); color:var(--ink-soft); border-radius:20px; padding:9px 15px; cursor:pointer; }
+.tab-g.attivo { background:var(--ink); color:var(--white); border-color:var(--ink); }
+.tab-g.suggerito:not(.attivo) { border-color:var(--accent); color:var(--accent-dark); }
+.tab-g .pallino { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); margin-left:6px; vertical-align:1px; }
+.vg { font-size:14px; line-height:1.45; }
+.vg .btn { margin-bottom:6px; }
+.vg .vg-info { color:var(--ink-muted); font-size:13px; text-align:center; margin-bottom:4px; }
+.vg .sez { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:18px 0 2px; }
+.vg .es-b { padding:10px 0; border-top:1px solid var(--border); }
+.vg .sez + .es-b { border-top:0; padding-top:4px; }
+.vg .es-t b { font-size:15px; display:block; }
+.vg .es-t .presc { color:var(--ink-muted); font-size:13px; }
+.vg .volta { display:flex; gap:10px; margin-top:6px; }
+.vg .v-data { flex:0 0 46px; color:var(--ink-muted); font-size:12px; padding-top:3px; }
+.vg .v-corpo { flex:1; min-width:0; }
+.vg .mai { color:var(--ink-muted); font-size:13px; margin-top:3px; }
+.chip { display:inline-block; background:var(--warm); border-radius:7px; padding:2px 8px; margin:0 3px 3px 0; font-size:13px; white-space:nowrap; }
+.chip small { color:var(--ink-muted); font-size:11px; }
+.chip.meglio { background:rgba(46,158,91,.12); color:var(--green); font-weight:700; }
+.nota-paz { background:var(--warm); border-radius:8px; padding:6px 9px; margin:2px 0 3px; color:var(--ink-soft); }
+.commento { background:var(--accent-light); border:1px solid rgba(244,121,32,.3); border-radius:8px; padding:6px 9px; margin:4px 0; }
+.commento .chi { font-weight:700; color:var(--accent-dark); }
+.commento .quando { color:var(--ink-muted); font-size:12px; }
+.nuovo { font-family:var(--mono); font-weight:700; font-size:9.5px; letter-spacing:.4px; text-transform:uppercase; background:var(--accent); color:var(--white); border-radius:10px; padding:2px 6px; margin-left:4px; vertical-align:1px; }
+.avviso-commenti { background:var(--white); border:1px solid rgba(244,121,32,.5); border-radius:14px; padding:14px 16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:15px; }
+.avviso-commenti button { font-family:var(--mono); font-weight:700; font-size:13px; background:var(--accent); color:var(--white); border:0; border-radius:10px; padding:9px 14px; cursor:pointer; white-space:nowrap; }
+
 /* Riepilogo */
 .stat { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .stat .card { margin:0; text-align:center; padding:14px; }
@@ -210,7 +239,12 @@ async function carica() {
       .limit(40);
     if (e3) throw e3;
 
-    const dati = { profilo, assegnazioni, sessioni, aggiornato_il: new Date().toISOString() };
+    // I commenti di Gianmarco: se la tabella non c'è ancora la pagina funziona lo stesso
+    const { data: commenti, error: e4 } = await sb.from('commenti')
+      .select('id, sessione_id, scheda_esercizio_id, testo, creato_il').order('creato_il').limit(500);
+    if (e4) console.warn('Commenti non disponibili:', e4.message);
+
+    const dati = { profilo, assegnazioni, sessioni, commenti: commenti || [], aggiornato_il: new Date().toISOString() };
     scriviLocale(CHIAVE_CACHE, dati);
     disegna(dati);
   } catch (err) {
@@ -255,12 +289,17 @@ function prossimo(assegnazione, sessioni) {
 // ---------------------------------------------------------------------
 // Disegno della pagina
 // ---------------------------------------------------------------------
-function disegna({ profilo, assegnazioni, sessioni }) {
+function disegna({ profilo, assegnazioni, sessioni, commenti = [] }) {
   const locali = leggiLocale(CHIAVE_LOCALI, {});
   const coda = leggiLocale(CHIAVE_CODA, []).filter(id => locali[id]?.completata);
   if (coda.length) avviso(`${coda.length === 1 ? 'Un allenamento' : coda.length + ' allenamenti'} in attesa di sincronizzazione: verranno inviati appena torna la rete.`);
 
   let html = `<p class="saluto">Ciao ${esc(profilo.nome)}</p>`;
+  vistePaz = {};
+  commentiPaz = commenti;
+  // commenti arrivati dopo l'ultima volta che hai aperto l'app
+  const visti = leggiLocale(CHIAVE_VISTI, '');
+  nuoviPaz = new Set(commenti.filter(c => c.creato_il > visti).map(c => c.id));
 
   if (!assegnazioni.length) {
     html += `<h1>Nessuna scheda attiva</h1>
@@ -292,24 +331,92 @@ function disegna({ profilo, assegnazioni, sessioni }) {
 
     if (scheda.indicazioni) html += `<div class="indicazioni">${esc(scheda.indicazioni)}</div>`;
 
-    if (giorni.size > 1) {
-      html += `<h2>Tutti i giorni</h2>`;
-      giorni.forEach((righe, g) => {
-        html += `
-          <a class="card giorno${p && p.giorno === g ? ' suggerito' : ''}" href="/allenamento.html?a=${a.id}&g=${g}">
-            <span class="num">${g}</span>
-            <span class="testo">
-              <span class="nome">Giorno ${g}</span>
-              <span class="eserc">${righe.map(r => esc(r.esercizi?.nome)).join(' · ')}</span>
-            </span>
-            <span class="freccia">›</span>
-          </a>`;
-      });
-    }
+    // I tuoi giorni: tocca un giorno per vedere cosa hai fatto e i commenti di Gianmarco
+    const mieSessioni = sessioni.filter(s => s.assegnazione_id === a.id);
+    const nuoviQui = commenti.filter(c => nuoviPaz.has(c.id) && mieSessioni.some(s => s.id === c.sessione_id));
+    const giornoNuovo = nuoviQui.length ? mieSessioni.find(s => s.id === nuoviQui[nuoviQui.length - 1].sessione_id)?.giorno : null;
+    vistePaz[a.id] = { a, righe: giorni, sessioni: mieSessioni, suggerito: p?.giorno, giorno: giornoNuovo ?? p?.giorno ?? [...giorni.keys()][0] };
+    if (nuoviQui.length) html += `
+      <div class="avviso-commenti"><span>💬 Gianmarco ha commentato ${nuoviQui.length === 1 ? 'un tuo allenamento' : nuoviQui.length + ' volte i tuoi allenamenti'}</span>
+        <button onclick="document.getElementById('giorni-${a.id}').scrollIntoView({ behavior: 'smooth' })">Leggi</button></div>`;
+    html += `<h2 id="giorni-${a.id}">I tuoi giorni</h2>
+      <div class="tabs-giorni" id="tabs-${a.id}"></div>
+      <div class="card" id="giorno-${a.id}"></div>`;
   });
 
   html += disegnaRiepilogo(sessioni) + disegnaStorico(sessioni);
   $('contenuto').innerHTML = html;
+  Object.keys(vistePaz).forEach(disegnaGiorno);
+  if (commenti.length) scriviLocale(CHIAVE_VISTI, commenti[commenti.length - 1].creato_il);
+}
+
+// ---------------------------------------------------------------------
+// Un giorno della scheda: esercizi, cosa hai fatto le ultime volte, commenti
+// ---------------------------------------------------------------------
+const CHIAVE_VISTI = 'fx_commenti_visti';
+let vistePaz = {}, commentiPaz = [], nuoviPaz = new Set();
+
+function scegliGiorno(aid, g) { vistePaz[aid].giorno = g; disegnaGiorno(aid); }
+
+function dataCorta(iso) {
+  const [a, m, g] = iso.slice(0, 10).split('-').map(Number);
+  return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(a, m - 1, g, 12)));
+}
+function testoSerie(x) {
+  const kg = Number(x.carico_kg) || 0;
+  let t = x.ripetizioni != null ? String(x.ripetizioni) : '';
+  if (kg) t += (t ? ' × ' : '') + numero(kg) + ' kg';
+  return esc(t || '✓') + (x.rpe != null ? ` <small>RPE ${numero(x.rpe)}</small>` : '');
+}
+function htmlCommenti(lista) {
+  return lista.map(c => `<div class="commento"><span class="chi">Gianmarco</span>${nuoviPaz.has(c.id) ? '<span class="nuovo">Nuovo</span>' : ''}
+    <span class="quando">· ${dataCorta(c.creato_il)}</span><br>${esc(c.testo).replace(/\n/g, '<br>')}</div>`).join('');
+}
+
+function disegnaGiorno(aid) {
+  const v = vistePaz[aid], { a, righe, sessioni, giorno } = v;
+  const commentiDi = (sid, rid) => commentiPaz.filter(c => c.sessione_id === sid && (c.scheda_esercizio_id || '') === rid);
+  const conNuovi = g => commentiPaz.some(c => nuoviPaz.has(c.id) && sessioni.some(s => s.id === c.sessione_id && s.giorno === g));
+  $('tabs-' + aid).innerHTML = [...righe.keys()].map(g =>
+    `<button class="tab-g${g === giorno ? ' attivo' : ''}${g === v.suggerito ? ' suggerito' : ''}" onclick="scegliGiorno('${aid}', ${g})">Giorno ${g}${conNuovi(g) ? '<span class="pallino"></span>' : ''}</button>`).join('');
+
+  const sess = sessioni.filter(s => s.giorno === giorno);
+  const fatte = sess.filter(s => s.completata);
+  const inCorso = sess.find(s => !s.completata && s.data === oggiRoma());
+  let html = `<div class="vg">
+    <a class="btn" href="/allenamento.html?a=${a.id}&g=${giorno}${inCorso ? '&s=' + inCorso.id : ''}">${inCorso ? 'Riprendi' : 'Inizia'} Giorno ${giorno}</a>
+    <div class="vg-info">${fatte.length ? `Fatto ${fatte.length} ${fatte.length === 1 ? 'volta' : 'volte'} · l'ultima ${dataCorta(fatte[0].data)}` : 'Non ancora fatto'}</div>`;
+
+  let sezione = null;
+  (righe.get(giorno) || []).forEach(r => {
+    if ((r.sezione || '') !== sezione) { sezione = r.sezione || ''; if (sezione) html += `<div class="sez">${esc(sezione)}</div>`; }
+    const presc = [r.serie ? `${r.serie}×${r.ripetizioni || '–'}` : r.ripetizioni, r.carico, r.rpe ? (/^\d/.test(r.rpe) ? 'RPE ' : '') + r.rpe : '', r.recupero ? 'rec ' + r.recupero : '']
+      .filter(Boolean).map(esc).join(' · ');
+    const volte = sess.map(s => ({
+      s, serie: (s.serie_registrate || []).filter(x => x.scheda_esercizio_id === r.id).sort((x, y) => x.numero_serie - y.numero_serie),
+      nota: (s.note_esercizi || {})[r.id], comm: commentiDi(s.id, r.id)
+    })).filter(x => x.serie.length || x.nota || x.comm.length).slice(0, 3);
+    const maxKg = Math.max(0, ...volte.flatMap(x => x.serie.map(y => Number(y.carico_kg) || 0)));
+    html += `
+      <div class="es-b">
+        <div class="es-t"><b>${esc(r.esercizi?.nome)}</b>${presc ? `<span class="presc">${presc}</span>` : ''}</div>
+        ${volte.map(x => `
+          <div class="volta"><span class="v-data">${dataCorta(x.s.data)}</span><div class="v-corpo">
+            ${x.serie.map(y => { const kg = Number(y.carico_kg) || 0;
+              return `<span class="chip${kg && kg === maxKg && volte.length > 1 ? ' meglio' : ''}">${testoSerie(y)}</span>`; }).join('')}
+            ${x.nota ? `<div class="nota-paz">Tu: ${esc(x.nota)}</div>` : ''}
+            ${htmlCommenti(x.comm)}
+          </div></div>`).join('')}
+      </div>`;
+  });
+
+  const generali = sess.filter(s => s.note || commentiDi(s.id, '').length).slice(0, 3);
+  if (generali.length) html += `<div class="sez">Note sull'allenamento</div>${generali.map(s => `
+    <div class="volta"><span class="v-data">${dataCorta(s.data)}</span><div class="v-corpo">
+      ${s.note ? `<div class="nota-paz">Tu: ${esc(s.note)}</div>` : ''}${htmlCommenti(commentiDi(s.id, ''))}
+    </div></div>`).join('')}`;
+
+  $('giorno-' + aid).innerHTML = html + '</div>';
 }
 
 function disegnaRiepilogo(sessioni) {
@@ -422,7 +529,7 @@ async function inviaCoda() {
 async function esci() {
   if (leggiLocale(CHIAVE_CODA, []).length &&
       !confirm('Hai allenamenti non ancora sincronizzati. Se esci ora andranno persi. Uscire comunque?')) return;
-  try { [CHIAVE_CACHE, CHIAVE_CODA, CHIAVE_LOCALI, 'fx_uid'].forEach(k => localStorage.removeItem(k)); } catch {}
+  try { [CHIAVE_CACHE, CHIAVE_CODA, CHIAVE_LOCALI, CHIAVE_VISTI, 'fx_uid'].forEach(k => localStorage.removeItem(k)); } catch {}
   await sb.auth.signOut();
   location.replace('/login.html');
 }

@@ -89,14 +89,18 @@ textarea { resize:vertical; }
 /* Editor scheda */
 .esempio { background:var(--warm); border-radius:10px; padding:10px 12px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); white-space:pre-wrap; margin-bottom:10px; }
 #testoScheda { min-height:260px; font-family:ui-monospace,Menlo,monospace; font-size:14px; line-height:1.55; }
-.tabella-righe { width:100%; border-collapse:separate; border-spacing:0 6px; }
+.tabella-righe { width:100%; border-collapse:separate; border-spacing:0 3px; }
 .tabella-righe th { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); text-align:left; padding:0 4px; }
 .tabella-righe td { padding:0 3px; vertical-align:top; }
-.tabella-righe input, .tabella-righe textarea { padding:8px 8px; font-size:14px; border-radius:8px; }
-.tabella-righe textarea { min-height:38px; }
+.tabella-righe input, .tabella-righe textarea { padding:5px 7px; font-size:13px; border-radius:7px; }
+.tabella-righe textarea { min-height:30px; line-height:1.35; }
+.tabella-righe input[data-c="nome"] { min-width:190px; font-weight:700; }
+.tabella-righe input[data-c="sezione"] { min-width:110px; }
+.tabella-righe textarea[data-c="indicazioni"] { min-width:200px; }
 .tabella-righe .stretto { width:58px; }
 .tabella-righe .medio { width:82px; }
-.giorno-testa td { padding-top:14px; font-family:var(--serif); font-size:19px; }
+.giorno-testa td { padding-top:22px; font-family:var(--serif); font-size:19px; }
+.giorno-testa:first-child td { padding-top:4px; }
 .riga-tools { display:flex; gap:2px; }
 .riga-tools button { background:none; border:0; color:var(--ink-muted); font-size:16px; cursor:pointer; padding:6px 5px; }
 .riga-tools button:hover { color:var(--ink); }
@@ -120,8 +124,13 @@ textarea { resize:vertical; }
 /* Dettaglio paziente */
 .dati-paziente { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 18px; font-size:14px; }
 .dati-paziente b { display:block; font-family:var(--mono); font-size:10px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); }
-.scheda-attiva .righe { font-size:14px; color:var(--ink-soft); margin-top:8px; }
-.scheda-attiva .righe > div { margin-bottom:6px; }
+.scheda-attiva .righe { font-size:13px; line-height:1.4; color:var(--ink-soft); margin-top:4px; }
+.scheda-attiva .giorno-tit { font-family:var(--serif); font-size:18px; color:var(--ink); margin:20px 0 4px; padding-top:12px; border-top:1px solid var(--border); }
+.scheda-attiva .giorno-tit:first-child { margin-top:8px; padding-top:0; border-top:0; }
+.scheda-attiva .sez-tit { font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:8px 0 2px; }
+.scheda-attiva .es-riga { margin:0 0 5px; }
+.scheda-attiva .es-riga b { color:var(--ink); }
+.scheda-attiva .es-riga .ultimo { margin-top:0; font-size:12px; }
 details.sessione { background:var(--white); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
 details.sessione summary { list-style:none; cursor:pointer; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
 details.sessione summary::-webkit-details-marker { display:none; }
@@ -322,7 +331,7 @@ async function vistaPaziente(id) {
   const [r1, r2, r3] = await Promise.all([
     sb.from('profili').select('*').eq('id', id).single(),
     sb.from('assegnazioni').select(`id, data_inizio, data_fine, stato, scheda_id,
-        schede ( id, nome, scheda_esercizi ( id, giorno, ordine, serie, ripetizioni, rpe, carico, esercizi ( nome ) ) )`)
+        schede ( id, nome, scheda_esercizi ( id, giorno, ordine, sezione, serie, ripetizioni, rpe, carico, esercizi ( nome ) ) )`)
       .eq('paziente_id', id).order('data_inizio', { ascending: false }),
     sb.from('sessioni').select(`id, giorno, data, completata, note, note_esercizi, assegnazione_id,
         serie_registrate ( scheda_esercizio_id, numero_serie, ripetizioni, carico_kg, rpe, scheda_esercizi ( ordine, esercizi ( nome ) ) )`)
@@ -352,11 +361,12 @@ async function vistaPaziente(id) {
   if (!attive.length) html += `<div class="card vuoto">Nessuna scheda attiva.</div>`;
   attive.forEach(a => {
     const righe = (a.schede?.scheda_esercizi || []).sort((x, y) => x.giorno - y.giorno || x.ordine - y.ordine);
-    let perGiorno = '', g = null;
+    let perGiorno = '', g = null, sez = null;
     righe.forEach(r => {
-      if (r.giorno !== g) { g = r.giorno; perGiorno += `<div style="margin-top:6px"><b>Giorno ${g}</b></div>`; }
-      perGiorno += `<div>${esc(r.esercizi?.nome)} · ${r.serie || '–'}×${esc(r.ripetizioni || '–')}${r.carico ? ' · ' + esc(r.carico) : ''}${r.rpe ? ' · RPE ' + esc(r.rpe) : ''}
-        ${ultimoFatto(r.id, sessioni)}</div>`;
+      if (r.giorno !== g) { g = r.giorno; sez = null; perGiorno += `<div class="giorno-tit">Giorno ${g}</div>`; }
+      if ((r.sezione || '') !== sez) { sez = r.sezione || ''; if (sez) perGiorno += `<div class="sez-tit">${esc(sez)}</div>`; }
+      const presc = [`${r.serie || '–'}×${r.ripetizioni || '–'}`, r.carico, r.rpe ? (/^\d/.test(r.rpe) ? 'RPE ' : '') + r.rpe : ''].filter(Boolean).map(esc).join(' · ');
+      perGiorno += `<div class="es-riga"><b>${esc(r.esercizi?.nome)}</b> · ${presc}${ultimoFatto(r.id, sessioni)}</div>`;
     });
     html += `
       <div class="card scheda-attiva">
@@ -372,7 +382,12 @@ async function vistaPaziente(id) {
         </div>
       </div>`;
   });
-  html += `<a class="btn" href="#nuova/${p.id}">+ Nuova scheda per ${esc(p.nome || 'il paziente')}</a>`;
+  html += attive.length
+    ? `<div class="azioni">
+         <a class="btn" href="#nuova/${p.id}" onclick="modelloDaScheda('${attive[0].scheda_id}', '${p.id}'); return false;">+ Nuova scheda per ${esc(p.nome || 'il paziente')} (dalla sua)</a>
+         <a class="btn btn-sec" href="#nuova/${p.id}" onclick="nuovaVuota('${p.id}'); return false;">Scheda vuota</a>
+       </div>`
+    : `<a class="btn" href="#nuova/${p.id}" onclick="nuovaVuota('${p.id}'); return false;">+ Nuova scheda per ${esc(p.nome || 'il paziente')}</a>`;
 
   // Schede concluse: restano con tutti i loro allenamenti
   const precedenti = assegnazioni.filter(a => a.stato !== 'attiva');
@@ -747,8 +762,8 @@ async function vistaNuova(pazienteId) {
     pazienti = data || [];
   }
   if (!esercizi.length) await caricaEsercizi();
-  if (!bozza) bozza = leggiBozza() || { nome: '', indicazioni: '', testo: '', pazienteId: '', righe: [] };
-  if (pazienteId) bozza.pazienteId = pazienteId;
+  const per = pazienteId || '';
+  if (!bozza || bozza.pazienteId !== per) bozza = leggiBozza(per) || bozzaVuota(per);
 
   const opzioni = pazienti.slice().sort((a, b) => nomeCompleto(a).localeCompare(nomeCompleto(b), 'it'))
     .map(p => `<option value="${p.id}" ${p.id === bozza.pazienteId ? 'selected' : ''}>${esc(nomeCompleto(p))} (@${esc(p.nome_utente)})${p.attivo ? '' : ' · da attivare'}</option>`).join('');
@@ -785,18 +800,28 @@ async function vistaNuova(pazienteId) {
     <datalist id="nomiEsercizi">${esercizi.map(e => `<option value="${esc(e.nome)}">`).join('')}</datalist>`;
 
   $('nomeScheda').addEventListener('input', e => { bozza.nome = e.target.value; salvaBozza(); });
-  $('pazienteScheda').addEventListener('change', e => { bozza.pazienteId = e.target.value; salvaBozza(); });
+  $('pazienteScheda').addEventListener('change', e => { togliBozza(bozza.pazienteId); bozza.pazienteId = e.target.value; salvaBozza(); });
   $('testoScheda').addEventListener('input', e => { bozza.testo = e.target.value; salvaBozza(); });
   disegnaAnteprima();
 }
 
-function salvaBozza() { try { localStorage.setItem(CHIAVE_BOZZA, JSON.stringify(bozza)); } catch {} }
-function leggiBozza() { try { return JSON.parse(localStorage.getItem(CHIAVE_BOZZA)); } catch { return null; } }
+// Una bozza per paziente (e una per le schede modello): così la scheda di un paziente non compare su un altro
+function chiaveBozza(pazienteId) { return CHIAVE_BOZZA + (pazienteId ? '_' + pazienteId : ''); }
+function salvaBozza() { try { localStorage.setItem(chiaveBozza(bozza.pazienteId), JSON.stringify(bozza)); } catch {} }
+function leggiBozza(pazienteId) { try { return JSON.parse(localStorage.getItem(chiaveBozza(pazienteId))); } catch { return null; } }
+function togliBozza(pazienteId) { try { localStorage.removeItem(chiaveBozza(pazienteId)); } catch {} }
+function bozzaVuota(pazienteId) { return { nome: '', indicazioni: '', testo: '', pazienteId: pazienteId || '', righe: [] }; }
+
+function nuovaVuota(pazienteId) {
+  togliBozza(pazienteId);
+  bozza = bozzaVuota(pazienteId);
+  if (location.hash === '#nuova/' + pazienteId) instrada(); else location.hash = '#nuova/' + pazienteId;
+}
 function svuotaBozza() {
   if (bozza.righe.length && !confirm('Svuotare la scheda in corso?')) return;
-  const p = bozza.pazienteId;
-  bozza = { nome: '', indicazioni: '', testo: '', pazienteId: p, righe: [] };
-  salvaBozza(); vistaNuova();
+  togliBozza(bozza.pazienteId);
+  bozza = bozzaVuota(bozza.pazienteId);
+  vistaNuova(bozza.pazienteId);
 }
 
 // ---------------------------------------------------------------------
@@ -1087,7 +1112,7 @@ async function ultimeEsecuzioni(eserciziIds, pazienteId) {
   return ris;
 }
 
-function righeTesto(t) { return Math.min(4, Math.max(1, Math.ceil(String(t || '').length / 24))); }
+function righeTesto(t) { return Math.min(2, Math.max(1, Math.ceil(String(t || '').length / 30))); }
 
 function aggiungiRiga() {
   const g = bozza.righe.length ? bozza.righe[bozza.righe.length - 1].giorno : 1;
@@ -1153,7 +1178,7 @@ async function salvaScheda(btn) {
       if (paz && !paz.attivo) await sb.from('profili').update({ attivo: true }).eq('id', pazienteId);
     }
 
-    try { localStorage.removeItem(CHIAVE_BOZZA); } catch {}
+    togliBozza(bozza.pazienteId);
     bozza = null;
     toast(pazienteId ? `Scheda salvata e assegnata a ${paz ? nomeCompleto(paz) : 'paziente'}` : 'Scheda salvata come modello');
     location.hash = pazienteId ? '#paziente/' + pazienteId : '#schede';

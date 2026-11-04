@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Valutazione tunnel tarsale · Fisio Expert Roma</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --ink: #1a1a1a; --ink-soft: #4a4a4a; --ink-muted: #8a8a8a;
+    --accent: #f47920; --accent-light: rgba(244,121,32,0.12); --accent-dark: #d4660e;
+    --warm: #f8f4ef; --warm-dark: #ede8e0; --white: #ffffff;
+    --border: rgba(26,26,26,0.1);
+    --ok: #2e7d52; --ok-light: rgba(46,125,82,0.1);
+    --blu: #2f5d8a; --blu-light: rgba(47,93,138,0.1);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'Montserrat', system-ui, sans-serif;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-family: var(--sans); background: var(--warm); color: var(--ink); line-height: 1.65; font-weight: 400; overscroll-behavior: none; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 18px 0; position: sticky; top: 0; z-index: 20; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.5px; color: var(--ink); display: inline-flex; align-items: center; text-decoration: none; }
+  .header-logo { height: 36px; width: auto; display: block; }
+  .logo-fallback { display: none; font-family: var(--serif); font-size: 22px; }
+  .logo-fallback b { color: var(--accent); font-weight: inherit; }
+  .step-count { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1px; color: var(--ink-muted); text-transform: uppercase; }
+
+  main { padding: 36px 0 140px; }
+  .eyebrow { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1.title { font-family: var(--serif); font-size: clamp(30px, 5vw, 42px); line-height: 1.08; font-weight: 400; margin-bottom: 12px; }
+  .lead { font-size: 16px; color: var(--ink-soft); margin-bottom: 28px; max-width: 600px; }
+  .sec-h { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 34px 0 6px; }
+  .sec-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 18px; padding: 28px; margin-bottom: 20px; }
+  .card h3 { font-family: var(--sans); font-weight: 600; font-size: 15px; margin: 18px 0 8px; color: var(--ink); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-muted); }
+  label .req { color: var(--accent); }
+  input[type=text], input[type=date], input[type=number], textarea, select {
+    font-family: var(--sans); font-size: 16px; color: var(--ink);
+    background: var(--warm); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 13px 15px; width: 100%; transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: var(--white); }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  select { appearance: auto; }
+  .hint { font-size: 12.5px; color: var(--ink-muted); }
+
+  /* PILLS */
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: var(--mono); font-weight: 700; font-size: 13px; padding: 11px 18px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--white); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: var(--white); }
+
+  /* CHECK ROWS */
+  .consent-row { display: flex; gap: 14px; align-items: flex-start; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: var(--white); }
+  .consent-row.checked { border-color: var(--accent); background: var(--accent-light); }
+  .consent-row.rf.checked { border-color: var(--accent-dark); background: rgba(212,102,14,0.16); }
+  .box { width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--ink-muted); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: var(--white); }
+  .consent-row.checked .box { background: var(--accent); border-color: var(--accent); }
+  .box svg { width: 14px; height: 14px; stroke: var(--white); stroke-width: 3.5; fill: none; opacity: 0; transition: opacity 0.15s; }
+  .consent-row.checked .box svg { opacity: 1; }
+  .consent-text { font-size: 14.5px; color: var(--ink-soft); }
+  .grp { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--accent-light); }
+  .grp:first-child { margin-top: 0; }
+
+  /* SEZIONI A SCOMPARSA */
+  details.tcard { background: var(--white); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px; overflow: hidden; }
+  details.tcard[open] { border-color: rgba(244,121,32,.35); }
+  details.tcard summary { list-style: none; padding: 16px 18px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+  details.tcard summary::-webkit-details-marker { display: none; }
+  .tdist { font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+  .tname { font-weight: 600; font-size: 15px; color: var(--ink); line-height: 1.3; }
+  .tbadge { margin-left: auto; flex-shrink: 0; font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: .5px; text-transform: uppercase; padding: 5px 10px; border-radius: 100px; background: var(--warm); color: var(--ink-muted); }
+  .tbadge.on { background: var(--ok-light); color: var(--ok); }
+  .tbody { padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  .tref { font-size: 12.5px; color: var(--ink-soft); background: var(--warm); border-radius: 10px; padding: 9px 12px; margin: 14px 0 10px; }
+
+  /* RIGHE DX / SX */
+  .bhead, .brow { display: grid; grid-template-columns: 1fr 104px 104px; gap: 8px; align-items: center; }
+  .bhead { font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-muted); padding: 8px 0 6px; }
+  .bhead span:not(:first-child) { text-align: center; }
+  .brow { padding: 9px 0; border-top: 1px solid var(--border); }
+  .brow.single { grid-template-columns: 1fr 216px; }
+  .bn { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+  .bh { font-size: 12.5px; color: var(--ink-muted); line-height: 1.45; margin-top: 2px; }
+  .brow select { padding: 9px 8px; font-size: 14px; }
+  .brow select.pos { border-color: var(--accent); background: var(--accent-light); }
+  .brow select.norm { border-color: rgba(46,125,82,.35); background: var(--ok-light); }
+
+  /* ORIENTAMENTO */
+  .rf-banner { border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; background: rgba(212,102,14,.12); border: 1.5px solid var(--accent-dark); color: var(--ink); font-size: 14.5px; display: none; }
+  .rf-banner.show { display: block; }
+  .rf-banner b { color: var(--accent-dark); }
+  .ori { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .ori-col { border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; background: var(--white); }
+  .ori-col.top { border-color: var(--accent); background: var(--accent-light); }
+  .ori-n { font-family: var(--mono); font-weight: 800; font-size: 28px; line-height: 1; color: var(--ink-muted); }
+  .ori-col.top .ori-n { color: var(--accent-dark); }
+  .ori-t { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--ink); margin: 6px 0 8px; }
+  .ori-col ul { padding-left: 16px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .ori-col li { margin-bottom: 4px; }
+  .ori-empty { font-size: 13px; color: var(--ink-muted); }
+  .disc { font-size: 12.5px; color: var(--ink-muted); margin-top: 12px; }
+
+  /* NAVBAR */
+  .navbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; background: var(--white); border-top: 1px solid var(--border); padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); }
+  .navbar .wrap { display: flex; gap: 12px; align-items: center; }
+  .btn { font-family: var(--mono); font-weight: 700; font-size: 14px; letter-spacing: 0.5px; padding: 16px 24px; border-radius: 100px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-primary { background: var(--accent); color: var(--white); flex: 1; }
+  .btn-primary:active { background: var(--accent-dark); }
+  .btn-ghost { background: var(--warm); color: var(--ink-soft); border: 1.5px solid var(--border); }
+  .err { color: var(--accent-dark); font-size: 13px; margin-top: 8px; font-weight: 500; display: none; }
+  .err.show { display: block; }
+
+  @media (max-width: 640px) {
+    .ori { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+    .wrap { padding: 0 18px; }
+    .card { padding: 22px; }
+    .bhead, .brow { grid-template-columns: 1fr 92px 92px; gap: 6px; }
+    .brow.single { grid-template-columns: 1fr 190px; }
+    .brow select { padding: 9px 4px; font-size: 13.5px; }
+    .navbar .btn { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="https://fisioexpert.it" class="logo">
+      <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+      <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+    </a>
+    <div class="step-count">Tunnel tarsale</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Valutazione neurologica</div>
+    <h1 class="title">Tunnel tarsale vs neuropatia</h1>
+    <p class="lead">Compila le sezioni che servono e testa sempre entrambi i lati. In fondo vedi verso cosa orientano i reperti. Nessun dato esce da questa pagina: alla fine scarichi il PDF.</p>
+
+    <div class="card">
+      <div class="grid">
+        <div class="field"><label>Iniziali paziente <span class="req">*</span></label><input type="text" id="iniziali" maxlength="6" placeholder="es. M.R." style="text-transform:uppercase"><div class="err" id="errIni">Inserisci le iniziali</div></div>
+        <div class="field"><label>Data valutazione</label><input type="date" id="data"></div>
+      </div>
+      <h3>Lato sintomatico</h3>
+      <div class="pills" data-pill="lato">
+        <button type="button" class="pill" data-val="DX">DX</button>
+        <button type="button" class="pill" data-val="SX">SX</button>
+        <button type="button" class="pill" data-val="Bilaterale">Bilaterale</button>
+      </div>
+    </div>
+
+    <h2 class="sec-h">Anamnesi</h2>
+    <p class="sec-sub">Spunta solo ciò che è presente.</p>
+    <div class="card" id="anamnesi"></div>
+
+    <h2 class="sec-h">Esame clinico</h2>
+    <p class="sec-sub">Per ogni voce scegli il risultato a DX e a SX. Le voci vuote non finiscono nel PDF.</p>
+    <div id="sezioni"></div>
+
+    <h2 class="sec-h">Questionari</h2>
+    <div class="card">
+      <div class="grid">
+        <div class="field"><label>DN4 (0-10)</label><input type="number" inputmode="numeric" min="0" max="10" id="dn4"><span class="hint">≥ 4 suggerisce dolore neuropatico</span></div>
+        <div class="field"><label>MNSI esame (0-10)</label><input type="number" inputmode="decimal" min="0" max="10" step="0.5" id="mnsi"><span class="hint">&gt; 2,5 suggerisce polineuropatia</span></div>
+        <div class="field"><label>NRS a riposo (0-10)</label><input type="number" inputmode="numeric" min="0" max="10" id="nrs_r"></div>
+        <div class="field"><label>NRS dopo carico (0-10)</label><input type="number" inputmode="numeric" min="0" max="10" id="nrs_c"></div>
+      </div>
+    </div>
+
+    <h2 class="sec-h">Orientamento clinico</h2>
+    <p class="sec-sub">Si aggiorna mentre compili. È un supporto al ragionamento, non una diagnosi.</p>
+    <div class="rf-banner" id="rfBanner"></div>
+    <div class="ori" id="ori"></div>
+    <p class="disc">La conferma di tunnel tarsale o polineuropatia è elettrofisiologica (ENG/EMG bilaterale).</p>
+
+    <h2 class="sec-h">Conclusione</h2>
+    <div class="card">
+      <div class="field" style="margin-bottom:16px;"><label>Piano</label>
+        <select id="piano">
+          <option value="">—</option>
+          <option>Trattamento conservativo, rivalutazione a 4-6 settimane</option>
+          <option>Invio per ENG/EMG ed ecografia</option>
+          <option>Invio a medico curante / neurologo (sospetta polineuropatia)</option>
+          <option>Invio medico urgente (red flag)</option>
+        </select>
+      </div>
+      <div class="field"><label>Note</label><textarea id="note" placeholder="es. ipotesi principale, esami suggeriti, indicazioni date"></textarea></div>
+    </div>
+  </div>
+</main>
+
+<div class="navbar">
+  <div class="wrap">
+    <button class="btn btn-ghost" id="btnRestart">Nuova</button>
+    <button class="btn btn-primary" id="btnDownload">Scarica PDF</button>
+  </div>
+</div>
+
+<script>
+/* ============ DATI ============ */
+const CHECK_SVG='<svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg>';
+
+/* tag: stt = tunnel tarsale, pnp = polineuropatia, rad = radicolare, risk = fattore di rischio PNP, rf = red flag */
+const ANAM=[
+  {g:'Sintomi',items:[
+    {id:'a_bilat',t:'Sintomi bilaterali e simmetrici',tag:'pnp'},
+    {id:'a_carico',t:'Peggiorano con stazione eretta, cammino o corsa',tag:'stt'},
+    {id:'a_notte',t:'Peggiorano di notte o a riposo',tag:'pnp'},
+    {id:'a_trauma',t:'Esordio dopo trauma, distorsione o aumento di carico',tag:'stt'},
+    {id:'a_ascend',t:'Sintomi che salgono verso caviglie/ginocchia o coinvolgono le mani',tag:'pnp'},
+    {id:'a_lombo',t:'Lombalgia o dolore irradiato da gluteo/coscia posteriore',tag:'rad'}
+  ]},
+  {g:'Fattori di rischio per neuropatia',items:[
+    {id:'r_diab',t:'Diabete o prediabete',tag:'risk'},
+    {id:'r_alcol',t:'Consumo elevato di alcol',tag:'risk'},
+    {id:'r_b12',t:'Rischio carenza B12 (dieta vegana, metformina, IPP a lungo termine)',tag:'risk'},
+    {id:'r_endo',t:'Ipotiroidismo, insufficienza renale o malattie autoimmuni',tag:'risk'},
+    {id:'r_chemio',t:'Chemioterapia o farmaci neurotossici',tag:'risk'},
+    {id:'r_fam',t:'Familiarità per neuropatie',tag:'risk'}
+  ]},
+  {g:'Fattori locali',items:[
+    {id:'l_prono',t:'Piede piatto/pronato, valgo di retropiede',tag:'stt'},
+    {id:'l_frattura',t:'Esiti di frattura o traumi ripetuti di caviglia',tag:'stt'},
+    {id:'l_varici',t:'Varici o tumefazione retromalleolare mediale',tag:'stt'},
+    {id:'l_sport',t:'Sport con carichi ripetuti in pronazione',tag:'stt'}
+  ]},
+  {g:'Red flags',rf:true,items:[
+    {id:'f_motor',t:'Deficit motorio rapidamente progressivo',tag:'rf'},
+    {id:'f_gbs',t:'Sintomi ascendenti rapidi (sospetto Guillain-Barré)',tag:'rf'},
+    {id:'f_cauda',t:'Disturbi sfinterici o anestesia a sella',tag:'rf'},
+    {id:'f_massa',t:'Massa palpabile in crescita nel tunnel',tag:'rf'},
+    {id:'f_sist',t:'Perdita di peso inspiegata, febbre, storia oncologica',tag:'rf'},
+    {id:'f_ulcera',t:'Ulcere o lesioni cutanee al piede in paziente diabetico',tag:'rf'}
+  ]}
+];
+
+const O={
+  PN:['Negativo','Positivo'], SN:['No','Sì'],
+  SENS:['Normale','Ridotta','Assente','Disestesia'],
+  RIF:['Normale','Vivace','Ridotto','Assente'],
+  MRC:['5','4','3','2','1','0'], MONO:['4/4','3/4','2/4','1/4','0/4'],
+  DIAP:['Presente','Ridotto','Assente'], NA:['Normale','Alterato']
+};
+
+const SEZ=[
+  {id:'oss',dist:'Esame obiettivo',nome:'Osservazione e palpazione',rows:[
+    {id:'pronazione',nome:'Piede pronato / valgo di retropiede',o:'SN',h:'In carico, valuta anche il navicular drop'},
+    {id:'varici',nome:'Tumefazione, varici o masse retromalleolari',o:'SN',h:'Se presenti: ecografia del tunnel'},
+    {id:'ipotrofia',nome:'Ipotrofia muscoli intrinseci',o:'SN',h:'Abduttore alluce e abduttore V dito'},
+    {id:'cute',nome:'Alterazioni cutanee',o:'SN',h:'Secchezza, perdita di peli, ulcere, calli anomali'},
+    {id:'palp',nome:'Palpazione del tunnel',o:'PN',h:'Positivo se riproduce i sintomi abituali'}
+  ]},
+  {id:'prov',dist:'Test provocativi',nome:'Test provocativi e neurodinamica',ref:'Positivo solo se riproduce i sintomi abituali del paziente. Testa sempre il lato sano per confronto.',rows:[
+    {id:'tinel',nome:'Tinel al tunnel tarsale',o:'PN',h:'Percussione dietro/sotto il malleolo mediale: formicolio irradiato in pianta o dita'},
+    {id:'kino',nome:'Dorsiflessione-eversione (Kinoshita)',o:'PN',h:'Dorsiflessione max + eversione + estensione MTF per 5-10 s'},
+    {id:'trep',nome:'Flessione plantare-inversione (Trepman)',o:'PN',h:'Flessione plantare + inversione con pressione sul tunnel per circa 60 s'},
+    {id:'triple',nome:'Triple compression',o:'PN',h:'Flessione plantare + inversione + pressione digitale per 30 s'},
+    {id:'neuro',nome:'Neurodinamica nervo tibiale',o:'PN',h:'SLR + dorsiflessione + eversione + estensione dita; differenziazione con flessione del capo'}
+  ]},
+  {id:'sens',dist:'Sensibilità',nome:'Mappatura sensitiva per territorio',ref:'Tatto leggero, puntorio e caldo/freddo. Le prime tre zone sono del nervo tibiale, le altre sono fuori dal suo territorio.',rows:[
+    {id:'z_pm',nome:'Pianta mediale, alluce, II-III dito',o:'SENS',h:'Plantare mediale · tibiale'},
+    {id:'z_pl',nome:'Pianta laterale, IV-V dito',o:'SENS',h:'Plantare laterale · tibiale'},
+    {id:'z_cm',nome:'Tallone mediale',o:'SENS',h:'Calcaneare mediale · tibiale'},
+    {id:'z_dorso',nome:'Dorso del piede',o:'SENS',h:'Peroneo superficiale · extra-tibiale'},
+    {id:'z_surale',nome:'Margine laterale piede e tallone',o:'SENS',h:'Surale · extra-tibiale'},
+    {id:'z_pp',nome:'I spazio interdigitale dorsale',o:'SENS',h:'Peroneo profondo · extra-tibiale'},
+    {id:'z_saf',nome:'Gamba mediale',o:'SENS',h:'Safeno · extra-tibiale'}
+  ]},
+  {id:'pnp',dist:'Screening neuropatia',nome:'Screening polineuropatia',rows:[
+    {id:'mono',nome:'Monofilamento 10 g',o:'MONO',h:'Siti percepiti su 4: alluce, testa I, III e V metatarso'},
+    {id:'diap',nome:'Diapason 128 Hz all\'alluce',o:'DIAP',h:'Se assente, risali a malleolo e tuberosità tibiale'},
+    {id:'posiz',nome:'Senso di posizione dell\'alluce',o:'NA',h:'Movimento passivo su/giù a occhi chiusi'},
+    {id:'mani',nome:'Sensibilità alle dita delle mani',o:'NA',h:'Monofilamento o diapason'},
+    {id:'romberg',nome:'Romberg',o:'PN',b:false,h:'Positivo se peggiora molto a occhi chiusi'}
+  ]},
+  {id:'rif',dist:'Riflessi',nome:'Riflessi',rows:[
+    {id:'achilleo',nome:'Achilleo',o:'RIF',h:'S1'},
+    {id:'rotuleo',nome:'Rotuleo',o:'RIF',h:'L4, confronto'},
+    {id:'babinski',nome:'Babinski',o:'PN',h:'Positivo = possibile lesione centrale'}
+  ]},
+  {id:'forza',dist:'Forza (MRC 0-5)',nome:'Forza',rows:[
+    {id:'f_intr',nome:'Intrinseci del piede',o:'MRC',h:'Abduzione alluce, apertura a ventaglio delle dita · tibiale distale'},
+    {id:'f_est',nome:'Estensione alluce e dita',o:'MRC',h:'Peroneo profondo · L5'},
+    {id:'f_dors',nome:'Dorsiflessione di caviglia',o:'MRC',h:'L4-L5'},
+    {id:'f_flp',nome:'Flessione plantare monopodalica',o:'MRC',h:'S1'}
+  ]}
+];
+
+const ROWS={};SEZ.forEach(s=>s.rows.forEach(r=>{r.sez=s.id;ROWS[r.id]=r;}));
+
+/* ============ RENDER ============ */
+const chk=new Set();
+document.getElementById('anamnesi').innerHTML=ANAM.map(g=>
+  `<div class="grp">${g.g}</div>`+g.items.map(it=>
+    `<div class="consent-row${g.rf?' rf':''}" data-id="${it.id}"><div class="box">${CHECK_SVG}</div><div class="consent-text">${it.t}</div></div>`).join('')
+).join('');
+document.querySelectorAll('#anamnesi .consent-row').forEach(el=>el.addEventListener('click',()=>{
+  const id=el.dataset.id;if(chk.has(id))chk.delete(id);else chk.add(id);
+  el.classList.toggle('checked',chk.has(id));analizza();
+}));
+
+function selHTML(r,side){
+  return `<select data-s="${r.id}" data-side="${side}"><option value="">—</option>${O[r.o].map(x=>`<option>${x}</option>`).join('')}</select>`;
+}
+function rowHTML(r){
+  const lab=`<div><div class="bn">${r.nome}</div>${r.h?`<div class="bh">${r.h}</div>`:''}</div>`;
+  return r.b===false?`<div class="brow single">${lab}${selHTML(r,'u')}</div>`:`<div class="brow">${lab}${selHTML(r,'dx')}${selHTML(r,'sx')}</div>`;
+}
+document.getElementById('sezioni').innerHTML=SEZ.map(s=>
+  `<details class="tcard"><summary><div><div class="tdist">${s.dist}</div><div class="tname">${s.nome}</div></div><span class="tbadge" id="tb_${s.id}">Da fare</span></summary>`+
+  `<div class="tbody">${s.ref?`<div class="tref">${s.ref}</div>`:''}<div class="bhead"><span></span><span>DX</span><span>SX</span></div>${s.rows.map(rowHTML).join('')}</div></details>`
+).join('');
+
+const NORMALI=['Negativo','No','Normale','Presente','4/4','5'];
+document.querySelectorAll('#sezioni select').forEach(el=>el.addEventListener('change',()=>{
+  el.classList.remove('pos','norm');
+  if(el.value)el.classList.add(NORMALI.includes(el.value)?'norm':'pos');
+  aggiornaBadge();analizza();
+}));
+function aggiornaBadge(){
+  SEZ.forEach(s=>{
+    const sel=[...document.querySelectorAll(`#sezioni select`)].filter(e=>ROWS[e.dataset.s].sez===s.id);
+    const n=sel.filter(e=>e.value).length,b=document.getElementById('tb_'+s.id);
+    b.textContent=n?`${n}/${sel.length}`:'Da fare';b.classList.toggle('on',n>0);
+  });
+}
+
+const pillVals={};
+document.querySelectorAll('[data-pill]').forEach(g=>{
+  g.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{
+    g.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');pillVals[g.dataset.pill]=p.dataset.val;
+  }));
+});
+['dn4','mnsi'].forEach(id=>document.getElementById(id).addEventListener('input',analizza));
+
+(function(){const n=new Date(),p=x=>String(x).padStart(2,'0');
+  document.getElementById('data').value=`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`;})();
+
+/* ============ ANALISI ============ */
+function v(id,side){const e=document.querySelector(`[data-s="${id}"][data-side="${side}"]`);return e?e.value:'';}
+const isPos=x=>x==='Positivo'||x==='Sì';
+const isAlt=x=>!!x&&x!=='Normale';
+const isLow=x=>x==='Ridotto'||x==='Assente';
+const isWeak=x=>x!==''&&+x<5;
+const monoLow=x=>!!x&&x!=='4/4';
+const isAltNA=x=>x==='Alterato';
+/* confronto tra lati: uni = alterato da un solo lato (entrambi compilati), both = alterato da entrambi */
+function lati(id,fn){
+  const a=v(id,'dx'),b=v(id,'sx'),d=fn(a),s=fn(b),filled=a!==''&&b!=='';
+  return {d,s,any:d||s,both:d&&s,uni:filled&&d!==s,lato:d&&!s?'DX':(s&&!d?'SX':''),filled,a,b};
+}
+const nome=id=>ROWS[id].nome;
+
+function analizza(){
+  const stt=[],pnp=[],rad=[],allarmi=[];
+
+  ANAM.forEach(g=>g.items.forEach(it=>{
+    if(!chk.has(it.id))return;
+    if(it.tag==='stt')stt.push(it.t);
+    if(it.tag==='pnp')pnp.push(it.t);
+    if(it.tag==='rad')rad.push(it.t);
+    if(it.tag==='rf')allarmi.push(it.t);
+  }));
+  const nRisk=ANAM[1].items.filter(it=>chk.has(it.id)).length;
+  if(nRisk)pnp.push(`${nRisk} fattor${nRisk>1?'i':'e'} di rischio per neuropatia`);
+
+  /* osservazione */
+  let x=lati('palp',isPos);if(x.uni)stt.push(`Palpazione del tunnel positiva solo a ${x.lato}`);else if(x.both)stt.push('Palpazione del tunnel positiva bilateralmente');
+  x=lati('ipotrofia',isPos);if(x.uni)stt.push(`Ipotrofia intrinseci solo a ${x.lato}`);else if(x.both)pnp.push('Ipotrofia intrinseci bilaterale');
+  x=lati('varici',isPos);if(x.any)stt.push('Tumefazione/varici retromalleolari: possibile lesione occupante spazio');
+  x=lati('pronazione',isPos);if(x.any)stt.push('Piede pronato / valgo di retropiede');
+  x=lati('cute',isPos);if(x.both)pnp.push('Alterazioni cutanee bilaterali');
+
+  /* test provocativi */
+  ['tinel','kino','trep','triple'].forEach(id=>{
+    const t=lati(id,isPos);
+    if(t.uni)stt.push(`${nome(id)} positivo solo a ${t.lato}`);
+    else if(t.both)stt.push(`${nome(id)} positivo bilateralmente (STT bilaterale da confermare)`);
+  });
+  ['dx','sx'].forEach(sd=>{
+    const lab=sd.toUpperCase();
+    if(isPos(v('neuro',sd))){
+      if(v('tinel',sd)==='Negativo')rad.push(`Neurodinamica positiva a ${lab} con Tinel al tunnel negativo`);
+      else if(isPos(v('tinel',sd)))stt.push(`Neurodinamica e Tinel positivi a ${lab}`);
+    }
+  });
+
+  /* sensibilità */
+  const tib=['z_pm','z_pl','z_cm'],ext=['z_dorso','z_surale','z_pp','z_saf'];
+  const extAny=ext.some(id=>lati(id,isAlt).any);
+  const tibUni=tib.map(id=>lati(id,isAlt)).filter(t=>t.uni);
+  if(tibUni.length&&!extAny){
+    const lato=[...new Set(tibUni.map(t=>t.lato))].join(' e ');
+    stt.push(`Deficit sensitivo nel solo territorio tibiale a ${lato}, zone extra-tibiali normali`);
+  }
+  const extBoth=ext.filter(id=>lati(id,isAlt).both);
+  if(extBoth.length)pnp.push(`Deficit sensitivo extra-tibiale bilaterale (${extBoth.map(id=>ROWS[id].h.split(' · ')[0]).join(', ')})`);
+  const tibBoth=tib.filter(id=>lati(id,isAlt).both);
+  if(tibBoth.length&&extBoth.length)pnp.push('Deficit sensitivo bilaterale anche nel territorio tibiale');
+  x=lati('z_surale',isAlt);if(x.uni&&!lati('z_pm',isAlt).any)rad.push(`Deficit sensitivo surale solo a ${x.lato}`);
+  x=lati('z_pp',isAlt);if(x.uni&&!extBoth.length)rad.push(`Deficit sensitivo I spazio dorsale solo a ${x.lato} (L5 / peroneo profondo)`);
+
+  /* screening PNP */
+  x=lati('mono',monoLow);if(x.both)pnp.push('Monofilamento ridotto bilateralmente');else if(x.uni)stt.push(`Monofilamento ridotto solo a ${x.lato}`);
+  x=lati('diap',isLow);if(x.both)pnp.push('Vibrazione ridotta/assente all\'alluce bilateralmente');
+  x=lati('posiz',isAltNA);if(x.both)pnp.push('Senso di posizione alterato bilateralmente');
+  x=lati('mani',isAltNA);if(x.any)pnp.push('Sensibilità alterata alle mani');
+  if(isPos(v('romberg','u')))pnp.push('Romberg positivo');
+
+  /* riflessi */
+  x=lati('achilleo',isLow);
+  if(x.both)pnp.push('Achillei ridotti/assenti bilateralmente');
+  else if(x.uni)rad.push(`Achilleo ridotto solo a ${x.lato}`);
+  else if(x.a==='Normale'&&x.b==='Normale')stt.push('Achillei normali bilateralmente');
+  x=lati('rotuleo',isLow);if(x.both)pnp.push('Rotulei ridotti bilateralmente');
+  x=lati('babinski',isPos);if(x.any)allarmi.push('Babinski positivo: possibile lesione del sistema nervoso centrale');
+  x=lati('achilleo',a=>a==='Vivace');if(x.any)allarmi.push('Achilleo vivace: valutare segni di primo motoneurone');
+
+  /* forza */
+  x=lati('f_intr',isWeak);if(x.uni)stt.push(`Debolezza degli intrinseci solo a ${x.lato}`);else if(x.both)pnp.push('Debolezza degli intrinseci bilaterale');
+  ['f_est','f_dors'].forEach(id=>{const t=lati(id,isWeak);if(t.both)pnp.push(`${nome(id)} debole bilateralmente`);else if(t.uni)rad.push(`${nome(id)} debole solo a ${t.lato} (L5)`);});
+  x=lati('f_flp',isWeak);if(x.uni)rad.push(`Flessione plantare debole solo a ${x.lato} (S1)`);else if(x.both)pnp.push('Flessione plantare debole bilateralmente');
+
+  /* questionari */
+  const mnsi=parseFloat((document.getElementById('mnsi').value||'').replace(',','.'));
+  if(!isNaN(mnsi)&&mnsi>2.5)pnp.push(`MNSI esame ${String(mnsi).replace('.',',')} (> 2,5)`);
+
+  /* render */
+  const rb=document.getElementById('rfBanner');
+  if(allarmi.length){rb.innerHTML=`<b>Invio medico prima di proseguire.</b><br>${allarmi.join('<br>')}`;rb.classList.add('show');}
+  else rb.classList.remove('show');
+  const cols=[{t:'Tunnel tarsale',l:stt},{t:'Polineuropatia',l:pnp},{t:'Radicolare S1/L5',l:rad}];
+  const max=Math.max(...cols.map(c=>c.l.length));
+  document.getElementById('ori').innerHTML=cols.map(c=>
+    `<div class="ori-col${max>0&&c.l.length===max?' top':''}"><div class="ori-n">${c.l.length}</div><div class="ori-t">${c.t}</div>`+
+    (c.l.length?`<ul>${c.l.map(i=>`<li>${i}</li>`).join('')}</ul>`:`<div class="ori-empty">Nessun reperto</div>`)+`</div>`
+  ).join('');
+  return {stt,pnp,rad,allarmi};
+}
+analizza();
+
+/* ============ PDF ============ */
+function fmtDate(iso){if(!iso)return '';const[y,m,dd]=iso.split('-');return `${dd}/${m}/${y}`;}
+function pulisci(s){return String(s).replace(/≥/g,'>=').replace(/≤/g,'<=').replace(/·/g,'-').replace(/’/g,"'");}
+
+document.getElementById('btnDownload').addEventListener('click',()=>{
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('show'));
+  const ini=(document.getElementById('iniziali').value||'').trim().toUpperCase();
+  if(!ini){document.getElementById('errIni').classList.add('show');window.scrollTo({top:0,behavior:'smooth'});return;}
+  if(!window.jspdf){alert('Generatore PDF non disponibile (verifica la connessione).');return;}
+  const an=analizza();
+  const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=18;let y=20;
+  const ACC=[244,121,32],INK=[26,26,26],SOFT=[74,74,74];
+  const nuovaPag=h=>{if(y+h>282){doc.addPage();y=20;return true;}return false;};
+  function sec(t){nuovaPag(16);y+=2;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...ACC);doc.text(pulisci(t).toUpperCase(),M,y);y+=7;}
+  function field(k,val){if(!val)return;nuovaPag(6);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...INK);doc.text(k+':',M,y);
+    doc.setFont('helvetica','normal');doc.setTextColor(...SOFT);const l=doc.splitTextToSize(pulisci(val),W-2*M-40);doc.text(l,M+40,y);y+=Math.max(5,l.length*4.5);}
+  function lista(arr,col){arr.forEach(t=>{doc.setFont('helvetica','normal');doc.setFontSize(9);const l=doc.splitTextToSize(pulisci(t),W-2*M-6);
+    nuovaPag(l.length*4.3+1);doc.setTextColor(...(col||SOFT));doc.text('•',M+1,y);doc.text(l,M+5,y);y+=l.length*4.3+1;});}
+
+  /* intestazione */
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...INK);doc.text('fisio',M,y);
+  const w=doc.getTextWidth('fisio');doc.setTextColor(...ACC);doc.text('·',M+w,y);doc.setTextColor(...INK);doc.text('expert',M+w+doc.getTextWidth('·'),y);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...SOFT);doc.text('Valutazione tunnel tarsale vs neuropatia',W-M,y,{align:'right'});y+=12;
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(...INK);doc.text('Paziente '+ini,M,y);y+=2;
+  doc.setDrawColor(...ACC);doc.setLineWidth(.6);doc.line(M,y,W-M,y);y+=7;
+  field('Data',fmtDate(document.getElementById('data').value));
+  field('Lato sintomatico',pillVals.lato||'Non indicato');
+  y+=2;
+
+  if(an.allarmi.length){sec('Red flags / allarmi');lista(an.allarmi,ACC);y+=2;}
+
+  const anam=ANAM.filter(g=>!g.rf).map(g=>({g:g.g,l:g.items.filter(it=>chk.has(it.id)).map(it=>it.t)})).filter(g=>g.l.length);
+  if(anam.length){sec('Anamnesi');anam.forEach(g=>{nuovaPag(10);doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...INK);doc.text(g.g,M,y);y+=4.5;lista(g.l);y+=1;});}
+
+  /* tabelle esame clinico */
+  SEZ.forEach(s=>{
+    const righe=s.rows.filter(r=>r.b===false?v(r.id,'u'):(v(r.id,'dx')||v(r.id,'sx')));
+    if(!righe.length)return;
+    sec(s.nome);
+    const head=()=>{doc.setFillColor(248,244,239);doc.rect(M,y-4.5,W-2*M,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...INK);
+      doc.text('Voce',M+2,y);doc.text('DX',M+120,y);doc.text('SX',M+148,y);y+=7;};
+    head();
+    righe.forEach(r=>{
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+      const l=doc.splitTextToSize(pulisci(r.nome),112);
+      if(nuovaPag(l.length*4+3))head();
+      doc.setTextColor(...INK);doc.text(l,M+2,y);
+      const cella=(val,x)=>{doc.setTextColor(...(val&&!NORMALI.includes(val)?ACC:SOFT));doc.text(val||'-',x,y);};
+      if(r.b===false)cella(v(r.id,'u'),M+120);else{cella(v(r.id,'dx'),M+120);cella(v(r.id,'sx'),M+148);}
+      y+=l.length*4;doc.setDrawColor(230,226,220);doc.setLineWidth(.2);doc.line(M,y-1.5,W-M,y-1.5);y+=2.5;
+    });
+  });
+
+  const q=id=>(document.getElementById(id).value||'').trim();
+  if(q('dn4')||q('mnsi')||q('nrs_r')||q('nrs_c')){
+    sec('Questionari');
+    field('DN4',q('dn4')?q('dn4')+'/10'+(+q('dn4')>=4?' (positivo)':''):'');
+    field('MNSI esame',q('mnsi')?q('mnsi')+'/10':'');
+    field('NRS a riposo',q('nrs_r')?q('nrs_r')+'/10':'');
+    field('NRS dopo carico',q('nrs_c')?q('nrs_c')+'/10':'');
+  }
+
+  sec('Orientamento clinico');
+  [['Tunnel tarsale',an.stt],['Polineuropatia',an.pnp],['Radicolare S1/L5',an.rad]].forEach(([t,l])=>{
+    nuovaPag(10);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...INK);doc.text(`${t} (${l.length})`,M,y);y+=4.5;
+    if(l.length)lista(l);else{doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(...SOFT);doc.text('Nessun reperto',M+5,y);y+=5;}
+    y+=1;
+  });
+  doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(...SOFT);nuovaPag(8);
+  doc.text(doc.splitTextToSize('Supporto al ragionamento clinico, non diagnosi. La conferma di tunnel tarsale o polineuropatia richiede ENG/EMG bilaterale.',W-2*M),M,y);y+=8;
+
+  if(q('piano')||q('note')){sec('Conclusione');field('Piano',q('piano'));field('Note',q('note'));}
+
+  const d=document.getElementById('data').value||'';
+  doc.save(`TunnelTarsale_${ini.replace(/[^A-Z0-9]/g,'')||'Paziente'}_${d.replace(/-/g,'')}.pdf`);
+});
+document.getElementById('btnRestart').addEventListener('click',()=>{if(confirm('Cancellare tutti i valori e ricominciare?'))location.reload();});
+</script>
+</body>
+</html>

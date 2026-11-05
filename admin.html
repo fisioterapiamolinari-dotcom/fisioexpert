@@ -92,16 +92,16 @@ textarea { resize:vertical; }
 .righe-ed .giorno-testa { font-family:var(--serif); font-size:19px; margin:24px 0 4px; }
 .righe-ed .giorno-testa:first-child { margin-top:2px; }
 /* ogni esercizio su due righe: i campi vanno a capo invece di tagliare il testo */
-.righe-ed .l1 { display:grid; grid-template-columns:150px minmax(0,1fr) 46px 46px 70px 66px; gap:5px; }
-.righe-ed .l2 { display:grid; grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) minmax(0,2.2fr) minmax(0,1.3fr); gap:5px; }
-.righe-ed .intest { font-family:var(--mono); font-weight:700; font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); padding:0 2px; }
-.righe-ed .intest.l1 { margin-bottom:1px; } .righe-ed .intest.l2 { margin-bottom:4px; opacity:.8; }
-.righe-ed .riga-es { background:var(--warm); border-radius:10px; padding:5px; margin-bottom:5px; }
+.righe-ed .l1 { display:grid; grid-template-columns:140px minmax(0,1fr) 52px 150px 140px 66px; gap:6px; align-items:start; }
+.righe-ed .l2 { display:grid; grid-template-columns:52px 60px 80px minmax(0,2fr) minmax(0,1fr); gap:6px; align-items:start; }
+/* ogni campo ha il suo nome scritto sopra: si capisce sempre cosa va dove */
+.righe-ed .f::before { content:attr(data-label); display:block; font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); margin:0 0 2px 2px; }
+.righe-ed .riga-es { background:var(--warm); border-radius:10px; padding:6px 8px 8px; margin-bottom:6px; }
+.righe-ed .riga-tools { padding-top:12px; }
 .righe-ed .riga-es .l2 { margin-top:5px; }
 .righe-ed input, .righe-ed textarea { padding:5px 7px; font-size:13px; border-radius:7px; line-height:1.35; }
 .righe-ed textarea { resize:none; overflow:hidden; display:block; min-height:29px; }
 .righe-ed input[data-c="nome"] { font-weight:700; }
-.righe-ed .f::before { display:none; }
 .riga-tools { display:flex; gap:2px; }
 .riga-tools button { background:none; border:0; color:var(--ink-muted); font-size:16px; cursor:pointer; padding:6px 5px; }
 .riga-tools button:hover { color:var(--ink); }
@@ -113,10 +113,8 @@ textarea { resize:vertical; }
 .progressione .comandi input { width:90px; }
 .scorri { overflow-x:auto; }
 @media (max-width:760px) {
-  .righe-ed .intest { display:none; }
   .righe-ed .l1, .righe-ed .l2 { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .righe-ed .f.largo { grid-column:1 / -1; }
-  .righe-ed .f::before { content:attr(data-label); display:block; font-family:var(--mono); font-weight:700; font-size:9px; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-muted); }
 }
 
 /* Dettaglio paziente */
@@ -349,6 +347,9 @@ async function vistaPaziente(id) {
       .eq('paziente_id', id).order('data', { ascending: false }).order('creato_il', { ascending: false }).limit(150)
   ]);
   const commenti = await caricaCommenti('paziente_id', id);
+  // bozze salvate per questo paziente (se manca 06-bozze.sql la sezione semplicemente non compare)
+  const { data: bozze } = await sb.from('schede').select('id, nome, creato_il, scheda_esercizi ( giorno )')
+    .eq('bozza', true).eq('bozza_paziente_id', id).order('creato_il', { ascending: false });
   if (r1.error) return errore(r1.error, 'Paziente non trovato');
   const p = r1.data, assegnazioni = r2.data || [], sessioni = r3.data || [];
   if (r2.error || r3.error) console.error(r2.error || r3.error);
@@ -383,6 +384,7 @@ async function vistaPaziente(id) {
           <a class="btn btn-sec btn-piccolo" href="#risultati/${a0.id}">Tutti i risultati</a>
           <a class="btn btn-sec btn-piccolo" href="#nuova/${p.id}" onclick="modelloDaScheda('${a0.scheda_id}', '${p.id}'); return false;">Progressione / modifica</a>
           <button class="btn btn-sec btn-piccolo" onclick="concludiAssegnazione('${a0.id}', this)">Concludi</button>
+          <button class="btn btn-sec btn-piccolo" onclick="togliAssegnazione('${a0.id}', '${p.id}', '${a0.scheda_id}', ${sessioni.filter(s => s.assegnazione_id === a0.id).length}, this)">Togli e metti in bozze</button>
         </div>
       </div>`;
   html += attive.length
@@ -391,6 +393,26 @@ async function vistaPaziente(id) {
          <a class="btn btn-sec" href="#nuova/${p.id}" onclick="nuovaVuota('${p.id}'); return false;">Scheda vuota</a>
        </div>`
     : `<a class="btn" href="#nuova/${p.id}" onclick="nuovaVuota('${p.id}'); return false;">+ Nuova scheda per ${esc(p.nome || 'il paziente')}</a>`;
+
+  // Bozze: schede salvate per lui ma non ancora assegnate (lui non le vede)
+  if (bozze?.length) {
+    html += `<h2>Bozze</h2>`;
+    bozze.forEach(b => {
+      const giorni = new Set((b.scheda_esercizi || []).map(r => r.giorno)).size;
+      html += `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+            <div><b>${esc(b.nome)}</b>
+              <div style="color:var(--ink-muted);font-size:13px">${(b.scheda_esercizi || []).length} esercizi · ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'} · salvata il ${dataBreve(b.creato_il)}</div></div>
+            <span class="badge attesa">Bozza</span>
+          </div>
+          <div class="azioni" style="margin-top:10px">
+            <button class="btn btn-piccolo" onclick="modelloDaScheda('${b.id}', '${p.id}', '${b.id}')">Apri, modifica e assegna</button>
+            <button class="btn btn-pericolo btn-piccolo" onclick="eliminaBozza('${b.id}', '${p.id}', this)">Elimina</button>
+          </div>
+        </div>`;
+    });
+  }
 
   // Schede concluse: restano con tutti i loro allenamenti
   const precedenti = assegnazioni.filter(a => a.stato !== 'attiva');
@@ -409,6 +431,7 @@ async function vistaPaziente(id) {
             <a class="btn btn-piccolo" href="#risultati/${a.id}">Scheda e risultati</a>
             <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${a.scheda_id}', '${p.id}')">Usa come modello</button>
             <button class="btn btn-sec btn-piccolo" onclick="riattivaAssegnazione('${a.id}', '${p.id}', this)">Riattiva</button>
+            <button class="btn btn-pericolo btn-piccolo" onclick="togliAssegnazione('${a.id}', '${p.id}', '${a.scheda_id}', ${fatte}, this)">Elimina</button>
           </div>
         </div>`;
     });
@@ -752,6 +775,29 @@ function filtraStorico(assegnazioneId) {
   $('titoloStorico').scrollIntoView({ behavior: 'smooth' });
 }
 
+// Toglie una scheda al paziente: l'assegnazione sparisce, la scheda finisce nelle sue bozze
+async function togliAssegnazione(id, pazienteId, schedaId, allenamenti, btn) {
+  const testo = allenamenti
+    ? `Togliere questa scheda al paziente?\n\nATTENZIONE: verranno cancellati anche ${allenamenti} ${allenamenti === 1 ? 'allenamento registrato' : 'allenamenti registrati'} con questa scheda. Non si può annullare.\n\nLa scheda resta nelle sue bozze.`
+    : 'Togliere questa scheda al paziente? Non la vedrà più.\n\nLa scheda resta nelle sue bozze: la puoi riaprire, modificare e assegnare, oppure eliminare.';
+  if (!confirm(testo)) return;
+  attesa(btn, true);
+  const { error } = await sb.from('assegnazioni').delete().eq('id', id);
+  if (error) { attesa(btn, false); return errore(error); }
+  const { error: e2 } = await sb.from('schede').update({ bozza: true, bozza_paziente_id: pazienteId }).eq('id', schedaId);
+  toast(e2 ? 'Scheda tolta. Per vederla nelle bozze esegui supabase/06-bozze.sql (intanto è in "Schede")' : 'Scheda tolta e messa in bozze');
+  vistaPaziente(pazienteId);
+}
+
+async function eliminaBozza(id, pazienteId, btn) {
+  if (!confirm('Eliminare definitivamente questa bozza?')) return;
+  attesa(btn, true);
+  const { error } = await sb.from('schede').delete().eq('id', id);
+  if (error) { attesa(btn, false); return errore(error); }
+  toast('Bozza eliminata');
+  pazienteId ? vistaPaziente(pazienteId) : vistaSchede();
+}
+
 // Rimette attiva una scheda conclusa: quella attiva adesso viene conclusa
 async function riattivaAssegnazione(id, pazienteId, btn) {
   if (!confirm('Riattivare questa scheda? Quella attiva adesso verrà conclusa (lo storico resta).')) return;
@@ -1045,12 +1091,9 @@ function disegnaAnteprima() {
   const nomiLib = new Set(esercizi.map(e => e.nome.toLowerCase()));
   const nuovi = [...new Set(bozza.righe.map(r => r.nome.trim()).filter(n => n && !nomiLib.has(n.toLowerCase())))];
 
-  const intest = `
-    <div class="intest l1"><span>Sezione</span><span>Esercizio</span><span>Serie</span><span>RPE</span><span>Recupero</span><span></span></div>
-    <div class="intest l2"><span>G</span><span>Ripetizioni</span><span>Carico</span><span>Indicazioni</span><span>Note</span></div>`;
   let corpo = '', g = null;
   bozza.righe.forEach((r, i) => {
-    if (r.giorno !== g) { g = r.giorno; corpo += `<div class="giorno-testa">Giorno ${g}</div>${intest}`; }
+    if (r.giorno !== g) { g = r.giorno; corpo += `<div class="giorno-testa">Giorno ${g}</div>`; }
     corpo += `
       <div class="riga-es" data-i="${i}">
         <div class="l1">
@@ -1058,8 +1101,8 @@ function disegnaAnteprima() {
           <div class="f largo" data-label="Esercizio"><input data-c="nome" list="nomiEsercizi" value="${esc(r.nome)}" title="${esc(r.nome)}">
             ${r.ultimo ? `<div class="ultimo">Fatto: <b>${esc(r.ultimo.testo)}</b></div>` : ''}</div>
           <div class="f" data-label="Serie"><input data-c="serie" inputmode="numeric" value="${r.serie ?? ''}"></div>
-          <div class="f" data-label="RPE"><input data-c="rpe" value="${esc(r.rpe)}"></div>
-          <div class="f" data-label="Recupero"><input data-c="recupero" value="${esc(r.recupero)}"></div>
+          <div class="f" data-label="Ripetizioni"><textarea data-c="ripetizioni" rows="1">${esc(r.ripetizioni)}</textarea></div>
+          <div class="f" data-label="Carico"><textarea data-c="carico" rows="1">${esc(r.carico)}</textarea></div>
           <div class="riga-tools">
             <button type="button" title="Su" data-az="su">↑</button>
             <button type="button" title="Giù" data-az="giu">↓</button>
@@ -1067,9 +1110,9 @@ function disegnaAnteprima() {
           </div>
         </div>
         <div class="l2">
-          <div class="f" data-label="G"><input data-c="giorno" inputmode="numeric" value="${r.giorno}"></div>
-          <div class="f" data-label="Ripetizioni"><textarea data-c="ripetizioni" rows="1">${esc(r.ripetizioni)}</textarea></div>
-          <div class="f" data-label="Carico"><textarea data-c="carico" rows="1">${esc(r.carico)}</textarea></div>
+          <div class="f" data-label="Giorno"><input data-c="giorno" inputmode="numeric" value="${r.giorno}"></div>
+          <div class="f" data-label="RPE"><input data-c="rpe" value="${esc(r.rpe)}"></div>
+          <div class="f" data-label="Recupero"><input data-c="recupero" value="${esc(r.recupero)}"></div>
           <div class="f largo" data-label="Indicazioni"><textarea data-c="indicazioni" rows="1">${esc(r.indicazioni)}</textarea></div>
           <div class="f largo" data-label="Note"><textarea data-c="note" rows="1">${esc(r.note)}</textarea></div>
         </div>
@@ -1091,7 +1134,9 @@ function disegnaAnteprima() {
     ${nuovi.length ? `<div class="avviso avviso-info"><b>Esercizi nuovi</b> (verranno aggiunti alla libreria): ${nuovi.map(esc).join(', ')}.
       Se uno è già in libreria con un nome diverso, correggilo scegliendolo dal suggerimento.</div>` : ''}
     <div class="avviso avviso-info" id="riepilogoSalva">${bozza.righe.length} esercizi su ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'}.</div>
-    <button class="btn btn-largo" id="btnSalvaScheda" onclick="salvaScheda(this)">Salva scheda${bozza.pazienteId ? ' e assegna' : ''}</button>`;
+    ${bozza.bozzaId ? `<div class="avviso avviso-info">Stai modificando una <b>bozza salvata</b>: "Salva in bozze" la aggiorna, "Salva e assegna" la assegna al paziente.</div>` : ''}
+    <button class="btn btn-largo" id="btnSalvaScheda" onclick="salvaScheda(this)">Salva scheda${bozza.pazienteId ? ' e assegna' : ''}</button>
+    <button class="btn btn-sec btn-largo" style="margin-top:8px" onclick="salvaScheda(this, true)">Salva in bozze${bozza.pazienteId ? ' (il paziente non la vede)' : ''}</button>`;
 
   $('indicazioniScheda').addEventListener('input', e => { bozza.indicazioni = e.target.value; salvaBozza(); });
   $('corpoRighe').querySelectorAll('textarea').forEach(adatta);
@@ -1206,7 +1251,7 @@ function aggiungiRiga() {
 // ---------------------------------------------------------------------
 // Salvataggio: libreria esercizi → scheda → righe → assegnazione
 // ---------------------------------------------------------------------
-async function salvaScheda(btn) {
+async function salvaScheda(btn, comeBozza = false) {
   const nome = ($('nomeScheda').value || '').trim();
   const pazienteId = $('pazienteScheda').value;
   const righe = bozza.righe.filter(r => r.nome.trim());
@@ -1226,10 +1271,21 @@ async function salvaScheda(btn) {
       data.forEach(e => perNome.set(e.nome.toLowerCase(), e.id));
     }
 
-    // 2. scheda
-    const { data: scheda, error: e2 } = await sb.from('schede')
-      .insert({ nome, indicazioni: (bozza.indicazioni || '').trim() || null, creata_da: mioId }).select('id').single();
-    if (e2) throw e2;
+    // 2. scheda: nuova, oppure la bozza già salvata (le sue righe si riscrivono da capo)
+    const campi = { nome, indicazioni: (bozza.indicazioni || '').trim() || null };
+    if (comeBozza || bozza.bozzaId) Object.assign(campi, { bozza: comeBozza, bozza_paziente_id: comeBozza ? (pazienteId || null) : null });
+    let scheda;
+    if (bozza.bozzaId) {
+      const { error: e2 } = await sb.from('schede').update(campi).eq('id', bozza.bozzaId);
+      if (e2) throw e2;
+      const { error: e2b } = await sb.from('scheda_esercizi').delete().eq('scheda_id', bozza.bozzaId);
+      if (e2b) throw e2b;
+      scheda = { id: bozza.bozzaId };
+    } else {
+      const { data, error: e2 } = await sb.from('schede').insert({ ...campi, creata_da: mioId }).select('id').single();
+      if (e2) throw e2;
+      scheda = data;
+    }
 
     // 3. righe, con l'ordine dentro ogni giorno
     const contatore = {};
@@ -1250,8 +1306,8 @@ async function salvaScheda(btn) {
     const { error: e3 } = await sb.from('scheda_esercizi').insert(daInserire);
     if (e3) throw e3;
 
-    // 4. assegnazione: la nuova sostituisce quella attiva del paziente
-    if (pazienteId) {
+    // 4. assegnazione: la nuova sostituisce quella attiva del paziente (le bozze non si assegnano)
+    if (pazienteId && !comeBozza) {
       const { error: e4 } = await sb.from('assegnazioni')
         .update({ stato: 'conclusa', data_fine: oggiRoma() }).eq('paziente_id', pazienteId).eq('stato', 'attiva');
       if (e4) throw e4;
@@ -1262,23 +1318,25 @@ async function salvaScheda(btn) {
 
     togliBozza(bozza.pazienteId);
     bozza = null;
-    toast(pazienteId ? `Scheda salvata e assegnata a ${paz ? nomeCompleto(paz) : 'paziente'}` : 'Scheda salvata come modello');
+    toast(comeBozza ? 'Scheda salvata in bozze' : pazienteId ? `Scheda salvata e assegnata a ${paz ? nomeCompleto(paz) : 'paziente'}` : 'Scheda salvata come modello');
     location.hash = pazienteId ? '#paziente/' + pazienteId : '#schede';
   } catch (err) {
     attesa(btn, false);
+    if (/bozza/.test(err?.message || '')) return toast('Per le bozze esegui prima supabase/06-bozze.sql in Supabase');
     errore(err, 'Scheda non salvata');
   }
 }
 
 // Carica una scheda esistente nell'editor (per modificarla o riusarla come modello)
-async function modelloDaScheda(schedaId, pazienteId) {
+// bozzaId: si apre una bozza salvata, che verrà aggiornata invece di crearne una nuova
+async function modelloDaScheda(schedaId, pazienteId, bozzaId) {
   const { data, error } = await sb.from('schede')
     .select('nome, indicazioni, scheda_esercizi ( id, esercizio_id, giorno, ordine, serie, ripetizioni, carico, sezione, rpe, recupero, indicazioni, note, esercizi ( nome ) )')
     .eq('id', schedaId).single();
   if (error) return errore(error);
   const fatto = await ultimeEsecuzioni(data.scheda_esercizi.map(r => r.esercizio_id), pazienteId);
   bozza = {
-    nome: data.nome, indicazioni: data.indicazioni || '', testo: '', pazienteId: pazienteId || '',
+    nome: data.nome, indicazioni: data.indicazioni || '', testo: '', pazienteId: pazienteId || '', bozzaId: bozzaId || null,
     righe: data.scheda_esercizi.sort((a, b) => a.giorno - b.giorno || a.ordine - b.ordine).map(r => ({
       giorno: r.giorno, nome: r.esercizi?.nome || '', serie: r.serie, ripetizioni: r.ripetizioni || '',
       carico: r.carico || '', sezione: r.sezione || '',
@@ -1297,9 +1355,11 @@ async function modelloDaScheda(schedaId, pazienteId) {
 // =====================================================================
 async function vistaSchede() {
   const { data, error } = await sb.from('schede')
-    .select('id, nome, creato_il, scheda_esercizi ( giorno ), assegnazioni ( stato, paziente_id, profili ( nome, cognome ) )')
+    .select('*, scheda_esercizi ( giorno ), assegnazioni ( stato, paziente_id, profili ( nome, cognome ) )')
     .order('creato_il', { ascending: false });
   if (error) return errore(error, 'Schede non caricate');
+  if (!pazienti.length) { const { data: pp } = await sb.from('profili').select('*').eq('ruolo', 'paziente').order('nome'); pazienti = pp || []; }
+  data.sort((a, b) => (b.bozza ? 1 : 0) - (a.bozza ? 1 : 0)); // prima le bozze
 
   let html = `<h1>Schede</h1><p class="sotto">Tutte le schede create. "Usa come modello" la copia in una nuova scheda da modificare e assegnare.</p>`;
   if (!data.length) html += `<div class="card vuoto">Nessuna scheda. <a href="#nuova">Creane una</a>.</div>`;
@@ -1311,11 +1371,13 @@ async function vistaSchede() {
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
           <div><b>${esc(s.nome)}</b>
             <div style="color:var(--ink-muted);font-size:13px">${s.scheda_esercizi.length} esercizi · ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'} · creata ${dataBreve(s.creato_il)}</div>
+            ${s.bozza && s.bozza_paziente_id ? `<div style="font-size:13px;margin-top:4px">Bozza per: <a href="#paziente/${s.bozza_paziente_id}">${esc((p => p ? nomeCompleto(p) : 'paziente')(pazienti.find(p => p.id === s.bozza_paziente_id)))}</a></div>` : ''}
             ${attive.length ? `<div style="font-size:13px;margin-top:4px">Attiva per: ${attive.map(a => `<a href="#paziente/${a.paziente_id}">${esc(`${a.profili?.nome || ''} ${a.profili?.cognome || ''}`.trim())}</a>`).join(', ')}</div>` : ''}
           </div>
-          ${attive.length ? '<span class="badge ok">In uso</span>' : s.assegnazioni.length ? '<span class="badge spento">Usata</span>' : '<span class="badge spento">Modello</span>'}
+          ${s.bozza ? '<span class="badge attesa">Bozza</span>' : attive.length ? '<span class="badge ok">In uso</span>' : s.assegnazioni.length ? '<span class="badge spento">Usata</span>' : '<span class="badge spento">Modello</span>'}
         </div>
         <div class="azioni" style="margin-top:10px">
+          ${s.bozza ? `<button class="btn btn-piccolo" onclick="modelloDaScheda('${s.id}', '${s.bozza_paziente_id || ''}', '${s.id}')">Apri e modifica</button>` : ''}
           <button class="btn btn-sec btn-piccolo" onclick="modelloDaScheda('${s.id}')">Usa come modello</button>
           ${s.assegnazioni.length ? '' : `<button class="btn btn-pericolo btn-piccolo" onclick="eliminaScheda('${s.id}', this)">Elimina</button>`}
         </div>

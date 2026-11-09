@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Libreria video | Fisio Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-muted:#6f6f6f;
+  --accent:#f47920; --accent-dark:#b9560a; --accent-light:rgba(244,121,32,.12);
+  --warm:#f8f4ef; --warm-dark:#ede8e0; --white:#fff;
+  --green:#22794a;
+  --serif:'DM Serif Display',Georgia,serif;
+  --mono:'Montserrat',system-ui,sans-serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+[hidden] { display:none !important; }
+body { font-family:var(--sans); background:var(--warm); color:var(--ink); line-height:1.5; padding:0 16px 64px; }
+.pagina { max-width:760px; margin:0 auto; }
+header { padding:28px 0 8px; }
+.logo { height:34px; width:auto; display:block; margin-bottom:22px; }
+h1 { font-family:var(--serif); font-weight:400; font-size:34px; line-height:1.15; }
+.sotto { color:var(--ink-soft); margin-top:6px; }
+
+.barra { position:sticky; top:0; z-index:5; background:var(--warm); padding:14px 0 12px; border-bottom:1px solid var(--warm-dark); }
+.avanzamento { font-family:var(--mono); font-weight:700; font-size:13px; }
+.progresso { height:6px; background:var(--warm-dark); border-radius:100px; margin:8px 0 12px; overflow:hidden; }
+.progresso div { height:100%; width:0; background:var(--accent); transition:width .2s; }
+.controlli { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+#cerca { flex:1 1 200px; min-height:44px; padding:0 14px; font:inherit; font-size:16px; color:var(--ink); background:var(--white); border:1px solid var(--warm-dark); border-radius:10px; }
+.chip { font-family:var(--mono); font-weight:700; font-size:12px; min-height:44px; padding:0 14px; border-radius:100px; border:1px solid var(--warm-dark); background:var(--white); color:var(--ink-soft); cursor:pointer; }
+.chip[aria-pressed="true"] { background:var(--ink); border-color:var(--ink); color:var(--white); }
+.inquadrature { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.tab { font-family:var(--mono); font-weight:800; font-size:14px; min-height:52px; padding:6px 10px; border-radius:12px; border:2px solid var(--warm-dark); background:var(--white); color:var(--ink-soft); cursor:pointer; }
+.tab small { display:block; font-weight:700; font-size:11px; }
+.tab[aria-pressed="true"] { background:var(--accent-light); border-color:var(--accent); color:var(--accent-dark); }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+h2 { font-family:var(--serif); font-weight:400; font-size:26px; margin-top:34px; }
+.orient-nota { color:var(--ink-muted); font-size:14px; }
+h3 { font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-muted); margin:22px 0 8px; }
+ul { list-style:none; display:grid; gap:6px; }
+
+.voce { background:var(--white); border:1px solid var(--warm-dark); border-radius:12px; }
+.riga { display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:11px 14px; min-height:46px; }
+.riga input { width:22px; height:22px; margin-top:1px; flex:none; accent-color:var(--green); cursor:pointer; }
+.nome { font-weight:500; }
+.voce.fatta .nome { color:var(--ink-muted); text-decoration:line-through; }
+.tag { display:inline-block; font-family:var(--mono); font-weight:700; font-size:10px; letter-spacing:.3px; padding:2px 8px; border-radius:100px; margin-left:6px; white-space:nowrap; vertical-align:1px; }
+.tag.conta { background:var(--accent-light); color:var(--accent-dark); }
+.tag.conferma, .tag.inattiva { background:var(--warm-dark); color:var(--ink-soft); }
+.doppione { display:block; font-size:13px; color:var(--ink-muted); margin-top:1px; }
+.vuoto { text-align:center; color:var(--ink-muted); padding:48px 0; }
+.nota-salvataggio { color:var(--ink-muted); font-size:13px; margin-top:36px; }
+@media (max-width:480px) { h1 { font-size:29px; } }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <header>
+    <img class="logo" src="logo.png" alt="Fisio Expert">
+    <h1>Video esercizi da girare</h1>
+    <p class="sotto">Spunta un esercizio quando hai registrato il video.</p>
+  </header>
+
+  <div class="barra">
+    <div class="avanzamento" id="conteggio"></div>
+    <div class="progresso"><div id="barra-progresso"></div></div>
+    <div class="inquadrature">
+      <button class="tab" data-orient="Orizzontale" aria-pressed="true"></button>
+      <button class="tab" data-orient="Verticale" aria-pressed="false"></button>
+    </div>
+    <div class="controlli">
+      <input id="cerca" type="search" placeholder="Cerca un esercizio" aria-label="Cerca un esercizio">
+      <button class="chip" data-filtro="da" aria-pressed="true">Da girare</button>
+      <button class="chip" data-filtro="fatti" aria-pressed="false">Girati</button>
+      <button class="chip" data-filtro="tutti" aria-pressed="false">Tutti</button>
+    </div>
+  </div>
+
+  <main id="elenco"></main>
+  <p class="vuoto" id="vuoto" hidden>Nessun esercizio in questa vista.</p>
+  <p class="nota-salvataggio">Le spunte restano salvate solo in questo browser.</p>
+</div>
+
+<script>
+/* Voce: [nome, numero di pazienti, flag, possibili doppioni]
+   flag "dc" = orientamento da confermare; "na" = solo in schede non attive.
+   Qui non vanno nomi di pazienti: la pagina sta sul sito pubblico. */
+const LISTA = [
+  { orientamento: "Orizzontale", nota: "Telefono girato di lato", gruppi: [
+    { titolo: "A terra, supino, prono o su un fianco", voci: [
+      ["Adduttore isometrico", 1],
+      ["Adduttore sul fianco", 1],
+      ["Attivazioni scapolari supine con elastico", 1],
+      ["Compressioni busto, una gamba alla volta", 1, "dc"],
+      ["Crunch con gamba su panca", 1],
+      ["Crunch hold + intrarotazione dell'anca", 1],
+      ["Da pinguino a T con addome attivo", 1, "dc"],
+      ["Dead bug", 3],
+      ["Dead bug con respirazione", 1],
+      ["Dead bug isometrico", 1],
+      ["Dead bug con kettlebell", 1],
+      ["Estensione del ginocchio in ponte", 1],
+      ["Extrarotazioni sul fianco", 1],
+      ["Hollow body hold", 1],
+      ["Isometria con il foam roller tra le gambe", 2],
+      ["Ostrica", 1],
+      ["Ostrica con elastico", 2, "", "Ostrica laterale con elastico"],
+      ["Ostrica laterale con elastico", 1, "", "Ostrica con elastico"],
+      ["Ostrica laterale con elastico (sinistra)", 1, "", "Ostrica laterale con elastico"],
+      ["Ponte", 1],
+      ["Ponte monopodalico", 3, "", "Ponte su una gamba"],
+      ["Ponte monopodalico su step", 1],
+      ["Ponte su una gamba", 1, "", "Ponte monopodalico"],
+      ["Psoas lift da sdraiato, monolaterale", 2],
+      ["Psoas march da supina", 1],
+      ["Psoas march sul divano", 1],
+      ["Respirazione con le gambe su panca", 1],
+      ["Respirazione diaframmatica con attivazione addominale", 1],
+      ["Squeeze adduttori con palla medica", 1],
+      ["T hold prono in rotazione esterna", 1],
+      ["T position in posizione prona", 1],
+      ["Y a pancia sotto", 1, "", "Y hold prono"],
+      ["Y hold prono", 1, "", "Y a pancia sotto"],
+    ]},
+    { titolo: "Quadrupedia, plank e appoggio", voci: [
+      ["Bird dog", 3],
+      ["Bird-dog range medio", 1],
+      ["Circuito plank", 1, "dc"],
+      ["Copenaghen plank", 2],
+      ["Copenhagen plank, leva corta", 2],
+      ["Depressioni scapolari in appoggio", 1, "dc"],
+      ["Piegamenti", 1, "", "Push-up, Piegamenti sulle braccia"],
+      ["Piegamenti con assetto addominale", 1],
+      ["Piegamenti sulle braccia", 2, "", "Piegamenti, Push-up"],
+      ["Pike push-up con piedi rialzati", 1],
+      ["Planche lean", 1],
+      ["Plank", 2],
+      ["Plank con tocco spalla", 2],
+      ["Plank frontale sulle ginocchia", 1, "", "Plank su ginocchia"],
+      ["Plank laterale, frontale, laterale", 1],
+      ["Plank laterale con elastico in clamshell", 1],
+      ["Plank laterale su mano", 1],
+      ["Plank su ginocchia", 1, "", "Plank frontale sulle ginocchia"],
+      ["Push-up", 1, "", "Piegamenti, Piegamenti sulle braccia"],
+      ["Push-up con fermo in basso", 1],
+      ["Push-up con piedi rialzati", 1],
+      ["Push-up diamante", 1],
+      ["Push-up in EMOM", 1],
+      ["Push-up plus su rialzo", 2],
+      ["Quadrupedia con ginocchia sollevate ed elevazione del braccio in alto", 1],
+      ["Quadrupedia in plank su foam roller", 1],
+      ["Rotazioni in quadrupedia con anca estesa", 1],
+      ["Side plank", 3],
+      ["Side plank con rotazione", 1],
+    ]},
+    { titolo: "Panca, macchine e anelli", voci: [
+      ["Australian pull up", 1],
+      ["Australian pull up EMOM", 1],
+      ["Cyclette", 1, "", "Cyclette, o tapis"],
+      ["Cyclette, o tapis", 2, "", "Cyclette"],
+      ["Estensioni GHD", 1],
+      ["Hip thrust con chiusura addominale", 2],
+      ["Leg curl sdraiata al cavo", 2],
+      ["Leg curl su panca con elastico leggero", 1],
+      ["Leg press con entrambi i piedi", 1],
+      ["Panca piana", 2],
+      ["Rematore agli anelli", 1],
+      ["Rematore con petto su panca", 1, "", "Rematore prono su panca"],
+      ["Rematore prono su panca", 1, "", "Rematore con petto su panca"],
+      ["Sollevamento della panca con manubri da 2 kg", 1, "dc"],
+      ["Spinte con manubri su panca a 30°", 1, "", "Spinte con manubri su panca inclinata"],
+      ["Spinte con manubri su panca inclinata", 2, "", "Spinte con manubri su panca a 30°"],
+      ["Spinte con manubri sulla panca", 1],
+      ["T su panca a 30°", 1],
+      ["Trazioni prone con discesa lenta", 1],
+      ["Trazioni prone in EMOM", 1],
+      ["Y-T-W prono su panca inclinata", 2],
+    ]},
+  ]},
+  { orientamento: "Verticale", nota: "Telefono in piedi", gruppi: [
+    { titolo: "In piedi, a corpo libero", voci: [
+      ["Affondo avanti", 1, "", "Affondo in avanti"],
+      ["Affondo avanti con frenata lenta", 1],
+      ["Affondo in avanti", 1, "", "Affondo avanti"],
+      ["Affondo indietro", 1],
+      ["Affondo indietro sul posto", 0, "na"],
+      ["Bulgarian", 0, "na"],
+      ["Calf raise bipodalico", 2, "", "Sollevamento sulle punte con entrambi i piedi"],
+      ["Calf raise monopodalico", 2, "", "Calf raises monopodalici"],
+      ["Calf raises monopodalici", 5, "", "Calf raise monopodalico, Sollevamento sulle punte con una sola gamba"],
+      ["Cammino in casa con il suo supporto", 1],
+      ["Camminata in salita", 1],
+      ["Elephant walk", 1],
+      ["Equilibrio monopodalico", 2],
+      ["In piedi a piedi uniti", 1],
+      ["Marcia sul posto con appoggio", 1],
+      ["Mobilità cervico-toracica", 2, "dc"],
+      ["Passi laterali lungo il piano del salotto", 1],
+      ["Pike stretch e pancake", 1, "dc"],
+      ["Portare la gamba di lato con appoggio", 1],
+      ["Salire sulle punte con appoggio", 1],
+      ["Sedia al muro", 2],
+      ["Short foot con equilibrio", 1],
+      ["Sissy squat", 1],
+      ["Sissy squat in appoggio", 1],
+      ["Soft tissue release del trapezio superiore con flessione di spalla", 1, "dc"],
+      ["Sollevamento sulle punte con entrambi i piedi", 1, "", "Calf raise bipodalico"],
+      ["Sollevamento sulle punte con una sola gamba", 1, "", "Calf raises monopodalici"],
+      ["Squat", 0, "na"],
+      ["Step up", 0, "na"],
+      ["Verticale al muro", 1],
+      ["Wall slide", 1],
+      ["Wall slide con elastico", 2],
+      ["Wall slides con foam a 90°", 1],
+      ["World's greatest stretch", 1, "dc"],
+      ["Yoga taps", 3],
+    ]},
+    { titolo: "In piedi, con pesi ed elastici", voci: [
+      ["Abduzione anca al cavo", 2],
+      ["Alzate laterali", 3],
+      ["Alzate laterali al cavo o manubri", 2],
+      ["Alzate posteriori", 2],
+      ["Back squat", 0, "na"],
+      ["Back squat al box", 1, "", "Box back squat"],
+      ["Back squat buca edition", 0, "na"],
+      ["Box back squat", 0, "na", "Back squat al box"],
+      ["Box back squat al parallelo", 1],
+      ["Cable chop e lift", 1],
+      ["Camminata con kettlebell", 1],
+      ["Circuito spalle con elastico", 1, "dc"],
+      ["Curl bicipiti", 1],
+      ["Dentato anteriore con elastico", 1],
+      ["Eccentrica in intrarotazione a 90°", 1, "dc"],
+      ["Extrarotazione con elastico", 1],
+      ["Extrarotazione con manubrio su panca", 1],
+      ["Extrarotazione in abduzione 0°", 1],
+      ["Face pull alle clavicole", 0, "na"],
+      ["Face pull con elastico", 1],
+      ["Face pull leggero", 2],
+      ["Farmer carry", 3],
+      ["Front squat", 1],
+      ["Girate", 0, "na"],
+      ["Goblet squat", 3],
+      ["Hang power clean", 1],
+      ["Hang power clean + push jerk", 1],
+      ["Lat machine", 0, "na"],
+      ["Lat machine Mono", 1, "", "Lat machine monobraccio"],
+      ["Lat machine monobraccio", 2, "", "Lat machine Mono"],
+      ["Military press", 0, "na"],
+      ["Military press discesa lenta", 1],
+      ["Pallof press con elastico", 3],
+      ["Pallof press dinamico", 1],
+      ["Pallof press isometrico", 1],
+      ["Power snatch dai blocchi", 1],
+      ["Power snatch dall'hang (da sotto il ginocchio)", 1],
+      ["Pull apart con elastico", 1],
+      ["Pulley", 1],
+      ["Pulley / seal row", 1],
+      ["Pulley monobraccio", 2],
+      ["Rematore", 2, "dc"],
+      ["Reverse lunge con rotazione del tronco", 1],
+      ["Rotazione al cavo in split stance", 1],
+      ["Rotazione con kettlebell, piede su step", 1],
+      ["Rotazione esterna al cavo", 2],
+      ["Rotazione esterna con elastico", 2],
+      ["Salita sul gradino con manubri", 1],
+      ["Single leg RDL", 1, "", "Single Romanian deadlift, Stacco monopodalico"],
+      ["Single Romanian deadlift", 1, "", "Single leg RDL, Stacco monopodalico"],
+      ["Slider dinamico specifico", 1, "dc"],
+      ["Sliders", 1, "dc"],
+      ["Squat alla panca", 1],
+      ["Stacco di strappo dai blocchi", 1],
+      ["Stacco monopodalico", 2, "", "Single leg RDL, Single Romanian deadlift"],
+      ["Stacco rumeno", 2],
+      ["Stacco rumeno con manubri", 1],
+      ["Triceps pushdown", 1],
+    ]},
+    { titolo: "Sbarra e parallele", voci: [
+      ["Dip alle parallele con fermo", 1],
+      ["Ginocchia al petto alla sbarra", 1],
+      ["L-sit raccolto", 1],
+      ["Ladder di chin-up", 1],
+      ["Muscle-up negativo", 1],
+      ["Piegamenti alle parallele", 0, "na", "Push Up alle parallele"],
+      ["Push Up alle parallele", 1, "", "Piegamenti alle parallele"],
+      ["Push-up scapolari su parallele", 1],
+      ["Support hold sulle parallele", 1],
+      ["Trazioni", 1],
+      ["Trazioni a densità", 1],
+      ["Trazioni con fermo in alto", 1],
+      ["Tuck front lever", 1],
+    ]},
+    { titolo: "Da seduto", voci: [
+      ["Alzarsi e sedersi dalla sedia", 1],
+      ["Alzate laterali da seduto", 1],
+      ["Calf raise da seduta", 2],
+      ["Distendere il ginocchio da seduta", 1],
+      ["Flessione del ginocchio da seduto", 1],
+      ["Hip hinge da seduto su panca", 1],
+      ["Intrarotazione sinistra da seduto con foam roller", 1],
+      ["Riscaldamento da seduta", 1],
+      ["Sollevamento dalla sedia alta su una gamba", 1],
+      ["Sollevamento dell'alluce", 1, "dc"],
+      ["Sollevare le punte dei piedi da seduta", 1],
+    ]},
+  ]},
+];
+
+const CHIAVE = "libreria-app-v2";
+let girati = {};
+try { girati = JSON.parse(localStorage.getItem(CHIAVE)) || {}; } catch (e) { girati = {}; }
+function salva() { try { localStorage.setItem(CHIAVE, JSON.stringify(girati)); } catch (e) {} }
+
+const righe = [];
+let filtro = "da";
+let inquadratura = "Orizzontale";
+
+function crea(tag, classe, testo) {
+  const el = document.createElement(tag);
+  if (classe) el.className = classe;
+  if (testo !== undefined) el.textContent = testo;
+  return el;
+}
+
+function creaVoce([nome, pazienti, flag, doppione], orient) {
+  const li = crea("li", "voce");
+  const riga = crea("label", "riga");
+  const spunta = crea("input");
+  spunta.type = "checkbox";
+  spunta.checked = !!girati[nome];
+
+  const testo = crea("span");
+  testo.append(crea("span", "nome", nome));
+  if (pazienti > 1) testo.append(crea("span", "tag conta", pazienti + " pazienti"));
+  if (flag === "dc") testo.append(crea("span", "tag conferma", "Orientamento da confermare"));
+  if (flag === "na") testo.append(crea("span", "tag inattiva", "Scheda non attiva"));
+  if (doppione) testo.append(crea("span", "doppione", "Forse stesso video di: " + doppione));
+  riga.append(spunta, testo);
+  li.append(riga);
+
+  spunta.addEventListener("change", () => {
+    if (spunta.checked) girati[nome] = true; else delete girati[nome];
+    li.classList.toggle("fatta", spunta.checked);
+    salva();
+    aggiornaConteggi();
+    applicaFiltro();
+  });
+
+  li.classList.toggle("fatta", spunta.checked);
+  righe.push({ li, nome, spunta, orient });
+  return li;
+}
+
+const elenco = document.getElementById("elenco");
+LISTA.forEach(o => {
+  const sezione = crea("section");
+  sezione.append(crea("h2", "", o.orientamento), crea("p", "orient-nota", o.nota));
+  o.gruppi.forEach(g => {
+    const blocco = crea("div", "gruppo");
+    const ul = crea("ul");
+    [...g.voci].sort((a, b) => a[0].localeCompare(b[0], "it")).forEach(v => ul.append(creaVoce(v, o.orientamento)));
+    blocco.append(crea("h3", "", g.titolo), ul);
+    sezione.append(blocco);
+  });
+  elenco.append(sezione);
+});
+
+function aggiornaConteggi() {
+  const totale = righe.length;
+  const fatti = righe.filter(r => r.spunta.checked).length;
+  document.getElementById("conteggio").textContent = (totale - fatti) + " da girare su " + totale;
+  document.getElementById("barra-progresso").style.width = (fatti / totale * 100) + "%";
+  document.querySelectorAll(".tab").forEach(t => {
+    const mancanti = righe.filter(r => r.orient === t.dataset.orient && !r.spunta.checked).length;
+    t.textContent = t.dataset.orient === "Orizzontale" ? "Orizzontali" : "Verticali";
+    t.append(crea("small", "", mancanti + " da girare"));
+  });
+}
+
+function normalizza(s) { return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+
+function applicaFiltro() {
+  const q = normalizza(document.getElementById("cerca").value.trim());
+  let visibili = 0;
+  righe.forEach(r => {
+    const statoOk = filtro === "tutti" || (filtro === "fatti") === r.spunta.checked;
+    /* La ricerca guarda in entrambe le inquadrature */
+    const orientOk = q !== "" || r.orient === inquadratura;
+    const mostra = statoOk && orientOk && normalizza(r.nome).includes(q);
+    r.li.hidden = !mostra;
+    if (mostra) visibili++;
+  });
+  document.querySelectorAll(".gruppo").forEach(g => { g.hidden = !g.querySelector("li:not([hidden])"); });
+  document.querySelectorAll("#elenco section").forEach(s => { s.hidden = !s.querySelector(".gruppo:not([hidden])"); });
+  document.getElementById("vuoto").hidden = visibili > 0;
+}
+
+document.getElementById("cerca").addEventListener("input", applicaFiltro);
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  inquadratura = t.dataset.orient;
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === t));
+  applicaFiltro();
+  window.scrollTo(0, 0);
+}));
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+  filtro = c.dataset.filtro;
+  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === c));
+  applicaFiltro();
+}));
+
+aggiornaConteggi();
+applicaFiltro();
+</script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Ads + consenso cookie (Consent Mode v2, modalità base).
+     Blocco identico su tutte le pagine pubbliche: Google non viene caricato finché il visitatore non accetta. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+
+  window.fxCookie = (function () {
+    var ID_ADS = 'AW-18400590631';
+    var CHIAVE = 'fx_consenso_cookie';
+    var DURATA_MS = 182 * 24 * 60 * 60 * 1000; // 6 mesi, poi il banner ricompare
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CHIAVE) || 'null');
+        if (v && (v.scelta === 'si' || v.scelta === 'no') && (Date.now() - v.data) < DURATA_MS) return v.scelta;
+      } catch (e) {}
+      return null;
+    }
+
+    function salva(scelta) {
+      try { localStorage.setItem(CHIAVE, JSON.stringify({ scelta: scelta, data: Date.now() })); } catch (e) {}
+    }
+
+    // Solo misurazione conversioni: niente pubblicità personalizzata, niente Analytics
+    function caricaGoogle() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ADS;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', ID_ADS, { send_page_view: false });
+    }
+
+    function cancellaCookieGoogle() {
+      var host = location.hostname.replace(/^www\./, '');
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          ['', 'domain=' + host + ';', 'domain=.' + host + ';'].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ' + d;
+          });
+        }
+      });
+    }
+
+    if (leggi() === 'si') caricaGoogle();
+
+    return {
+      scelta: leggi,
+      accetta: function () { salva('si'); caricaGoogle(); },
+      rifiuta: function () {
+        salva('no');
+        if (caricato) {
+          gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+        }
+        cancellaCookieGoogle();
+      },
+      // Usata dalle pagine di prenotazione: parte solo se il visitatore ha accettato
+      conversione: function (etichetta) {
+        if (!caricato || !etichetta) return;
+        gtag('event', 'conversion', { send_to: ID_ADS + '/' + etichetta });
+      }
+    };
+  })();
+</script>
+<title>Capsulite adesiva: spalla congelata, cosa fare | Fisio Expert Roma</title>
+<meta name="description" content="Non riesci più ad alzare il braccio e la spalla si è irrigidita? Come funziona la capsulite adesiva, le sue fasi e cosa serve in ognuna. Roma EUR.">
+<link rel="canonical" href="https://fisioexpert.it/blog/spalla-congelata-capsulite-adesiva.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Capsulite adesiva: spalla congelata, cosa fare | Fisio Expert Roma">
+<meta property="og:description" content="Non riesci più ad alzare il braccio e la spalla si è irrigidita? Come funziona la capsulite adesiva, le sue fasi e cosa serve in ognuna. Roma EUR.">
+<meta property="og:url" content="https://fisioexpert.it/blog/spalla-congelata-capsulite-adesiva.html">
+<meta property="og:image" content="https://fisioexpert.it/logo.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalWebPage","name":"Capsulite adesiva: spalla congelata, cosa fare","url":"https://fisioexpert.it/blog/spalla-congelata-capsulite-adesiva.html","datePublished":"2026-10-02","author":{"@type":"Person","name":"Gianmarco Molinari","jobTitle":"Fisioterapista Sportivo"},"publisher":{"@type":"LocalBusiness","name":"Fisio Expert Roma","vatID":"14315091000","url":"https://fisioexpert.it"},"mainEntity":{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quanto dura la spalla congelata?","acceptedAnswer":{"@type":"Answer","text":"La durata della capsulite adesiva è molto variabile e dipende dalla fase in cui viene riconosciuta e dal tipo di trattamento impostato. Il percorso completo attraverso le tre fasi può durare da diversi mesi a oltre un anno. Affermare un tempo preciso di risoluzione sarebbe scorretto, perché ogni caso ha una risposta diversa."}},{"@type":"Question","name":"Spalla congelata si può guarire senza fisioterapia?","acceptedAnswer":{"@type":"Answer","text":"Il dolore tende a ridursi nel tempo anche senza trattamento, ma la rigidità residua può persistere per anni. La fisioterapia mirata alla mobilizzazione della capsula e al rinforzo muscolare accelera il recupero e riduce il rischio di limitazioni permanenti nel movimento. Affidarsi solo all'attesa significa accettare un risultato che potrebbe essere significativamente inferiore."}},{"@type":"Question","name":"Esercizi per spalla congelata fai da te funzionano?","acceptedAnswer":{"@type":"Answer","text":"Gli esercizi sono una parte fondamentale del percorso, ma devono essere calibrati sulla fase della capsulite. Fare stretching aggressivo nella fase infiammatoria peggiora il quadro, mentre gli stessi esercizi nella fase di rigidità possono essere utili. Per questo è importante farsi guidare da un fisioterapista che valuti la fase e prescriva il programma adatto."}},{"@type":"Question","name":"Capsulite adesiva e cuffia dei rotatori sono la stessa cosa?","acceptedAnswer":{"@type":"Answer","text":"No, sono due condizioni diverse. La capsulite adesiva riguarda l'involucro dell'articolazione — la capsula — che si infiamma e si irrigidisce, limitando tutti i movimenti. Le lesioni della cuffia dei rotatori riguardano i tendini dei muscoli che muovono la spalla e causano perdita di forza più che di mobilità passiva. Le due condizioni possono coesistere, e una valutazione clinica accurata serve a distinguerle."}}]}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#1a1a1a;--ink-soft:#4a4a4a;--ink-muted:#8a8a8a;--accent:#f47920;--accent-dark:#d4660e;--accent-light:rgba(244,121,32,0.08);--warm:#f8f4ef;--warm-dark:#ede8e0;--white:#ffffff;--border:rgba(26,26,26,0.1);--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--mono:'Montserrat',system-ui,sans-serif}
+  body{font-family:var(--sans);background:var(--warm);color:var(--ink);line-height:1.6}
+  nav{position:sticky;top:0;z-index:100;background:rgba(248,244,239,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 4rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:inline-flex;align-items:center;text-decoration:none}
+  .header-logo{height:36px;width:auto;display:block}
+  .logo-fallback{display:none;font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--ink);letter-spacing:-0.01em}
+  .logo-fallback b{color:var(--accent);font-weight:inherit}
+  .nav-back{font-size:0.875rem;color:var(--accent);text-decoration:none;font-weight:500}
+  .nav-back:hover{text-decoration:underline}
+  .article-hero{background:var(--white);border-bottom:1px solid var(--border);padding:4rem 4rem 3rem}
+  .breadcrumb{font-size:0.8rem;color:var(--ink-muted);margin-bottom:1.5rem}
+  .breadcrumb a{color:var(--accent);text-decoration:none}
+  .article-category{display:inline-block;background:var(--accent);color:var(--white);font-size:0.7rem;font-weight:500;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.25rem}
+  .article-hero h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;color:var(--ink);margin-bottom:1rem;max-width:700px}
+  .article-meta{font-size:0.82rem;color:var(--ink-muted)}
+  .article-meta span{margin-right:1.5rem}
+  .article-layout{display:grid;grid-template-columns:1fr 300px;gap:3rem;max-width:1100px;margin:0 auto;padding:3rem 4rem 5rem;align-items:start}
+  .article-body h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin:2.5rem 0 0.75rem;line-height:1.25}
+  .article-body h3{font-size:1.05rem;font-weight:500;color:var(--ink);margin:1.75rem 0 0.5rem}
+  .article-body p{font-size:1rem;color:var(--ink-soft);line-height:1.8;margin-bottom:1.25rem}
+  .article-body a{color:var(--accent);text-decoration:none}
+  .article-body a:hover{text-decoration:underline}
+  .article-body ul{margin:0.5rem 0 1.25rem;list-style:none;padding:0}
+  .article-body ul li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0 0.3rem 1.25rem;position:relative}
+  .article-body ul li::before{content:'';position:absolute;left:0;top:0.75rem;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .article-body ol{margin:0.5rem 0 1.25rem;padding-left:1.35rem}
+  .article-body ol li{font-size:1rem;color:var(--ink-soft);line-height:1.7;padding:0.3rem 0}
+  .article-body .highlight-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin:1.5rem 0}
+  .article-body .highlight-box p{margin:0;color:var(--ink)}
+  .article-body strong{color:var(--ink);font-weight:500}
+  .article-body hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+  .sidebar{position:sticky;top:80px}
+  .sidebar-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem}
+  .sidebar-card h4{font-family:var(--serif);font-size:1.1rem;color:var(--ink);margin-bottom:0.75rem}
+  .sidebar-card p{font-size:0.875rem;color:var(--ink-muted);line-height:1.6;margin-bottom:1rem}
+  .sidebar-btn{display:block;background:var(--accent);color:var(--white);text-align:center;padding:12px;border-radius:100px;text-decoration:none;font-size:0.875rem;font-weight:500;transition:background 0.2s}
+  .sidebar-btn:hover{background:var(--accent-dark)}
+  .sidebar-btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border);margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:6px}
+  .sidebar-btn.ghost:hover{border-color:var(--accent);background:var(--accent-light)}
+  .toc-title{font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.75rem}
+  .toc a{display:block;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;padding:0.3rem 0;border-left:2px solid var(--border);padding-left:0.75rem;transition:border-color 0.2s,color 0.2s}
+  .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .faq-section{margin-top:3rem}
+  .faq-section h2{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin-bottom:1.25rem}
+  .faq-item{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;background:var(--white)}
+  .faq-question{width:100%;text-align:left;background:none;border:none;padding:1.1rem 1.25rem;font-family:var(--sans);font-size:0.97rem;font-weight:500;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color 0.2s}
+  .faq-question:hover{color:var(--accent)}
+  .faq-icon{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:300;line-height:1;transition:transform 0.25s}
+  .faq-item.open .faq-icon{transform:rotate(45deg)}
+  .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;padding:0 1.25rem}
+  .faq-item.open .faq-answer{max-height:400px;padding:0 1.25rem 1.25rem}
+  .faq-answer p{font-size:0.93rem;color:var(--ink-soft);line-height:1.75;margin:0}
+  .article-cta{background:var(--ink);color:var(--white);border-radius:16px;padding:2rem;margin-top:3rem;text-align:center}
+  .article-cta h3{font-family:var(--serif);font-size:1.4rem;margin-bottom:0.5rem}
+  .article-cta p{font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:1.25rem;line-height:1.6}
+  .article-cta a{display:inline-block;background:var(--accent);color:var(--white);padding:13px 28px;border-radius:100px;text-decoration:none;font-weight:500;font-size:0.95rem;transition:background 0.2s}
+  .article-cta a:hover{background:var(--accent-dark)}
+  .disclaimer{max-width:1100px;margin:0 auto;padding:0 4rem 3rem;font-size:0.78rem;color:var(--ink-muted);line-height:1.7}
+  footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:2.5rem 5rem;font-size:0.82rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+  .footer-logo{display:flex;align-items:center;gap:10px}
+  .footer-logo img{height:24px;width:auto;display:block;filter:invert(1);opacity:0.85}
+  .logo-fallback-footer{display:none;font-family:var(--mono);font-weight:700;font-size:0.95rem;color:rgba(255,255,255,0.8)}
+  .logo-fallback-footer b{color:var(--accent);font-weight:inherit}
+  footer a{color:rgba(255,255,255,0.5);text-decoration:none}
+  footer a:hover{color:var(--accent)}
+  @media(max-width:900px){nav,.article-hero{padding-left:1.5rem;padding-right:1.5rem}.article-layout{grid-template-columns:1fr;padding:2rem 1.5rem;gap:2rem}.sidebar{position:static}.disclaimer{padding:0 1.5rem 2rem}footer{padding:2rem 1.5rem;flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://fisioexpert.it" class="logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert" class="header-logo"
+         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline';">
+    <span id="logoFallback" class="logo-fallback">fisio<b>·</b>expert</span>
+  </a>
+  <a class="nav-back" href="/blog/">← Blog</a>
+</nav>
+
+<div class="article-hero">
+  <div class="breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/blog/">Blog</a> &nbsp;/&nbsp; Spalla</div>
+  <span class="article-category">Spalla</span>
+  <h1>Spalla congelata: quando il braccio smette di alzarsi</h1>
+  <div class="article-meta"><span>Ottobre 2026</span><span>Lettura: 10 minuti</span><span>Fisio Expert Roma</span></div>
+</div>
+
+<div class="article-layout">
+  <article class="article-body">
+<!-- CORPO:START -->
+    <h2 id="perche-il-braccio-smette-di-alzarsi-senza-un-motivo-apparente">Perché il braccio smette di alzarsi senza un motivo apparente</h2>
+    <p>La capsula articolare della spalla è un involucro di tessuto connettivo che avvolge l'articolazione come una manica elastica. Quando questa manica si infiamma e poi si ispessisce, perde progressivamente la capacità di scorrere e distendersi: il braccio non si alza più, non perché un muscolo sia lesionato, ma perché il contenitore che dovrebbe permettere il movimento si è ristretto.</p>
+    <p>Questo processo si chiama capsulite adesiva ed è una delle condizioni di spalla più frustranti da vivere, proprio perché all'inizio non c'è un evento scatenante chiaro. Non hai sbattuto la spalla, non sei caduto, non hai sollevato nulla di pesante. Un giorno ti accorgi che allacciare il reggiseno è diventato un problema. Due settimane dopo non riesci a prendere un bicchiere dallo scaffale alto. Un mese dopo dormi solo su un fianco, e pure quello fa male.</p>
+    <p>Il meccanismo di fondo è una reazione infiammatoria della capsula che, nel tempo, produce tessuto cicatriziale in eccesso. La capsula si &quot;incolla&quot; su se stessa — da qui il termine &quot;adesiva&quot; — riducendo lo spazio disponibile per la testa dell'omero. <strong>Il dolore non viene dal muscolo o dal tendine, ma dall'involucro che si è irrigidito e che resiste a ogni tentativo di movimento.</strong></p>
+    <p>Chi ha il diabete, problemi tiroidei o ha tenuto la spalla ferma a lungo dopo un intervento chirurgico ha più probabilità di sviluppare una capsulite adesiva. Ma nello studio di Gianmarco Molinari, fisioterapista sportivo iscritto all'albo FNOFI n. 2841, arrivano anche persone senza nessuno di questi fattori: impiegati della zona EUR che lavorano otto ore al computer, insegnanti del quartiere Fleming che scrivono alla lavagna, professionisti che si accorgono del problema solo quando il braccio non arriva più al volante per la cintura di sicurezza.</p>
+    <h2 id="le-tre-fasi-della-capsulite-adesiva-e-perche-trattarle-allo-stesso-modo-e-un-errore">Le tre fasi della capsulite adesiva e perché trattarle allo stesso modo è un errore</h2>
+    <p>La capsulite adesiva non è un problema statico: attraversa tre fasi distinte che hanno caratteristiche biologiche diverse, e ogni fase richiede un approccio diverso. Trattare la fase infiammatoria iniziale come se fosse un semplice problema di rigidità è l'errore che trasforma un percorso gestibile in mesi di frustrazione.</p>
+    <h3>Fase 1 — La fase infiammatoria (freezing)</h3>
+    <p>Il sintomo dominante è il dolore, non la rigidità. Il braccio si muove ancora in modo discreto, ma ogni movimento oltre una certa soglia produce una fitta profonda, localizzata nella parte anteriore o laterale della spalla. Il dolore notturno è il segnale più caratteristico: ti svegli alle tre di notte appoggiato sulla spalla interessata e il dolore è così intenso che devi alzarti.</p>
+    <p>In questa fase la capsula è infiammata in modo attivo. I tessuti sono irritati e ipersensibili. <strong>Forzare il movimento adesso, cercare di &quot;sbloccare&quot; la spalla con esercizi aggressivi o stretching estremo, è come grattare una ferita aperta: si alimenta l'infiammazione e si peggiora il quadro.</strong> Quello che serve è contenere il dolore, mantenere i movimenti che non provocano sintomi e rispettare la biologia del tessuto.</p>
+    <p>Un paziente che è arrivato nello studio di Viale Pasteur a EUR aveva passato sei settimane a fare stretching con la corda della carrucola consigliatagli da un amico. Ogni sessione finiva con dolore che durava ore. Quando l'abbiamo valutato, la spalla aveva perso più gradi di movimento rispetto a due mesi prima. Non perché lo stretching fosse sbagliato in assoluto, ma perché era sbagliato in quel momento.</p>
+    <h3>Fase 2 — La fase di rigidità (frozen)</h3>
+    <p>Il dolore inizia a calare, ma la spalla è ormai bloccata. Il braccio si ferma a metà strada quando provi ad alzarlo di lato, la rotazione esterna è quasi azzerata — il gesto di portare la mano dietro la testa diventa impossibile. Questa è la fase in cui la capsula ha formato il tessuto cicatriziale e si è accorciata.</p>
+    <p>Adesso, e solo adesso, il lavoro sulla mobilità diventa centrale. La terapia manuale specifica sulla capsula posteriore e inferiore, combinata con esercizi graduali e progressivi, può recuperare gradi di movimento che sembravano persi. <strong>Il confine è tra il &quot;scomodo ma tollerabile&quot; e il &quot;dolore acuto che dura oltre la seduta&quot;: superare quel confine significa riaccendere l'infiammazione e tornare alla fase precedente.</strong></p>
+    <h3>Fase 3 — La fase di recupero (thawing)</h3>
+    <p>La spalla inizia a &quot;scongelarsi&quot; e il movimento ritorna gradualmente. Non è un recupero lineare: ci sono settimane in cui guadagni dieci gradi e settimane in cui non cambia nulla. Questa fase richiede un lavoro attivo e costante, con esercizi di rinforzo per i muscoli che hanno perso forza durante i mesi di limitazione, e un programma di mobilità che consolidi i gradi recuperati.</p>
+    <p>Il punto critico è che molte capsuliti adesive non tornano al cento per cento da sole. La narrazione secondo cui &quot;si risolve spontaneamente&quot; è parzialmente vera — il dolore di solito si riduce — ma la rigidità residua può restare per anni se non viene trattata attivamente. Un paziente dello studio di Via Città di Castello nel quartiere Fleming aveva convissuto per due anni con una spalla che &quot;andava un po' meglio&quot; ma non gli permetteva ancora di nuotare a stile libero. In otto settimane di lavoro mirato sulla fase di thawing ha recuperato la rotazione che gli mancava.</p>
+    <div class="highlight-box"><p><strong>Il principio guida è semplice: nella fase infiammatoria si protegge, nella fase rigida si mobilizza, nella fase di recupero si rinforza. Saltare un passaggio o invertire l'ordine rallenta tutto il percorso.</strong></p></div>
+    <h2 id="come-distinguere-la-capsulite-adesiva-da-altri-problemi-di-spalla">Come distinguere la capsulite adesiva da altri problemi di spalla</h2>
+    <p>La capsulite adesiva ha un pattern di limitazione specifico che la rende riconoscibile durante una valutazione clinica approfondita. La perdita di movimento riguarda sia i movimenti attivi — quelli che fai tu — sia quelli passivi — quelli che il fisioterapista prova a fare muovendo il tuo braccio. Se il braccio non si alza quando lo muovi tu, ma si alza normalmente quando qualcuno lo muove per te, il problema non è la capsula.</p>
+    <p>Una lesione della cuffia dei rotatori, per esempio, limita la forza e il movimento attivo, ma il range passivo è quasi sempre conservato. Una tendinopatia del sovraspinato provoca dolore in un arco specifico del movimento — tra i 60 e i 120 gradi di abduzione — e il resto del range è libero. La capsulite adesiva, invece, produce una limitazione globale che segue un pattern preciso: <strong>la rotazione esterna è la prima a ridursi, seguita dall'abduzione e dalla rotazione interna.</strong></p>
+    <p>Un altro elemento distintivo è l'assenza di un trauma iniziale. La maggior parte delle persone che arrivano in studio con capsulite adesiva non riesce a indicare un momento preciso in cui è iniziato il problema. &quot;È venuto piano piano&quot; è la frase che sento ripetere con maggiore regolarità.</p>
+    <p>L'ecografia e la risonanza magnetica possono supportare la diagnosi mostrando l'ispessimento della capsula, ma la valutazione clinica con test specifici di mobilità passiva resta l'elemento più affidabile. Un'ecografia normale non esclude la capsulite adesiva, così come una risonanza che mostra &quot;tendinopatia del sovraspinato&quot; non la esclude: le due condizioni possono coesistere.</p>
+    <ul>
+      <li><strong>Segnali che suggeriscono capsulite adesiva</strong>: dolore notturno intenso nelle prime settimane, perdita progressiva di rotazione esterna passiva, assenza di trauma, impossibilità di portare la mano dietro la testa o dietro la schiena.</li>
+      <li><strong>Segnali che richiedono una valutazione medica urgente</strong>: dolore improvviso dopo un trauma, impossibilità totale di alzare il braccio da un giorno all'altro, gonfiore visibile, febbre associata al dolore, dolore che peggiora in modo costante senza nessun momento di sollievo.</li>
+    </ul>
+    <h2 id="cosa-funziona-davvero-nel-trattamento-e-cosa-no">Cosa funziona davvero nel trattamento e cosa no</h2>
+    <p>Il trattamento della capsulite adesiva richiede pazienza, precisione nel dosaggio e soprattutto la capacità di adattare il programma alla fase in cui ti trovi. Non esiste un protocollo unico che funzioni per tutti, ma ci sono principi che guidano ogni decisione clinica.</p>
+    <p><strong>La terapia manuale sulla capsula</strong> è il pilastro del trattamento nella fase frozen. Le mobilizzazioni specifiche in rotazione esterna e abduzione, eseguite con una pressione graduata e mantenuta, permettono di guadagnare gradi di movimento sessione dopo sessione. Il fisioterapista sente con le mani dove la capsula resiste e lavora su quelle zone con tecniche di distrazione e scivolamento articolare.</p>
+    <p><strong>Gli esercizi a casa</strong> sono la parte che fa la differenza tra un risultato temporaneo e un recupero che si consolida. Non servono attrezzi complicati: un bastone, un tavolo, una parete. Quello che serve è la costanza — pochi minuti ogni giorno valgono più di una sessione lunga una volta alla settimana. Il programma cambia man mano che la spalla risponde: gli esercizi della fase frozen non sono quelli della fase thawing.</p>
+    <p><strong>L'infiltrazione di cortisone</strong> può avere un ruolo nella fase infiammatoria per ridurre il dolore e creare una finestra temporale in cui iniziare a muovere la spalla senza scatenare reazioni eccessive. Non è un trattamento che risolve la capsulite, ma può facilitare l'ingresso nella fisioterapia. La decisione spetta al medico ortopedico e va presa caso per caso.</p>
+    <p>Quello che non funziona è l'approccio passivo puro. Dieci sedute di tecarterapia senza mobilizzazione manuale e senza esercizi non cambiano la storia naturale della capsulite. Le terapie strumentali possono avere un ruolo nel controllo del dolore, ma non sostituiscono il lavoro specifico sulla capsula e il programma di esercizi progressivi.</p>
+    <p>Un altro approccio che produce risultati scarsi è la manipolazione in narcosi — la mobilizzazione forzata della spalla sotto anestesia — quando viene eseguita troppo presto, nella fase infiammatoria. Rompere le aderenze capsulari con la forza mentre il tessuto è ancora infiammato può riattivare l'intero ciclo. Questa procedura, quando indicata, ha senso solo in casi selezionati e nella fase giusta, e resta una decisione medica.</p>
+    <div class="highlight-box"><p><strong>Il concetto chiave: la capsulite adesiva non si &quot;sblocca&quot; con una manovra singola. Si gestisce con un percorso che rispetta i tempi biologici del tessuto e che combina il lavoro in studio con il lavoro quotidiano a casa.</strong></p></div>
+    <h2 id="quando-farti-valutare-e-come-lavoriamo-in-studio">Quando farti valutare e come lavoriamo in studio</h2>
+    <p>Se da più di due settimane il tuo braccio si alza meno di prima e il dolore ti sveglia di notte, non aspettare che la situazione migliori da sola. La capsulite adesiva trattata nella fase iniziale risponde in modo più efficace rispetto a una capsulite che è stata ignorata per mesi. Prima si identifica la fase, prima si imposta il percorso corretto.</p>
+    <p>Nello studio Fisio Expert Roma, nelle sedi di Viale Pasteur 56 all'EUR e di Via Città di Castello 20 nel quartiere Fleming, <a href="/chi-sono.html">Gianmarco Molinari</a> dedica la prima seduta interamente alla valutazione. Non è una seduta in cui &quot;si inizia a fare qualcosa&quot;: è una seduta in cui si capisce cosa sta succedendo. Vengono testati tutti i movimenti passivi e attivi della spalla, viene identificata la fase della capsulite, vengono escluse altre condizioni che possono mimare un quadro simile. A fine valutazione hai un quadro chiaro di dove ti trovi e di quale percorso ha senso per te.</p>
+    <p>Il trattamento è manuale e attivo. In studio si lavora sulla capsula con mobilizzazioni specifiche, calibrate sulla risposta del tessuto in quella seduta, non su un protocollo standard. A casa ricevi un programma di esercizi con video e indicazioni precise su intensità, ripetizioni e segnali a cui prestare attenzione. Il programma viene aggiornato ad ogni seduta in base ai progressi.</p>
+    <p>La frequenza delle sedute dipende dalla fase: nella fase infiammatoria possono bastare una o due sedute alla settimana con un focus sul controllo del dolore e sulla gestione delle attività quotidiane. Nella fase frozen il lavoro diventa più intenso e le sedute possono aumentare. Nella fase di recupero si diradano progressivamente, perché il grosso del lavoro lo fai tu.</p>
+    <p><strong>Se riconosci i segnali descritti in questo articolo, <a href="/booking.html">prenota una valutazione</a> e porta con te eventuali esami già eseguiti.</strong> Non serve una diagnosi già fatta: quello che serve è una spalla da valutare e la disponibilità a lavorare insieme su un percorso che rispetti i tempi del tuo corpo.</p>
+<!-- CORPO:END -->
+
+    <div class="faq-section">
+      <h2 id="faq">Domande frequenti</h2>
+<!-- FAQ:START -->
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Quanto dura la spalla congelata?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>La durata della capsulite adesiva è molto variabile e dipende dalla fase in cui viene riconosciuta e dal tipo di trattamento impostato. Il percorso completo attraverso le tre fasi può durare da diversi mesi a oltre un anno. Affermare un tempo preciso di risoluzione sarebbe scorretto, perché ogni caso ha una risposta diversa.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Spalla congelata si può guarire senza fisioterapia?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Il dolore tende a ridursi nel tempo anche senza trattamento, ma la rigidità residua può persistere per anni. La fisioterapia mirata alla mobilizzazione della capsula e al rinforzo muscolare accelera il recupero e riduce il rischio di limitazioni permanenti nel movimento. Affidarsi solo all'attesa significa accettare un risultato che potrebbe essere significativamente inferiore.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Esercizi per spalla congelata fai da te funzionano?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>Gli esercizi sono una parte fondamentale del percorso, ma devono essere calibrati sulla fase della capsulite. Fare stretching aggressivo nella fase infiammatoria peggiora il quadro, mentre gli stessi esercizi nella fase di rigidità possono essere utili. Per questo è importante farsi guidare da un fisioterapista che valuti la fase e prescriva il programma adatto.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Capsulite adesiva e cuffia dei rotatori sono la stessa cosa?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><p>No, sono due condizioni diverse. La capsulite adesiva riguarda l'involucro dell'articolazione — la capsula — che si infiamma e si irrigidisce, limitando tutti i movimenti. Le lesioni della cuffia dei rotatori riguardano i tendini dei muscoli che muovono la spalla e causano perdita di forza più che di mobilità passiva. Le due condizioni possono coesistere, e una valutazione clinica accurata serve a distinguerle.</p></div>
+      </div>
+<!-- FAQ:END -->
+    </div>
+
+    <div class="article-cta">
+      <h3>Hai bisogno di una valutazione?</h3>
+      <p>Prenota una prima visita: in 60 minuti capiamo esattamente cosa non va e costruiamo insieme il piano di cura piu efficace per te.</p>
+      <a href="/booking.html">Prenota la prima visita</a>
+    </div>
+  </article>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Prenota una visita</h4>
+      <p>Prima valutazione completa con piano di trattamento personalizzato.</p>
+      <a href="/booking.html" class="sidebar-btn">Prenota ora</a>
+      <a href="https://wa.me/393282738164" class="sidebar-btn ghost" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/></svg>
+        Scrivici su WhatsApp
+      </a>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">In questo articolo</div>
+      <div class="toc">
+<!-- TOC:START -->
+        <a href="#perche-il-braccio-smette-di-alzarsi-senza-un-motivo-apparente">Perché il braccio smette di alzarsi senza un motivo apparente</a>
+        <a href="#le-tre-fasi-della-capsulite-adesiva-e-perche-trattarle-allo-stesso-modo-e-un-errore">Le tre fasi della capsulite adesiva e perché trattarle allo stesso modo è un errore</a>
+        <a href="#come-distinguere-la-capsulite-adesiva-da-altri-problemi-di-spalla">Come distinguere la capsulite adesiva da altri problemi di spalla</a>
+        <a href="#cosa-funziona-davvero-nel-trattamento-e-cosa-no">Cosa funziona davvero nel trattamento e cosa no</a>
+        <a href="#quando-farti-valutare-e-come-lavoriamo-in-studio">Quando farti valutare e come lavoriamo in studio</a>
+        <a href="#faq">Domande frequenti</a>
+<!-- TOC:END -->
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="toc-title">Articoli correlati</div>
+      <div class="toc">
+<!-- CORRELATI:START -->
+        <a href="/blog/stiramento-ischiocrurali-sprint.html">Stiramento dei flessori: perché la coscia cede proprio durante lo sprint</a>
+        <a href="/blog/distorsione-caviglia-cosa-fare.html">Distorsione di caviglia: cosa fare nelle prime 72 ore e cosa evitare</a>
+<!-- CORRELATI:END -->
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="disclaimer">
+  I contenuti di questo articolo hanno scopo informativo e divulgativo e non sostituiscono
+  la valutazione clinica di un professionista sanitario. In caso di dolore o sintomi
+  persistenti, rivolgiti a un fisioterapista o al tuo medico.
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <img src="/logo.png" width="671" height="135" alt="fisio·expert"
+         onerror="this.style.display='none'; document.getElementById('logoFallbackFooter').style.display='inline';">
+    <span id="logoFallbackFooter" class="logo-fallback-footer">fisio<b>·</b>expert</span>
+  </div>
+  <span>P.IVA 14315091000 &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy policy</a> &nbsp;·&nbsp; <a href="#" data-preferenze-cookie>Preferenze cookie</a> &nbsp;·&nbsp; Roma</span>
+</footer>
+
+<script>
+  function toggleFaq(btn){var item=btn.closest('.faq-item');var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(el){el.classList.remove('open')});if(!isOpen)item.classList.add('open')}
+</script>
+<!-- Banner consenso cookie. Blocco identico su tutte le pagine pubbliche. -->
+<style>
+  .cc-banner {
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    width: calc(100% - 40px); max-width: 380px;
+    background: #ffffff; border: 1px solid rgba(26,26,26,0.1); border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 12px 40px rgba(26,26,26,0.14);
+    font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; text-align: left;
+  }
+  .cc-banner[hidden] { display: none; }
+  .cc-titolo { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.2; margin: 0 36px 6px 0; color: #1a1a1a; }
+  .cc-testo { font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0; }
+  .cc-testo a { color: #d4660e; text-decoration: underline; }
+  .cc-chiudi {
+    position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+    border: none; background: transparent; color: #8a8a8a; font-size: 24px; line-height: 1;
+    cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .cc-chiudi:hover { background: #f8f4ef; color: #1a1a1a; }
+  .cc-pulsanti { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .cc-btn {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500;
+    height: 46px; border: none; border-radius: 10px; color: #ffffff; cursor: pointer; transition: background 0.2s;
+  }
+  .cc-rifiuta { background: #1a1a1a; }
+  .cc-rifiuta:hover { background: #3a3a3a; }
+  .cc-accetta { background: #f47920; }
+  .cc-accetta:hover { background: #d4660e; }
+  .cc-btn:focus-visible, .cc-chiudi:focus-visible, .cc-testo a:focus-visible { outline: 2px solid #f47920; outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .cc-banner {
+      right: 0; bottom: 0; left: 0; width: 100%; max-width: none;
+      border-radius: 16px 16px 0 0; border-width: 1px 0 0;
+      padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .cc-titolo { font-size: 19px; }
+    .cc-testo { font-size: 13.5px; }
+  }
+</style>
+<div class="cc-banner" id="ccBanner" role="dialog" aria-labelledby="ccTitolo" aria-describedby="ccTesto" hidden>
+  <button type="button" class="cc-chiudi" id="ccChiudi" aria-label="Chiudi e rifiuta">&times;</button>
+  <p class="cc-titolo" id="ccTitolo">Cookie e annunci</p>
+  <p class="cc-testo" id="ccTesto">Uso i cookie di Google Ads solo per capire se gli annunci portano prenotazioni. Si attivano solo se accetti: se rifiuti, il sito funziona uguale. Dettagli nella <a href="/privacy-policy.html#cookie">cookie policy</a>.</p>
+  <div class="cc-pulsanti">
+    <button type="button" class="cc-btn cc-rifiuta" id="ccRifiuta">Rifiuta</button>
+    <button type="button" class="cc-btn cc-accetta" id="ccAccetta">Accetta</button>
+  </div>
+</div>
+<script>
+  (function () {
+    var banner = document.getElementById('ccBanner');
+    if (!banner || !window.fxCookie) return;
+    function mostra() { banner.hidden = false; }
+    function nascondi() { banner.hidden = true; }
+    document.getElementById('ccAccetta').addEventListener('click', function () { fxCookie.accetta(); nascondi(); });
+    document.getElementById('ccRifiuta').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    document.getElementById('ccChiudi').addEventListener('click', function () { fxCookie.rifiuta(); nascondi(); });
+    // Qualsiasi elemento con data-preferenze-cookie riapre il banner (link nel footer, pulsante in privacy)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest ? e.target.closest('[data-preferenze-cookie]') : null;
+      if (el) { e.preventDefault(); mostra(); document.getElementById('ccAccetta').focus(); }
+    });
+    if (fxCookie.scelta() === null) mostra();
+  })();
+</script>
+
+</body>
+</html>

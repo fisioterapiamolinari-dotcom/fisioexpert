@@ -73,7 +73,7 @@ h1 { font-family:var(--serif); font-weight:400; font-size:32px; line-height:1.1;
 .sezione { font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent-dark); margin:22px 2px 10px; display:flex; align-items:center; gap:10px; }
 .sezione::after { content:''; flex:1; height:1px; background:var(--border); }
 .chip.carico { background:var(--ink); color:var(--white); }
-.nota-es { margin-top:8px; }
+.nota-es { margin-top:12px; }
 .nota-es textarea { min-height:56px; font-size:16px; }
 .nota-es .etichetta { margin-bottom:6px; }
 
@@ -202,7 +202,6 @@ let sessione = null;  // la sessione in corso (sempre salvata anche sul telefono
 let timerSync = null;
 const aperti = new Set();     // esercizi completati che il paziente ha riaperto (o che aspettano l'RPE)
 const kgMostrati = new Set(); // esercizi senza carico dove il paziente ha chiesto la colonna kg
-const noteAperte = new Set(); // esercizi dove ha aperto il campo nota
 
 // ---------------------------------------------------------------------
 // Utilità
@@ -639,10 +638,8 @@ function disegnaEsercizio(r) {
       <div class="rpe-scala"><span>${da <= 6 ? '6 · facile' : da + ' · facile'}</span><span>8 · ne avevi 2</span><span>10 · al limite</span></div>
     </div>
     <div class="nota-es">
-      ${nota || noteAperte.has(r.id) ? `
-        <label class="etichetta" for="nota-${r.id}">La tua nota per Gianmarco</label>
-        <textarea id="nota-${r.id}" data-nota="${r.id}" placeholder="Es. fastidio all'inguine alla terza serie">${esc(nota)}</textarea>`
-      : `<button type="button" class="link" data-apri-nota="${r.id}">✎ Scrivi una nota a Gianmarco</button>`}
+      <label class="etichetta" for="nota-${r.id}">La tua nota per Gianmarco</label>
+      <textarea id="nota-${r.id}" data-nota="${r.id}" placeholder="Com'è andata? Es. fastidio all'inguine alla terza serie">${esc(nota)}</textarea>
     </div>`;
 
   box.innerHTML = html;
@@ -720,12 +717,6 @@ document.addEventListener('click', e => {
   if (btnKg) {
     const r = trova(btnKg.dataset.kg); kgMostrati.add(r.id); disegnaEsercizio(r);
     $('es-' + r.id).querySelector('.serie-riga:not(.fatta) [data-campo="carico_kg"]')?.focus();
-    return;
-  }
-  const btnNota = e.target.closest('[data-apri-nota]');
-  if (btnNota) {
-    const r = trova(btnNota.dataset.apriNota); noteAperte.add(r.id); disegnaEsercizio(r);
-    $('nota-' + r.id)?.focus();
     return;
   }
   const btnRpe = e.target.closest('[data-rpe]');

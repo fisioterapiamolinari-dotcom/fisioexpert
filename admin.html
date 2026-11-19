@@ -79,17 +79,24 @@ textarea { resize:vertical; }
 
 /* Elenco pazienti */
 .cerca { margin-bottom:12px; }
-.paziente { display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+.paziente { display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; padding:9px 12px; margin-bottom:6px; border-radius:12px; }
 .paziente:hover { border-color:rgba(244,121,32,.4); }
-.paziente .iniziali { flex:0 0 44px; height:44px; border-radius:50%; background:var(--warm-dark); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:14px; }
-.paziente .testo { flex:1; min-width:0; }
-.paziente .nome { font-weight:700; display:block; }
-.paziente .info { color:var(--ink-muted); font-size:13px; display:block; }
+.paziente .iniziali { flex:0 0 32px; height:32px; border-radius:50%; background:var(--warm-dark); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:800; font-size:11px; }
+.paziente .testo { flex:1; min-width:0; line-height:1.3; }
+.paziente .nome { font-weight:700; font-size:14px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.paziente .info { color:var(--ink-muted); font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+@media (max-width:640px) {
+  h1 { font-size:24px; margin-top:18px; }
+  header { padding-top:10px; }
+  .header-logo { height:30px; }
+  nav { margin-top:6px; }
+  nav a { padding:8px 10px 9px; font-size:12px; }
+}
 
 /* Editor scheda */
 .esempio { background:var(--warm); border-radius:10px; padding:10px 12px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); white-space:pre-wrap; margin-bottom:10px; }
 #testoScheda { min-height:260px; font-family:ui-monospace,Menlo,monospace; font-size:14px; line-height:1.55; }
-.righe-ed .giorno-testa { font-family:var(--serif); font-size:19px; margin:24px 0 4px; }
+.righe-ed .giorno-testa { font-family:var(--serif); font-size:19px; margin:24px 0 4px; display:flex; align-items:baseline; gap:12px; }
 .righe-ed .giorno-testa:first-child { margin-top:2px; }
 /* ogni esercizio su due righe: i campi vanno a capo invece di tagliare il testo */
 .righe-ed .l1 { display:grid; grid-template-columns:140px minmax(0,1fr) 52px 150px 140px 66px; gap:6px; align-items:start; }
@@ -1315,7 +1322,7 @@ function disegnaAnteprima() {
 
   let corpo = '', g = null;
   bozza.righe.forEach((r, i) => {
-    if (r.giorno !== g) { g = r.giorno; corpo += `<div class="giorno-testa">Giorno ${g}</div>`; }
+    if (r.giorno !== g) { g = r.giorno; corpo += `<div class="giorno-testa">Giorno ${g} <button type="button" class="link" onclick="copiaGiorno(${g})">Copia questo giorno in…</button></div>`; }
     corpo += `
       <div class="riga-es" data-i="${i}">
         <div class="l1">
@@ -1462,6 +1469,20 @@ async function ultimeEsecuzioni(eserciziIds, pazienteId) {
 // Il riquadro cresce con il testo: niente più indicazioni tagliate
 function adatta(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; }
 window.addEventListener('resize', () => document.querySelectorAll('#corpoRighe textarea').forEach(adatta));
+
+// Copia tutti gli esercizi di un giorno in un altro (sostituisce quelli che c'erano)
+function copiaGiorno(da) {
+  const giorni = [...new Set(bozza.righe.map(r => r.giorno))];
+  const proposta = giorni.find(x => x !== da) ?? da + 1;
+  const verso = parseInt(prompt(`Copia il Giorno ${da} nel giorno numero:`, proposta), 10);
+  if (!verso || verso < 1 || verso === da) return;
+  const esistenti = bozza.righe.filter(r => r.giorno === verso).length;
+  if (esistenti && !confirm(`Il Giorno ${verso} ha già ${esistenti} esercizi: li sostituisco con quelli del Giorno ${da}?`)) return;
+  const copie = bozza.righe.filter(r => r.giorno === da).map(r => ({ ...r, giorno: verso }));
+  bozza.righe = bozza.righe.filter(r => r.giorno !== verso).concat(copie);
+  salvaBozza(); disegnaAnteprima();
+  toast(`Giorno ${da} copiato nel Giorno ${verso}. Ricordati di salvare.`);
+}
 
 function aggiungiRiga() {
   const g = bozza.righe.length ? bozza.righe[bozza.righe.length - 1].giorno : 1;

@@ -113,6 +113,7 @@ details.sessione summary .stato { font-family:var(--mono); font-weight:700; font
 details.sessione[open] summary { border-bottom:1px solid var(--border); }
 .dettaglio-sessione { padding:12px 16px 14px; font-size:14px; }
 .dettaglio-sessione .es { margin-bottom:10px; }
+.btn-riprendi { margin-top:12px; padding:12px; font-size:14px; }
 .dettaglio-sessione .es b { display:block; }
 .dettaglio-sessione .serie { color:var(--ink-soft); }
 .dettaglio-sessione .nota-es { display:block; color:var(--ink-soft); font-style:italic; }
@@ -273,13 +274,20 @@ function giorniDi(assegnazione) {
   return giorni; // Map giorno → righe in ordine
 }
 
+// Allenamento lasciato a metà: il più recente di questa scheda, se non è stato completato
+// (anche di un altro giorno: si riprende da dove si era arrivati)
+function aMetaDi(assegnazioneId, sessioni) {
+  const ultima = sessioni.find(s => s.assegnazione_id === assegnazioneId); // già ordinate dalla più recente
+  return ultima && !ultima.completata ? ultima : null;
+}
+
 // Sessione lasciata a metà → si riprende quella. Altrimenti il giorno dopo l'ultimo completato.
 function prossimo(assegnazione, sessioni) {
   const giorni = [...giorniDi(assegnazione).keys()];
   if (!giorni.length) return null;
   const mie = sessioni.filter(s => s.assegnazione_id === assegnazione.id); // già ordinate dalla più recente
-  const aMeta = mie.find(s => !s.completata && s.data === oggiRoma());
-  if (aMeta) return { giorno: aMeta.giorno, sessioneId: aMeta.id, riprendi: true };
+  const aMeta = aMetaDi(assegnazione.id, sessioni);
+  if (aMeta && giorni.includes(aMeta.giorno)) return { giorno: aMeta.giorno, sessioneId: aMeta.id, riprendi: true, dal: aMeta.data };
   const ultima = mie.find(s => s.completata);
   if (!ultima) return { giorno: giorni[0] };
   const i = giorni.indexOf(ultima.giorno);
@@ -321,7 +329,7 @@ function disegna({ profilo, assegnazioni, sessioni, commenti = [] }) {
       html += `
         <div class="card prossimo">
           ${fattaOggi ? '<div class="fatto-oggi">✓ Allenamento di oggi completato. Ottimo lavoro!</div>' : ''}
-          <span class="etichetta">${p.riprendi ? 'Allenamento in corso' : 'Prossimo allenamento'}</span>
+          <span class="etichetta">${p.riprendi ? (p.dal === oggiRoma() ? 'Allenamento in corso' : `Lasciato a metà ${dataCorta(p.dal)}`) : 'Prossimo allenamento'}</span>
           <div class="titolo">Giorno ${p.giorno}</div>
           <div class="dettaglio">${righe.length} ${righe.length === 1 ? 'esercizio' : 'esercizi'}</div>
           <ol>${righe.map(r => `<li>${esc(r.esercizi?.nome)}${r.serie ? ` · ${r.serie}×${esc(r.ripetizioni || '')}` : ''}${r.carico ? ` · ${esc(r.carico)}` : ''}</li>`).join('')}</ol>
@@ -344,6 +352,8 @@ function disegna({ profilo, assegnazioni, sessioni, commenti = [] }) {
       <div class="card" id="giorno-${a.id}"></div>`;
   });
 
+  // allenamenti che si possono ancora riprendere (uno per scheda attiva)
+  riprendibili = new Map(assegnazioni.map(a => [aMetaDi(a.id, sessioni)?.id, a.id]).filter(([id]) => id));
   html += disegnaRiepilogo(sessioni) + disegnaStorico(sessioni);
   $('contenuto').innerHTML = html;
   Object.keys(vistePaz).forEach(disegnaGiorno);
@@ -355,6 +365,7 @@ function disegna({ profilo, assegnazioni, sessioni, commenti = [] }) {
 // ---------------------------------------------------------------------
 const CHIAVE_VISTI = 'fx_commenti_visti';
 let vistePaz = {}, commentiPaz = [], nuoviPaz = new Set();
+let riprendibili = new Map(); // id sessione lasciata a metà → id assegnazione
 
 function scegliGiorno(aid, g) { vistePaz[aid].giorno = g; disegnaGiorno(aid); }
 
@@ -382,7 +393,8 @@ function disegnaGiorno(aid) {
 
   const sess = sessioni.filter(s => s.giorno === giorno);
   const fatte = sess.filter(s => s.completata);
-  const inCorso = sess.find(s => !s.completata && s.data === oggiRoma());
+  const aMeta = aMetaDi(a.id, sessioni);
+  const inCorso = aMeta && aMeta.giorno === giorno ? aMeta : null;
   let html = `<div class="vg">
     <a class="btn" href="/allenamento.html?a=${a.id}&g=${giorno}${inCorso ? '&s=' + inCorso.id : ''}">${inCorso ? 'Riprendi' : 'Inizia'} Giorno ${giorno}</a>
     <div class="vg-info">${fatte.length ? `Fatto ${fatte.length} ${fatte.length === 1 ? 'volta' : 'volte'} · l'ultima ${dataCorta(fatte[0].data)}` : 'Non ancora fatto'}</div>`;
@@ -474,7 +486,8 @@ function disegnaStorico(sessioni) {
             <span class="info">Giorno ${s.giorno} · ${nSerie} serie</span></span>
           <span class="stato ${s.completata ? 'ok' : 'incompleta'}">${s.completata ? 'Completato' : 'Non finito'}</span>
         </summary>
-        <div class="dettaglio-sessione">${dettaglio}</div>
+        <div class="dettaglio-sessione">${dettaglio}${riprendibili.has(s.id) ? `
+          <a class="btn btn-riprendi" href="/allenamento.html?a=${riprendibili.get(s.id)}&g=${s.giorno}&s=${s.id}">Riprendi questo allenamento</a>` : ''}</div>
       </details>`;
   });
   return html;
